@@ -1,0 +1,9 @@
+{
+  "name" : "SSE-Example",
+  "description" : "Example for iOS EventSource implementation on Swift",
+  "author" : "Andres Canal",
+  "version" : "1.0.0",
+  "dependencies" : {
+    "node-uuid" : "1.4.2"
+  }
+}
