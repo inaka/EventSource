@@ -12,9 +12,21 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        let basicAuthAuthorization = EventSource.basicAuth("sarasa", password: "sarasa")
-        var eventSource = EventSource(url: "http://test.com", headers: ["Authorization" : basicAuthAuthorization])
+        
+        let server = "http://127.0.0.1:8080/sse"
+        let username = "fe8b0af5-1b50-467d-ac0b-b29d2d30136b"
+        let password = "ae10ff39ca41dgf0a8"
+        
+        let basicAuthAuthorization = EventSource.basicAuth(username, password: password)
+        var eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
+        
+        eventSource.onOpen({
+            println("HOLA");
+        })
+        
+        eventSource.onError({
+            println("CHAU");
+        })
     }
 }
 
