@@ -25,6 +25,7 @@ class EventSource: NSObject, NSURLSessionDataDelegate{
     private var onOpenCallback : (Void -> Void)?
     private var onErrorCallback : (Void -> Void)?
     private(set) var readyState = EventSourceState.Closed
+    private(set) var retryTime = 3000
     
     init(url: NSString, headers: [NSString : NSString]){
 
@@ -34,7 +35,7 @@ class EventSource: NSObject, NSURLSessionDataDelegate{
         if let eventID = lastEventID{
             additionalHeaders["Last-Event-Id"] = eventID
         }
-        
+
         additionalHeaders["Accept"] = "text/event-stream"
         additionalHeaders["Cache-Control"] = "no-cache"
 
@@ -44,7 +45,7 @@ class EventSource: NSObject, NSURLSessionDataDelegate{
         configuration.HTTPAdditionalHeaders = additionalHeaders
 
         super.init();
-        
+
         readyState = EventSourceState.Connecting
         urlSession = NSURLSession(configuration: configuration, delegate: self, delegateQueue: operationQueue)
         task = urlSession!.dataTaskWithURL(self.url);
@@ -75,18 +76,22 @@ class EventSource: NSObject, NSURLSessionDataDelegate{
         if let receivedString = NSString(data: data, encoding: NSUTF8StringEncoding){
             print(receivedString)
 
+            parseEventStream(receivedString)
+
             dispatch_async(dispatch_get_main_queue()) {
-                print(NSThread.isMainThread())
+
             }
         }
     }
 
     func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
         completionHandler(NSURLSessionResponseDisposition.Allow);
-        
+
         readyState = EventSourceState.Open
         if(self.onOpenCallback != nil){
-           self.onOpenCallback!()
+            dispatch_async(dispatch_get_main_queue()) {
+                self.onOpenCallback!()
+            }
         }
     }
 
@@ -94,18 +99,76 @@ class EventSource: NSObject, NSURLSessionDataDelegate{
         readyState = EventSourceState.Closed
         if(self.onErrorCallback != nil){
             if(error?.domain != "NSURLErrorDomain" && error?.code != -999){
-                self.onErrorCallback!()
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.onErrorCallback!()
+                }
             }
         }
     }
 
 //MARK: Helpers
     
+    private func parseEventStream(events: NSString) -> [(id: String, event: String, data: String)]{
+        var parsedEvents: [(id: String, event: String, data: String)] = Array()
+
+        let events = events.componentsSeparatedByString("\n\n")
+        for event in events as [String]{
+
+            if event.isEmpty {
+                continue
+            }
+
+            if event.hasPrefix(":"){
+                continue
+            }
+
+            if (event as NSString).containsString("retry:"){
+                if let reconnectTime = parseRetryTime(event){
+                    self.retryTime = reconnectTime
+                }
+            }
+
+            parsedEvents.append(parseEvent(event))
+        }
+
+        return parsedEvents
+    }
+
+    private func parseEvent(eventString: String) -> (id: String, event: String, data: String){
+        autoreleasepool {
+            var key: NSString?, value: NSString?
+            let scanner = NSScanner(string: eventString)
+            scanner.scanUpToString(":", intoString: &key)
+            scanner.scanString(":",intoString: nil)
+            scanner.scanUpToString("\n", intoString: &value)
+        }
+
+
+        return ("id", "event", "data")
+    }
+
+    private func parseRetryTime(eventString: String) -> Int?{
+        var reconnectTime: Int?
+        let separators = NSCharacterSet(charactersInString: ":")
+        if let milli = eventString.componentsSeparatedByCharactersInSet(separators).last{
+            let milliseconds = trim(milli)
+
+            if let intMiliseconds = milliseconds.toInt() {
+                reconnectTime = intMiliseconds
+            }
+        }
+        return reconnectTime
+    }
+
+    private func trim(string: String) -> String{
+        return string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
+    }
+
     class func basicAuth(username: NSString, password: NSString) -> NSString{
         let authString = "\(username):\(password)"
         let authData = authString.dataUsingEncoding(NSUTF8StringEncoding)
         let base64String = authData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding76CharacterLineLength)
-        
+
         return "Basic \(base64String)"
     }
 }

@@ -21,11 +21,11 @@ class ViewController: UIViewController {
         var eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
         
         eventSource.onOpen({
-            println("HOLA");
+            println("onOpen");
         })
         
         eventSource.onError({
-            println("CHAU");
+            println("onError");
         })
     }
 }
