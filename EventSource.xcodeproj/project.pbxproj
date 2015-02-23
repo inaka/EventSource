@@ -14,6 +14,7 @@
 		41DFE4341A8E686F000C3519 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41DFE4321A8E686F000C3519 /* LaunchScreen.xib */; };
 		41DFE4401A8E6870000C3519 /* EventSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE43F1A8E6870000C3519 /* EventSourceTests.swift */; };
 		41DFE44B1A8E6D6F000C3519 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE44A1A8E6D6F000C3519 /* EventSource.swift */; };
+		E0E27C231A9BB5A2008B9900 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE44A1A8E6D6F000C3519 /* EventSource.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -234,6 +235,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				41DFE4401A8E6870000C3519 /* EventSourceTests.swift in Sources */,
+				E0E27C231A9BB5A2008B9900 /* EventSource.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

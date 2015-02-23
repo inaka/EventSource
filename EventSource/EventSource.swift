@@ -14,16 +14,17 @@ enum EventSourceState {
     case Closed
 }
 
-class EventSource: NSObject, NSURLSessionDataDelegate{
+public class EventSource: NSObject, NSURLSessionDataDelegate{
 
     let url: NSURL
     private let urlSession: NSURLSession?
     private let task : NSURLSessionTask?
     private let operationQueue = NSOperationQueue()
-    private let lastEventID: NSString?
-    private let receivedString : NSString?
-    private var onOpenCallback : (Void -> Void)?
-    private var onErrorCallback : (Void -> Void)?
+    private let receivedString: NSString?
+    private var lastEventID: NSString?
+    private var onOpenCallback: (Void -> Void)?
+    private var onErrorCallback: (Void -> Void)?
+    private var onMessageCallback: ((id: String?, event: String?, data: String?) -> Void)?
     private(set) var readyState = EventSourceState.Closed
     private(set) var retryTime = 3000
     
@@ -68,19 +69,16 @@ class EventSource: NSObject, NSURLSessionDataDelegate{
     func onError(onErrorCallback: Void -> Void) {
         self.onErrorCallback = onErrorCallback
     }
-
     
+    func onMessage(onMessageCallback: (id: String?, event: String?, data: String?) -> Void){
+        self.onMessageCallback = onMessageCallback
+    }
+
 //MARK: NSURLSessionDataDelegate
     
-    func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData){
+    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData){
         if let receivedString = NSString(data: data, encoding: NSUTF8StringEncoding){
-            print(receivedString)
-
             parseEventStream(receivedString)
-
-            dispatch_async(dispatch_get_main_queue()) {
-
-            }
         }
     }
 
@@ -95,7 +93,7 @@ class EventSource: NSObject, NSURLSessionDataDelegate{
         }
     }
 
-    func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?){
+    public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?){
         readyState = EventSourceState.Closed
         if(self.onErrorCallback != nil){
             if(error?.domain != "NSURLErrorDomain" && error?.code != -999){
@@ -108,8 +106,8 @@ class EventSource: NSObject, NSURLSessionDataDelegate{
 
 //MARK: Helpers
     
-    private func parseEventStream(events: NSString) -> [(id: String, event: String, data: String)]{
-        var parsedEvents: [(id: String, event: String, data: String)] = Array()
+    public func parseEventStream(events: NSString) -> Void{
+        var parsedEvents: [(id: String?, event: String?, data: String?)] = Array()
 
         let events = events.componentsSeparatedByString("\n\n")
         for event in events as [String]{
@@ -126,25 +124,49 @@ class EventSource: NSObject, NSURLSessionDataDelegate{
                 if let reconnectTime = parseRetryTime(event){
                     self.retryTime = reconnectTime
                 }
+                continue
             }
 
             parsedEvents.append(parseEvent(event))
         }
 
-        return parsedEvents
+        for parsedEvent in parsedEvents as [(id: String?, event: String?, data: String?)]{
+            self.lastEventID = parsedEvent.id
+            
+            if  parsedEvent.event == nil &&  parsedEvent.data != nil{
+                if(self.onMessageCallback != nil){
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.onMessageCallback!(id:self.lastEventID,event: "message",data: parsedEvent.data)
+                    }
+                }
+            }
+        }
     }
 
-    private func parseEvent(eventString: String) -> (id: String, event: String, data: String){
-        autoreleasepool {
-            var key: NSString?, value: NSString?
-            let scanner = NSScanner(string: eventString)
-            scanner.scanUpToString(":", intoString: &key)
-            scanner.scanString(":",intoString: nil)
-            scanner.scanUpToString("\n", intoString: &value)
+    private func parseEvent(eventString: String) -> (id: String?, event: String?, data: String?){
+        var event = Dictionary<String, String>()
+        
+        for line in eventString.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet()) as [String]{
+            autoreleasepool {
+                var key: NSString?, value: NSString?
+                let scanner = NSScanner(string: line)
+                scanner.scanUpToString(":", intoString: &key)
+                scanner.scanString(":",intoString: nil)
+                scanner.scanUpToString("\n", intoString: &value)
+                
+                if (key != nil && value != nil) {
+                    if (event[key!] != nil) {
+                        event[key!] = "\(event[key!])\n\(value!)"
+                    } else {
+                        event[key!] = value!
+                    }
+                }
+            }
         }
 
-
-        return ("id", "event", "data")
+        print("Event: \(event)")
+        
+        return (event["id"], event["event"], event["data"])
     }
 
     private func parseRetryTime(eventString: String) -> Int?{

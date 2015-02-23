@@ -27,6 +27,12 @@ class ViewController: UIViewController {
         eventSource.onError({
             println("onError");
         })
+        
+        eventSource.onMessage({ (id, event, data) -> Void in
+            println(id)
+            println(event)
+            println(data)
+        })
     }
 }
 
