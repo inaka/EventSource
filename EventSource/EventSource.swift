@@ -17,40 +17,49 @@ enum EventSourceState {
 public class EventSource: NSObject, NSURLSessionDataDelegate{
 
     let url: NSURL
-    private let urlSession: NSURLSession?
-    private let task : NSURLSessionTask?
-    private let operationQueue = NSOperationQueue()
+    private let lastEventIDKey = "com.inaka.eventSource.lastEventId"
     private let receivedString: NSString?
-    private var lastEventID: NSString?
     private var onOpenCallback: (Void -> Void)?
     private var onErrorCallback: (Void -> Void)?
     private var onMessageCallback: ((id: String?, event: String?, data: String?) -> Void)?
-    private(set) var readyState = EventSourceState.Closed
+    private(set) var readyState: EventSourceState
     private(set) var retryTime = 3000
     private var eventListeners = Dictionary<String, (id: String?, event: String?, data: String?) -> Void>()
-    
+    private var headers: Dictionary<String, String>
+    private var urlSession: NSURLSession?
+    private var task : NSURLSessionTask?
+    private var operationQueue: NSOperationQueue
+
     var event = Dictionary<String, String>()
 
     
-    init(url: NSString, headers: [NSString : NSString]){
+    init(url: NSString, headers: [String : String]){
 
         self.url = NSURL(string: url)!
-        
-        var additionalHeaders = headers
+        self.headers = headers
+        self.readyState = EventSourceState.Closed
+        self.operationQueue = NSOperationQueue()
+
+        super.init();
+        self.connect()
+    }
+
+//Mark: Connect
+    
+    func connect(){
+        var additionalHeaders = self.headers
         if let eventID = lastEventID{
             additionalHeaders["Last-Event-Id"] = eventID
         }
-
+        
         additionalHeaders["Accept"] = "text/event-stream"
         additionalHeaders["Cache-Control"] = "no-cache"
-
+        
         let configuration = NSURLSessionConfiguration.defaultSessionConfiguration()
         configuration.timeoutIntervalForRequest = NSTimeInterval(INT_MAX)
         configuration.timeoutIntervalForResource = NSTimeInterval(INT_MAX)
         configuration.HTTPAdditionalHeaders = additionalHeaders
-
-        super.init();
-
+        
         readyState = EventSourceState.Connecting
         urlSession = NSURLSession(configuration: configuration, delegate: self, delegateQueue: operationQueue)
         task = urlSession!.dataTaskWithURL(self.url);
@@ -85,6 +94,10 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
 //MARK: NSURLSessionDataDelegate
     
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData){
+        if readyState != EventSourceState.Open {
+            return
+        }
+        
         if let receivedString = NSString(data: data, encoding: NSUTF8StringEncoding){
             parseEventStream(receivedString)
         }
@@ -109,6 +122,12 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
                     self.onErrorCallback!()
                 }
             }
+        }
+
+        let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
+        let delayTime = dispatch_time(DISPATCH_TIME_NOW, Int64(nanoseconds));
+        dispatch_after(delayTime, dispatch_get_main_queue()) { () -> Void in
+            self.connect()
         }
     }
 
@@ -159,6 +178,19 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
             }
         }
     }
+    
+    private var lastEventID: String?{
+        set{
+            let defaults = NSUserDefaults.standardUserDefaults()
+            defaults.setObject(newValue, forKey: lastEventIDKey)
+            defaults.synchronize()
+        }
+        
+        get{
+            let defaults = NSUserDefaults.standardUserDefaults()
+            return defaults.stringForKey(lastEventIDKey) as String?
+        }
+    }
 
     private func parseEvent(eventString: String) -> (id: String?, event: String?, data: String?){
         var event = Dictionary<String, String>()
@@ -173,15 +205,13 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
                 
                 if (key != nil && value != nil) {
                     if (event[key!] != nil) {
-                        event[key!] = "\(event[key!])\n\(value!)"
+                        event[key!] = "\(event[key!]!)\n\(value!)"
                     } else {
                         event[key!] = value!
                     }
                 }
             }
         }
-
-        print("Event: \(event)")
         
         return (event["id"], event["event"], event["data"])
     }

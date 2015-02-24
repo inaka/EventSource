@@ -32,6 +32,7 @@ class ViewController: UIViewController {
             println(id)
             println(event)
             println(data)
+            println()
         })
     }
 }

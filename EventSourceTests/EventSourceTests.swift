@@ -62,14 +62,14 @@ class EventSourceTests: XCTestCase {
         })
     }
     
-    func testParseOfIDAndData(){
+    func testMultilineData(){
         let expectation = self.expectationWithDescription("onMessage should be called")
 
-        let retryEventData = "id: event-id\ndata:event-data"
+        let retryEventData = "id: event-id\ndata:event-data-first\ndata:event-data-second"
         sut.onMessage { (id, event, data) -> Void in
             XCTAssertEqual(event!, "message", "the event should be message")
             XCTAssertEqual(id!, "event-id", "the event id should be received")
-            XCTAssertEqual(data!, "event-data", "the event data should be received")
+            XCTAssertEqual(data!, "event-data-first\nevent-data-second", "the event data should be received")
             
             expectation.fulfill()
         }

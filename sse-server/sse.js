@@ -4,6 +4,7 @@ var uuid = require('node-uuid');
 var sendInterval = 5000;
 
 function sendServerSendEvent(req, res) {
+  console.log("Connected")
   res.writeHead(200, {
     'Content-Type' : 'text/event-stream',
     'Cache-Control' : 'no-cache',
