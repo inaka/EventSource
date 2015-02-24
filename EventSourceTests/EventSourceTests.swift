@@ -30,6 +30,38 @@ class EventSourceTests: XCTestCase {
         XCTAssertEqual(5000, sut.retryTime, "the retry time should be changed to 5000")
     }
     
+    func testIgnoreCommets(){
+        let commentEvent = ":coment\n\n"
+        sut.addEventListener("event",{ (id, event, data) in
+            XCTAssert(false, "got event in comment")
+        })
+        
+        sut.onMessage { (id, event, data) -> Void in
+            XCTAssert(false, "got event in comment")
+        }
+        sut.parseEventStream(commentEvent)
+    }
+    
+    func testAddEventListenerAndReceiveEvent(){
+        let expectation = self.expectationWithDescription("onEvent should be called")
+        
+        let eventListenerAndReceiveEvent = "id: event-id\nevent:event-event\ndata:event-data"
+        sut.addEventListener("event-event",{ (id, event, data) in
+            XCTAssertEqual(event!, "event-event", "the event should be test")
+            XCTAssertEqual(id!, "event-id", "the event id should be received")
+            XCTAssertEqual(data!, "event-data", "the event data should be received")
+            
+            expectation.fulfill()
+        })
+        sut.parseEventStream(eventListenerAndReceiveEvent)
+        
+        self.waitForExpectationsWithTimeout(2, handler: { (error) -> Void in
+            if let receivedError = error{
+                XCTFail("Expectation not fulfilled")
+            }
+        })
+    }
+    
     func testParseOfIDAndData(){
         let expectation = self.expectationWithDescription("onMessage should be called")
 

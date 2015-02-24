@@ -27,6 +27,10 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
     private var onMessageCallback: ((id: String?, event: String?, data: String?) -> Void)?
     private(set) var readyState = EventSourceState.Closed
     private(set) var retryTime = 3000
+    private var eventListeners = Dictionary<String, (id: String?, event: String?, data: String?) -> Void>()
+    
+    var event = Dictionary<String, String>()
+
     
     init(url: NSString, headers: [NSString : NSString]){
 
@@ -73,6 +77,10 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
     func onMessage(onMessageCallback: (id: String?, event: String?, data: String?) -> Void){
         self.onMessageCallback = onMessageCallback
     }
+    
+    func addEventListener(event: String, handler: (id: String?, event: String?, data: String?) -> Void){
+        self.eventListeners[event] = handler
+    }
 
 //MARK: NSURLSessionDataDelegate
     
@@ -106,7 +114,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
 
 //MARK: Helpers
     
-    public func parseEventStream(events: NSString) -> Void{
+    public func parseEventStream(events: String){
         var parsedEvents: [(id: String?, event: String?, data: String?)] = Array()
 
         let events = events.componentsSeparatedByString("\n\n")
@@ -133,10 +141,19 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
         for parsedEvent in parsedEvents as [(id: String?, event: String?, data: String?)]{
             self.lastEventID = parsedEvent.id
             
-            if  parsedEvent.event == nil &&  parsedEvent.data != nil{
+            if parsedEvent.event == nil && parsedEvent.data != nil {
                 if(self.onMessageCallback != nil){
                     dispatch_async(dispatch_get_main_queue()) {
                         self.onMessageCallback!(id:self.lastEventID,event: "message",data: parsedEvent.data)
+                    }
+                }
+            }
+            
+            if parsedEvent.event != nil && parsedEvent.data != nil {
+                if (self.eventListeners[parsedEvent.event!] != nil){
+                    dispatch_async(dispatch_get_main_queue()) {
+                        let eventHandler = self.eventListeners[parsedEvent.event!]
+                        eventHandler!(id:self.lastEventID,event:parsedEvent.event!, data: parsedEvent.data!)
                     }
                 }
             }
