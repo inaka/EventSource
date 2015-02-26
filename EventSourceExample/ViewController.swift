@@ -18,13 +18,15 @@ class ViewController: UIViewController {
         let password = "ae10ff39ca41dgf0a8"
         
         let basicAuthAuthorization = EventSource.basicAuth(username, password: password)
-        var eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
+        var eventSource: EventSource?
+
+//        eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
         
-        eventSource.onOpen({
+        eventSource?.onOpen({
             println("onOpen");
         })
         
-        eventSource.onError(){(error) -> Void in
+        eventSource?.onError(){(error) -> Void in
             if let currentError = error{
                 print(currentError)
             }else{
@@ -32,7 +34,7 @@ class ViewController: UIViewController {
             }
         }
 
-        eventSource.onMessage({ (id, event, data) -> Void in
+        eventSource?.onMessage({ (id, event, data) -> Void in
             println(id)
             println(event)
             println(data)
