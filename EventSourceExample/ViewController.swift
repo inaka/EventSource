@@ -24,16 +24,22 @@ class ViewController: UIViewController {
             println("onOpen");
         })
         
-        eventSource.onError({
-            println("onError");
-        })
-        
+        eventSource.onError(){(error) -> Void in
+            if let currentError = error{
+                print(currentError)
+            }else{
+                print("Error")
+            }
+        }
+
         eventSource.onMessage({ (id, event, data) -> Void in
             println(id)
             println(event)
             println(data)
             println()
         })
+        
+//        eventSource.close()
     }
 }
 
