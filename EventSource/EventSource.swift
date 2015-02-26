@@ -29,6 +29,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
     internal var urlSession: NSURLSession?
     internal var task : NSURLSessionDataTask?
     private var operationQueue: NSOperationQueue
+    private var errorBeforeSetErrorCallBack: NSError?
 
     var event = Dictionary<String, String>()
 
@@ -86,6 +87,11 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
 
     func onError(onErrorCallback: NSError? -> Void) {
         self.onErrorCallback = onErrorCallback
+
+        if let errorBeforeSet = self.errorBeforeSetErrorCallBack{
+            self.onErrorCallback!(errorBeforeSet)
+            self.errorBeforeSetErrorCallBack = nil;
+        }
     }
 
     func onMessage(onMessageCallback: (id: String?, event: String?, data: String?) -> Void){
@@ -132,7 +138,11 @@ public class EventSource: NSObject, NSURLSessionDataDelegate{
         }
 
         dispatch_async(dispatch_get_main_queue()) {
-            self.onErrorCallback!(error)
+            if let errorCallback = self.onErrorCallback{
+                self.onErrorCallback!(error)
+            }else{
+                self.errorBeforeSetErrorCallBack = error
+            }
         }
     }
 
