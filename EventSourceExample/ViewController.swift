@@ -10,6 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    var eventSource: EventSource?
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -18,7 +20,7 @@ class ViewController: UIViewController {
         let password = "ae10ff39ca41dgf0a8"
         
         let basicAuthAuthorization = EventSource.basicAuth(username, password: password)
-        var eventSource: EventSource?
+        
 
 //        eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
         
