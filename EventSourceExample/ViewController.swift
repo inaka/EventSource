@@ -22,11 +22,11 @@ class ViewController: UIViewController {
 
 //        eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
         
-        eventSource?.onOpen({
+        eventSource?.onOpen {
             println("onOpen");
-        })
+        }
         
-        eventSource?.onError(){(error) -> Void in
+        eventSource?.onError { (error) in
             if let currentError = error{
                 print(currentError)
             }else{
@@ -34,12 +34,12 @@ class ViewController: UIViewController {
             }
         }
 
-        eventSource?.onMessage({ (id, event, data) -> Void in
+        eventSource?.onMessage { (id, event, data) in
             println(id)
             println(event)
             println(data)
             println()
-        })
+        }
         
 //        eventSource.close()
     }
