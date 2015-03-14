@@ -30,20 +30,20 @@ class ViewController: UIViewController {
         eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
         
         eventSource?.onOpen {
-            self.status.backgroundColor = UIColor.greenColor()
-            self.status.text = "Connected"
+            self.status.backgroundColor = UIColor(red: 166/255, green: 226/255, blue: 46/255, alpha: 1)
+            self.status.text = "CONNECTED"
         }
         
         eventSource?.onError { (error) in
-            self.status.backgroundColor = UIColor.redColor()
-            self.status.text = "Disconnected"
+            self.status.backgroundColor = UIColor(red: 249/255, green: 38/255, blue: 114/255, alpha: 1)
+            self.status.text = "DISCONNECTED"
         }
 
         eventSource?.onMessage { (id, event, data) in
             self.updateLabels(id, event: event, data: data)
         }
         
-        eventSource?.addEventListener("event-name") { (id, event, data) in
+        eventSource?.addEventListener("user-connected") { (id, event, data) in
             self.updateLabels(id, event: event, data: data)
         }
         
