@@ -145,6 +145,15 @@ nothing it's a comment
 ```
 ---
 
+### Live example
+
+This is the example shipped with the app. If you run the server and run the app you will be able to see this example live. The moving box is just to show that everything works on background and the main thread performance shows no degradation. (The gif is pretty bad to see that, but if you click on the image you will be taken to the gfycat version of the gif which runs way smoother) 
+
+<a href="http://gfycat.com/ifr/BossyDistantHadrosaurus">
+![2015-03-17 22_35_09](http://giant.gfycat.com/BossyDistantHadrosaurus.gif)
+</a>
+
+
 ### Contact Us
 For **questions** or **general comments** regarding the use of this library, please use our public
 [hipchat room](https://www.hipchat.com/gpBpW3SsT).
