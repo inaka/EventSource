@@ -10,11 +10,11 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    @IBOutlet var status: UILabel!
-    @IBOutlet var dataLabel: UILabel!
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var idLabel: UILabel!
-    @IBOutlet var squareConstraint: NSLayoutConstraint!
+    @IBOutlet private weak var status: UILabel!
+    @IBOutlet private weak var dataLabel: UILabel!
+    @IBOutlet private weak var nameLabel: UILabel!
+    @IBOutlet private weak var idLabel: UILabel!
+    @IBOutlet private weak var squareConstraint: NSLayoutConstraint!
     var eventSource: EventSource?
 
     override func viewDidLoad() {
@@ -27,23 +27,23 @@ class ViewController: UIViewController {
         let basicAuthAuthorization = EventSource.basicAuth(username, password: password)
         
 
-        eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
+        self.eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
         
-        eventSource?.onOpen {
+        self.eventSource?.onOpen {
             self.status.backgroundColor = UIColor(red: 166/255, green: 226/255, blue: 46/255, alpha: 1)
             self.status.text = "CONNECTED"
         }
         
-        eventSource?.onError { (error) in
+        self.eventSource?.onError { (error) in
             self.status.backgroundColor = UIColor(red: 249/255, green: 38/255, blue: 114/255, alpha: 1)
             self.status.text = "DISCONNECTED"
         }
 
-        eventSource?.onMessage { (id, event, data) in
+        self.eventSource?.onMessage { (id, event, data) in
             self.updateLabels(id, event: event, data: data)
         }
         
-        eventSource?.addEventListener("user-connected") { (id, event, data) in
+        self.eventSource?.addEventListener("user-connected") { (id, event, data) in
             self.updateLabels(id, event: event, data: data)
         }
         
