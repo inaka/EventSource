@@ -34,12 +34,13 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     var event = Dictionary<String, String>()
 
     
-    init(url: NSString, headers: [String : String]) {
+    init(url: String, headers: [String : String]) {
 
         self.url = NSURL(string: url)!
         self.headers = headers
         self.readyState = EventSourceState.Closed
         self.operationQueue = NSOperationQueue()
+        self.receivedString = nil
 
         super.init();
         self.connect()
@@ -110,12 +111,15 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
             return
         }
 
-        if let receivedString = NSString(data: data, encoding: NSUTF8StringEncoding) {
+        var buffer = [UInt8](count: data.length, repeatedValue: 0)
+        data.getBytes(&buffer, length: data.length)
+        
+        if let receivedString = String(bytes: buffer, encoding: NSUTF8StringEncoding) {
             parseEventStream(receivedString)
         }
     }
 
-    func URLSession(session: NSURLSession!, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
+    public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
         completionHandler(NSURLSessionResponseDisposition.Allow)
 
         readyState = EventSourceState.Open
@@ -225,10 +229,10 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
                 scanner.scanUpToString("\n", intoString: &value)
 
                 if (key != nil && value != nil) {
-                    if (event[key!] != nil) {
-                        event[key!] = "\(event[key!]!)\n\(value!)"
+                    if (event[key as! String] != nil) {
+                        event[key as! String] = "\(event[key as! String]!)\n\(value!)"
                     } else {
-                        event[key!] = value!
+                        event[key as! String] = value! as String
                     }
                 }
             }
@@ -254,7 +258,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         return string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
     }
 
-    class func basicAuth(username: NSString, password: NSString) -> NSString {
+    class func basicAuth(username: String, password: String) -> String {
         let authString = "\(username):\(password)"
         let authData = authString.dataUsingEncoding(NSUTF8StringEncoding)
         let base64String = authData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding76CharacterLineLength)
