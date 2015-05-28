@@ -34,7 +34,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     var event = Dictionary<String, String>()
 
     
-    init(url: String, headers: [String : String]) {
+    public init(url: String, headers: [String : String]) {
 
         self.url = NSURL(string: url)!
         self.headers = headers
@@ -75,18 +75,18 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 
 //Mark: Close
 
-    func close() {
+    public func close() {
         readyState = EventSourceState.Closed
         urlSession?.invalidateAndCancel()
     }
 
 //Mark: EventListeners
 
-    func onOpen(onOpenCallback: Void -> Void) {
+    public func onOpen(onOpenCallback: Void -> Void) {
         self.onOpenCallback = onOpenCallback
     }
 
-    func onError(onErrorCallback: NSError? -> Void) {
+    public func onError(onErrorCallback: NSError? -> Void) {
         self.onErrorCallback = onErrorCallback
 
         if let errorBeforeSet = self.errorBeforeSetErrorCallBack {
@@ -95,11 +95,11 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         }
     }
 
-    func onMessage(onMessageCallback: (id: String?, event: String?, data: String?) -> Void) {
+    public func onMessage(onMessageCallback: (id: String?, event: String?, data: String?) -> Void) {
         self.onMessageCallback = onMessageCallback
     }
 
-    func addEventListener(event: String, handler: (id: String?, event: String?, data: String?) -> Void) {
+    public func addEventListener(event: String, handler: (id: String?, event: String?, data: String?) -> Void) {
         self.eventListeners[event] = handler
     }
 
@@ -258,7 +258,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         return string.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceCharacterSet())
     }
 
-    class func basicAuth(username: String, password: String) -> String {
+    class public func basicAuth(username: String, password: String) -> String {
         let authString = "\(username):\(password)"
         let authData = authString.dataUsingEncoding(NSUTF8StringEncoding)
         let base64String = authData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding76CharacterLineLength)
