@@ -18,25 +18,40 @@ Also in `sse-server` folder you will find an extremely simple `node.js` server t
 - `npm install`
 - `node sse.js`
 
+### Install
+
+You can just drag the `EventSource.swift` file to your project or using CocoaPods:
+
+```
+pod 'IKEventSource'
+
+```
+
+Then import the library:
+
+```
+import IKEventSource
+```
+
 #### Javascript API:
 
 ```JavaScript
 var eventSource = new EventSource(server);
 
 eventSource.onopen = function() {
-  	// When opened
+    // When opened
 }
 
 eventSource.onerror = function() {
-  	// When errors
+    // When errors
 }
 
 eventSource.onmessage = function(e) {  
-  	// Here you get an event without event name!
+    // Here you get an event without event name!
 }
 
 eventSource.addEventListener("ping", function(e) {
-	// Here you get an event 'event-name'
+  // Here you get an event 'event-name'
 }, false);
 
 eventSource.close();
@@ -69,9 +84,9 @@ eventSource.close()
 Also the following properties are available: 
 
 - **readyState**: Status of EventSource
-	- **EventSourceState.Closed**
-	- **EventSourceState.Connecting**
-	- **EventSourceState.Open**
+  - **EventSourceState.Closed**
+  - **EventSourceState.Connecting**
+  - **EventSourceState.Open**
 - **URL**: EventSource server URL.
 
 #### Examples:
@@ -161,12 +176,3 @@ For **questions** or **general comments** regarding the use of this library, ple
 If you find any **bugs** or have a **problem** while using this library, please [open an issue](https://github.com/inaka/galgo/issues/new) in this repo (or a pull request :)).
 
 And you can check all of our open-source projects at [inaka.github.io](http://inaka.github.io)
-
-
-
-
-
-
-
-
-
