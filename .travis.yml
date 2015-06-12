@@ -1,0 +1,9 @@
+language: objective-c
+
+before_install: 
+- brew update
+- if brew outdated | grep -qx xctool; then brew upgrade xctool; fi
+
+script: 
+- xctool clean build -project EventSource.xcodeproj -scheme EventSource
+- xctool test -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator
