@@ -261,7 +261,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     class public func basicAuth(username: String, password: String) -> String {
         let authString = "\(username):\(password)"
         let authData = authString.dataUsingEncoding(NSUTF8StringEncoding)
-        let base64String = authData!.base64EncodedStringWithOptions(NSDataBase64EncodingOptions.Encoding76CharacterLineLength)
+        let base64String = authData!.base64EncodedStringWithOptions(nil)
 
         return "Basic \(base64String)"
     }
