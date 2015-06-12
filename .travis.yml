@@ -1,3 +1,4 @@
+osx_image: beta-xcode6.3
 language: objective-c
 
 before_install: 
@@ -5,5 +6,5 @@ before_install:
 - if brew outdated | grep -qx xctool; then brew upgrade xctool; fi
 
 script: 
-- xctool clean build -project EventSource.xcodeproj -scheme EventSource
+- xctool clean build -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator
 - xctool test -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator
