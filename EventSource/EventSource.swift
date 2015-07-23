@@ -142,7 +142,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 
         dispatch_async(dispatch_get_main_queue()) {
             if let errorCallback = self.onErrorCallback {
-                self.onErrorCallback!(error)
+                errorCallback(error)
             }else {
                 self.errorBeforeSetErrorCallBack = error
             }
