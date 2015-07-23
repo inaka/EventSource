@@ -47,7 +47,7 @@ class EventSourceTests: XCTestCase {
     }
 
     func testURL() {
-        XCTAssertEqual("http://127.0.0.1", sut!.url.absoluteString!, "the URL should be the same")
+        XCTAssertEqual("http://127.0.0.1", sut!.url.absoluteString, "the URL should be the same")
     }
 
     func testDefaultRetryTimeAndChangeRetryTime() {
@@ -91,7 +91,7 @@ class EventSourceTests: XCTestCase {
         sut?.callDidReceiveData(eventListenerAndReceiveEventData!)
 
         self.waitForExpectationsWithTimeout(2) { (error) in
-            if let receivedError = error{
+            if let _ = error{
                 XCTFail("Expectation not fulfilled")
             }
         }
@@ -113,7 +113,7 @@ class EventSourceTests: XCTestCase {
         sut?.callDidReceiveData(retryEventData!)
 
         self.waitForExpectationsWithTimeout(2) { (error) in
-            if let receivedError = error{
+            if let _ = error{
                 XCTFail("Expectation not fulfilled")
             }
         }
@@ -131,27 +131,31 @@ class EventSourceTests: XCTestCase {
         sut?.callDidReceiveData(retryEventData!)
 
         self.waitForExpectationsWithTimeout(2) { (error) in
-            if let receivedError = error{
+            if let _ = error {
                 XCTFail("Expectation not fulfilled")
             }
-            XCTAssertEqual((self.sut?.lastEventID)!, "event-id-1", "last event id stored is different from sent")
-
-            let expectation2 = self.expectationWithDescription("onMessage should be called")
-            let retryEventData2 = "data:event-data-first".dataUsingEncoding(NSUTF8StringEncoding)
-            self.sut!.onMessage { (id, event, data) in
-                XCTAssertEqual(id!, "event-id-1", "the event id should be received")
-                expectation2.fulfill()
+            XCTAssertEqual(self.sut!.lastEventID!, "event-id-1", "last event id stored is different from sent")
+        }
+    }
+    
+    func testLastEventIDNotUpdatedForEventWithNoID() {
+        self.sut!.lastEventID = "event-id-1"
+        
+        let expectation = self.expectationWithDescription("onMessage should be called")
+        let retryEventData = "data:event-data-first".dataUsingEncoding(NSUTF8StringEncoding)
+        self.sut!.onMessage { (id, event, data) in
+            XCTAssertEqual(id!, "event-id-1", "the event id should be received")
+            expectation.fulfill()
+        }
+        
+        self.sut?.callDidReceiveResponse()
+        self.sut?.callDidReceiveData(retryEventData!)
+        
+        self.waitForExpectationsWithTimeout(2) { (error) in
+            if let _ = error {
+                XCTFail("Expectation not fulfilled")
             }
-
-            self.sut?.callDidReceiveResponse()
-            self.sut?.callDidReceiveData(retryEventData2!)
-
-            self.waitForExpectationsWithTimeout(2) { (error) in
-                if let receivedError = error{
-                    XCTFail("Expectation not fulfilled")
-                }
-                XCTAssertEqual((self.sut?.lastEventID)!, "event-id-1", "last event id stored is different from sent")
-            }
+            XCTAssertEqual(self.sut!.lastEventID!, "event-id-1", "last event id stored is different from sent")
         }
     }
 
@@ -164,7 +168,7 @@ class EventSourceTests: XCTestCase {
 
 //        sut!.callDidCompleteWithError("error message") it's not neccesary to call this because sut is going to try to connect and fail
         self.waitForExpectationsWithTimeout(2) { (error) in
-            if let receivedError = error{
+            if let _ = error{
                 XCTFail("Expectation not fulfilled")
             }
         }
@@ -179,7 +183,7 @@ class EventSourceTests: XCTestCase {
 
         sut!.callDidReceiveResponse()
         self.waitForExpectationsWithTimeout(2) { (error) in
-            if let receivedError = error{
+            if let _ = error{
                 XCTFail("Expectation not fulfilled")
             }
         }
