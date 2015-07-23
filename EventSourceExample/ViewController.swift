@@ -56,7 +56,7 @@ class ViewController: UIViewController {
         self.idLabel.text = ""
         
         if let eventID = id {
-            self.idLabel.text = id
+            self.idLabel.text = eventID
         }
         
         if let eventName = event {
