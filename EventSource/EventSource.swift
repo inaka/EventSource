@@ -247,7 +247,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         if let milli = eventString.componentsSeparatedByCharactersInSet(separators).last {
             let milliseconds = trim(milli)
 
-            if let intMiliseconds = milliseconds.toInt() {
+            if let intMiliseconds = Int(milliseconds) {
                 reconnectTime = intMiliseconds
             }
         }
@@ -261,7 +261,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     class public func basicAuth(username: String, password: String) -> String {
         let authString = "\(username):\(password)"
         let authData = authString.dataUsingEncoding(NSUTF8StringEncoding)
-        let base64String = authData!.base64EncodedStringWithOptions(nil)
+        let base64String = authData!.base64EncodedStringWithOptions([])
 
         return "Basic \(base64String)"
     }
