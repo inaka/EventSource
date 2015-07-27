@@ -8,3 +8,7 @@ before_install:
 script: 
 - xctool clean build -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator
 - xctool test -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator
+
+branches:
+  except:
+    - swift-2.0
