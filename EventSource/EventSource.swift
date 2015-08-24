@@ -30,7 +30,8 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     internal var task : NSURLSessionDataTask?
     private var operationQueue: NSOperationQueue
     private var errorBeforeSetErrorCallBack: NSError?
-
+    internal let receivedDataBuffer: NSMutableData
+    
     var event = Dictionary<String, String>()
 
     
@@ -41,6 +42,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         self.readyState = EventSourceState.Closed
         self.operationQueue = NSOperationQueue()
         self.receivedString = nil
+        self.receivedDataBuffer = NSMutableData()
 
         super.init();
         self.connect()
@@ -111,12 +113,9 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
             return
         }
 
-        var buffer = [UInt8](count: data.length, repeatedValue: 0)
-        data.getBytes(&buffer, length: data.length)
-        
-        if let receivedString = String(bytes: buffer, encoding: NSUTF8StringEncoding) {
-            parseEventStream(receivedString)
-        }
+        self.receivedDataBuffer.appendData(data)
+        let eventStream = extractEventsFromBuffer()
+        parseEventStream(eventStream)
     }
 
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
@@ -151,11 +150,37 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     }
 
 //MARK: Helpers
+    
+    private func extractEventsFromBuffer() -> [String] {
+        let delimiter = "\n\n".dataUsingEncoding(NSUTF8StringEncoding)!
+        var events = [String]()
+        
+        // Find first occurrence of delimiter
+        var searchRange = NSMakeRange(0, receivedDataBuffer.length)
+        var foundRange = receivedDataBuffer.rangeOfData(delimiter, options: NSDataSearchOptions.allZeros, range: searchRange)
+        while foundRange.location != NSNotFound {
+            // Append event
+            if foundRange.location > searchRange.location {
+                let dataChunk = receivedDataBuffer.subdataWithRange(
+                    NSMakeRange(searchRange.location, foundRange.location - searchRange.location)
+                )
+                events.append(NSString(data: dataChunk, encoding: NSUTF8StringEncoding) as! String)
+            }
+            // Search for next occurrence of delimiter
+            searchRange.location = foundRange.location + foundRange.length
+            searchRange.length = receivedDataBuffer.length - searchRange.location
+            foundRange = receivedDataBuffer.rangeOfData(delimiter, options: NSDataSearchOptions.allZeros, range: searchRange)
+        }
+        
+        // Remove the found events from the buffer
+        receivedDataBuffer.replaceBytesInRange(NSMakeRange(0,searchRange.location), withBytes: nil, length: 0)
+        
+        return events
+    }
 
-    private func parseEventStream(events: String) {
+    private func parseEventStream(events: [String]) {
         var parsedEvents: [(id: String?, event: String?, data: String?)] = Array()
-
-        let events = events.componentsSeparatedByString("\n\n")
+    
         for event in events as [String] {
 
             if event.isEmpty {
