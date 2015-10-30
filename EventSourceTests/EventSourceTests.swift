@@ -183,6 +183,38 @@ class EventSourceTests: XCTestCase {
         }
     }
     
+    func testTransientLastEventID() {
+        let expectation = self.expectationWithDescription("onMessage should be called")
+        
+        let secondEventSource = TestableEventSource(url: "http://127.0.0.1", headers: ["Authorization" : "basic auth"])
+        secondEventSource.usesTransientLastEventID = true
+
+        let firstEventData = "id: event-id-1\ndata:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)
+        let secondEventData = "id: event-id-2\ndata:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)
+        
+        sut!.onMessage { (id, event, data) in
+            XCTAssertEqual(id!, "event-id-1", "the event id should be received")
+        }
+        
+        secondEventSource.onMessage({ (id, event, data) in
+            XCTAssertEqual(id!, "event-id-2", "the event id should be received")
+            expectation.fulfill()
+        })
+        
+        sut?.callDidReceiveResponse()
+        sut?.callDidReceiveData(firstEventData!)
+        secondEventSource.callDidReceiveResponse()
+        secondEventSource.callDidReceiveData(secondEventData!)
+        
+        self.waitForExpectationsWithTimeout(2) { (error) in
+            if let _ = error {
+                XCTFail("Expectation not fulfilled")
+            }
+            XCTAssertEqual(self.sut!.lastEventID!, "event-id-1", "last event id stored is different from sent")
+            XCTAssertEqual(secondEventSource.lastEventID!, "event-id-2", "last event id stored is different from sent")
+        }
+    }
+    
     func testLastEventIDNotUpdatedForEventWithNoID() {
         self.sut!.lastEventID = "event-id-1"
         
