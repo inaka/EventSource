@@ -281,6 +281,8 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
                     } else {
                         event[key as! String] = value! as String
                     }
+                } else if (key != nil && value == nil) {
+                    event[key as! String] = ""
                 }
             }
         }
