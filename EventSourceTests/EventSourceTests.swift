@@ -120,6 +120,27 @@ class EventSourceTests: XCTestCase {
         }
     }
     
+    func testEmptyDataValue() {
+        let expectation = self.expectationWithDescription("onMessage should be called")
+        
+        let emptyDataValueEvent = "event:done\ndata\n\n".dataUsingEncoding(NSUTF8StringEncoding)
+        sut!.addEventListener("done") { (id, event, data) in
+            XCTAssertEqual(event!, "done", "the event should be message")
+            XCTAssertEqual(data!, "", "the event data should an empty string")
+            
+            expectation.fulfill()
+        }
+        
+        sut?.callDidReceiveResponse()
+        sut?.callDidReceiveData(emptyDataValueEvent!)
+        
+        self.waitForExpectationsWithTimeout(2) { (error) in
+            if let _ = error{
+                XCTFail("Expectation not fulfilled")
+            }
+        }
+    }
+    
     func testEventDataIsRemovedFromBufferWhenProcessed() {
         let expectation = self.expectationWithDescription("onMessage should be called")
         
