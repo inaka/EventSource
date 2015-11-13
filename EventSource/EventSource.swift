@@ -17,7 +17,9 @@ enum EventSourceState {
 public class EventSource: NSObject, NSURLSessionDataDelegate {
 
     let url: NSURL
+    public var usesTransientLastEventID: Bool = false;
     private let lastEventIDKey = "com.inaka.eventSource.lastEventId"
+    private var transientLastEventID: String?
     private let receivedString: NSString?
     private var onOpenCallback: (Void -> Void)?
     private var onErrorCallback: (NSError? -> Void)?
@@ -220,18 +222,27 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 
     internal var lastEventID: String? {
         set {
-            if let lastEventID = newValue {
-                let defaults = NSUserDefaults.standardUserDefaults()
-                defaults.setObject(lastEventID, forKey: lastEventIDKey)
-                defaults.synchronize()
+            if (usesTransientLastEventID == true) {
+                self.transientLastEventID = newValue
+            } else {
+                if let lastEventID = newValue {
+                    let defaults = NSUserDefaults.standardUserDefaults()
+                    defaults.setObject(lastEventID, forKey: lastEventIDKey)
+                    defaults.synchronize()
+                }
             }
         }
 
         get {
-            let defaults = NSUserDefaults.standardUserDefaults()
+            
+            if (usesTransientLastEventID == true) {
+                return self.transientLastEventID
+            } else {
+                let defaults = NSUserDefaults.standardUserDefaults()
 
-            if let lastEventID = defaults.stringForKey(lastEventIDKey) {
-                return lastEventID
+                if let lastEventID = defaults.stringForKey(lastEventIDKey) {
+                    return lastEventID
+                }
             }
             return nil
         }
