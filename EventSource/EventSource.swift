@@ -108,6 +108,16 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 //MARK: NSURLSessionDataDelegate
 
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
+        
+        if let httpResponse = dataTask.response as? NSHTTPURLResponse
+        {
+            if(httpResponse.statusCode == 204)
+            {
+                self.close();
+                return;
+            }
+        }
+
         if readyState != EventSourceState.Open {
             return
         }
@@ -118,6 +128,16 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     }
 
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
+
+        if let httpResponse = response as? NSHTTPURLResponse
+        {
+            if(httpResponse.statusCode == 204)
+            {
+                self.close();
+                return;
+            }
+        }
+        
         completionHandler(NSURLSessionResponseDisposition.Allow)
 
         readyState = EventSourceState.Open
@@ -129,6 +149,16 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     }
 
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
+        
+        if let httpResponse = task.response as? NSHTTPURLResponse
+        {
+            if(httpResponse.statusCode == 204)
+            {
+                self.close();
+                return;
+            }
+        }
+
         readyState = EventSourceState.Closed
 
         if(error == nil || error!.code != -999) {
