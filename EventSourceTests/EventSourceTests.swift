@@ -47,22 +47,6 @@ class EventSourceTests: XCTestCase {
         super.tearDown()
     }
 
-    func testURL() {
-        XCTAssertEqual("http://127.0.0.1", sut!.url.absoluteString, "the URL should be the same")
-    }
-
-    func testDefaultRetryTimeAndChangeRetryTime() {
-
-		let retryEventData = "retry: 5000\n\n".dataUsingEncoding(NSUTF8StringEncoding)
-
-        XCTAssertEqual(3000, sut!.retryTime, "the default retry time should be 3000")
-
-        sut?.callDidReceiveResponse()
-        sut?.callDidReceiveData(retryEventData!)
-
-        XCTAssertEqual(5000, sut!.retryTime, "the retry time should be changed to 5000")
-    }
-
     func testIgnoreCommets() {
         let commentEventData = ":coment\n\n".dataUsingEncoding(NSUTF8StringEncoding)
         sut!.addEventListener("event",handler: { (id, event, data) in
@@ -75,28 +59,6 @@ class EventSourceTests: XCTestCase {
 
         sut?.callDidReceiveResponse()
         sut?.callDidReceiveData(commentEventData!)
-    }
-
-    func testAddEventListenerAndReceiveEvent() {
-        let expectation = self.expectationWithDescription("onEvent should be called")
-
-        let eventListenerAndReceiveEventData = "id: event-id\nevent:event-event\ndata:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)
-        sut!.addEventListener("event-event") { (id, event, data) in
-            XCTAssertEqual(event!, "event-event", "the event should be test")
-            XCTAssertEqual(id!, "event-id", "the event id should be received")
-            XCTAssertEqual(data!, "event-data", "the event data should be received")
-
-            expectation.fulfill()
-        }
-
-        sut?.callDidReceiveResponse()
-        sut?.callDidReceiveData(eventListenerAndReceiveEventData!)
-
-        self.waitForExpectationsWithTimeout(2) { (error) in
-            if let _ = error {
-                XCTFail("Expectation not fulfilled")
-            }
-        }
     }
 
     func testMultilineData() {
