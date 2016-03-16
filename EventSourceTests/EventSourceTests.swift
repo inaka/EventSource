@@ -52,7 +52,8 @@ class EventSourceTests: XCTestCase {
     }
 
     func testDefaultRetryTimeAndChangeRetryTime() {
-        let retryEventData = "retry: 5000\n\n".dataUsingEncoding(NSUTF8StringEncoding)
+
+		let retryEventData = "retry: 5000\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 
         XCTAssertEqual(3000, sut!.retryTime, "the default retry time should be 3000")
 

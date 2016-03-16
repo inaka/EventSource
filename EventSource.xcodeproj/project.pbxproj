@@ -14,6 +14,14 @@
 		41DFE4341A8E686F000C3519 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41DFE4321A8E686F000C3519 /* LaunchScreen.xib */; };
 		41DFE4401A8E6870000C3519 /* EventSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE43F1A8E6870000C3519 /* EventSourceTests.swift */; };
 		41DFE44B1A8E6D6F000C3519 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE44A1A8E6D6F000C3519 /* EventSource.swift */; };
+		C1F518E21C99D96200713047 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1F518E11C99D96200713047 /* File.swift */; };
+		C1F518F21C99D9BB00713047 /* OHHTTPStubsResponse+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F518E61C99D9BB00713047 /* OHHTTPStubsResponse+JSON.m */; };
+		C1F518F31C99D9BB00713047 /* OHHTTPStubs+NSURLSessionConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F518E81C99D9BB00713047 /* OHHTTPStubs+NSURLSessionConfiguration.m */; };
+		C1F518F41C99D9BB00713047 /* OHHTTPStubs.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F518EA1C99D9BB00713047 /* OHHTTPStubs.m */; };
+		C1F518F51C99D9BB00713047 /* OHHTTPStubsResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F518EC1C99D9BB00713047 /* OHHTTPStubsResponse.m */; };
+		C1F518F61C99D9BB00713047 /* OHPathHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F518EF1C99D9BB00713047 /* OHPathHelpers.m */; };
+		C1F518F71C99D9BB00713047 /* OHHTTPStubsSwift.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1F518F11C99D9BB00713047 /* OHHTTPStubsSwift.swift */; };
+		C1F518FA1C99E3A300713047 /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1F518F91C99E3A300713047 /* ConfigurationTests.swift */; };
 		E0E27C231A9BB5A2008B9900 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE44A1A8E6D6F000C3519 /* EventSource.swift */; };
 /* End PBXBuildFile section */
 
@@ -39,6 +47,20 @@
 		41DFE43E1A8E6870000C3519 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		41DFE43F1A8E6870000C3519 /* EventSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSourceTests.swift; sourceTree = "<group>"; };
 		41DFE44A1A8E6D6F000C3519 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
+		C1F518E11C99D96200713047 /* File.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		C1F518E31C99D9BA00713047 /* EventSourceTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EventSourceTests-Bridging-Header.h"; sourceTree = "<group>"; };
+		C1F518E51C99D9BB00713047 /* OHHTTPStubsResponse+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OHHTTPStubsResponse+JSON.h"; sourceTree = "<group>"; };
+		C1F518E61C99D9BB00713047 /* OHHTTPStubsResponse+JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OHHTTPStubsResponse+JSON.m"; sourceTree = "<group>"; };
+		C1F518E81C99D9BB00713047 /* OHHTTPStubs+NSURLSessionConfiguration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "OHHTTPStubs+NSURLSessionConfiguration.m"; sourceTree = "<group>"; };
+		C1F518E91C99D9BB00713047 /* OHHTTPStubs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OHHTTPStubs.h; sourceTree = "<group>"; };
+		C1F518EA1C99D9BB00713047 /* OHHTTPStubs.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OHHTTPStubs.m; sourceTree = "<group>"; };
+		C1F518EB1C99D9BB00713047 /* OHHTTPStubsResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OHHTTPStubsResponse.h; sourceTree = "<group>"; };
+		C1F518EC1C99D9BB00713047 /* OHHTTPStubsResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OHHTTPStubsResponse.m; sourceTree = "<group>"; };
+		C1F518EE1C99D9BB00713047 /* OHPathHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OHPathHelpers.h; sourceTree = "<group>"; };
+		C1F518EF1C99D9BB00713047 /* OHPathHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OHPathHelpers.m; sourceTree = "<group>"; };
+		C1F518F11C99D9BB00713047 /* OHHTTPStubsSwift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OHHTTPStubsSwift.swift; sourceTree = "<group>"; };
+		C1F518F81C99D9EC00713047 /* Compatibility.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Compatibility.h; sourceTree = "<group>"; };
+		C1F518F91C99E3A300713047 /* ConfigurationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConfigurationTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,7 +124,10 @@
 		41DFE43C1A8E6870000C3519 /* EventSourceTests */ = {
 			isa = PBXGroup;
 			children = (
+				C1F518DE1C99D8CC00713047 /* OHTTPStubs */,
 				41DFE43F1A8E6870000C3519 /* EventSourceTests.swift */,
+				C1F518E11C99D96200713047 /* File.swift */,
+				C1F518F91C99E3A300713047 /* ConfigurationTests.swift */,
 				41DFE43D1A8E6870000C3519 /* Supporting Files */,
 			);
 			path = EventSourceTests;
@@ -122,6 +147,57 @@
 				41DFE44A1A8E6D6F000C3519 /* EventSource.swift */,
 			);
 			path = EventSource;
+			sourceTree = "<group>";
+		};
+		C1F518DE1C99D8CC00713047 /* OHTTPStubs */ = {
+			isa = PBXGroup;
+			children = (
+				C1F518F81C99D9EC00713047 /* Compatibility.h */,
+				C1F518E41C99D9BB00713047 /* JSON */,
+				C1F518E71C99D9BB00713047 /* NSURLSession */,
+				C1F518E91C99D9BB00713047 /* OHHTTPStubs.h */,
+				C1F518EA1C99D9BB00713047 /* OHHTTPStubs.m */,
+				C1F518EB1C99D9BB00713047 /* OHHTTPStubsResponse.h */,
+				C1F518EC1C99D9BB00713047 /* OHHTTPStubsResponse.m */,
+				C1F518ED1C99D9BB00713047 /* OHPathHelpers */,
+				C1F518F01C99D9BB00713047 /* Swift */,
+				C1F518E31C99D9BA00713047 /* EventSourceTests-Bridging-Header.h */,
+			);
+			path = OHTTPStubs;
+			sourceTree = "<group>";
+		};
+		C1F518E41C99D9BB00713047 /* JSON */ = {
+			isa = PBXGroup;
+			children = (
+				C1F518E51C99D9BB00713047 /* OHHTTPStubsResponse+JSON.h */,
+				C1F518E61C99D9BB00713047 /* OHHTTPStubsResponse+JSON.m */,
+			);
+			path = JSON;
+			sourceTree = "<group>";
+		};
+		C1F518E71C99D9BB00713047 /* NSURLSession */ = {
+			isa = PBXGroup;
+			children = (
+				C1F518E81C99D9BB00713047 /* OHHTTPStubs+NSURLSessionConfiguration.m */,
+			);
+			path = NSURLSession;
+			sourceTree = "<group>";
+		};
+		C1F518ED1C99D9BB00713047 /* OHPathHelpers */ = {
+			isa = PBXGroup;
+			children = (
+				C1F518EE1C99D9BB00713047 /* OHPathHelpers.h */,
+				C1F518EF1C99D9BB00713047 /* OHPathHelpers.m */,
+			);
+			path = OHPathHelpers;
+			sourceTree = "<group>";
+		};
+		C1F518F01C99D9BB00713047 /* Swift */ = {
+			isa = PBXGroup;
+			children = (
+				C1F518F11C99D9BB00713047 /* OHHTTPStubsSwift.swift */,
+			);
+			path = Swift;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -169,7 +245,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftMigration = 0700;
-				LastSwiftUpdateCheck = 0700;
+				LastSwiftUpdateCheck = 0720;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Inaka;
 				TargetAttributes = {
@@ -236,8 +312,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C1F518F71C99D9BB00713047 /* OHHTTPStubsSwift.swift in Sources */,
+				C1F518F41C99D9BB00713047 /* OHHTTPStubs.m in Sources */,
+				C1F518E21C99D96200713047 /* File.swift in Sources */,
 				41DFE4401A8E6870000C3519 /* EventSourceTests.swift in Sources */,
+				C1F518FA1C99E3A300713047 /* ConfigurationTests.swift in Sources */,
+				C1F518F21C99D9BB00713047 /* OHHTTPStubsResponse+JSON.m in Sources */,
 				E0E27C231A9BB5A2008B9900 /* EventSource.swift in Sources */,
+				C1F518F31C99D9BB00713047 /* OHHTTPStubs+NSURLSessionConfiguration.m in Sources */,
+				C1F518F51C99D9BB00713047 /* OHHTTPStubsResponse.m in Sources */,
+				C1F518F61C99D9BB00713047 /* OHPathHelpers.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -375,6 +459,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -384,6 +469,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.inaka.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "EventSourceTests/OHTTPStubs/EventSourceTests-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EventSource.app/EventSource";
 			};
 			name = Debug;
@@ -392,11 +479,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ENABLE_MODULES = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = EventSourceTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.inaka.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "EventSourceTests/OHTTPStubs/EventSourceTests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/EventSource.app/EventSource";
 			};
 			name = Release;
