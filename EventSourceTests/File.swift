@@ -45,4 +45,20 @@ class File: XCTestCase {
 			}
 		}
 	}
+	
+	func testIgnoreCommets() {
+
+		sut!.addEventListener("event",handler: { (id, event, data) in
+			XCTAssert(false, "got event in comment")
+		})
+		
+		sut!.onMessage { (id, event, data) in
+			XCTAssert(false, "got event in comment")
+		}
+		
+		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
+			let commentEventData = ":coment\n\n".dataUsingEncoding(NSUTF8StringEncoding)
+			return OHHTTPStubsResponse(data: commentEventData!, statusCode: 200, headers: nil)
+		}
+	}
 }

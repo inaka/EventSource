@@ -29,23 +29,14 @@ class ConfigurationTests: XCTestCase {
 	}
 	
 	func testDefaultRetryTimeAndChangeRetryTime() {
-		let expectation = self.expectationWithDescription("onEvent should be called")
-
 		XCTAssertEqual(3000, sut!.retryTime, "the default retry time should be 3000")
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let retryEventData = "retry: 5000\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: retryEventData!, statusCode: 200, headers: nil)
 		}
-
-		OHHTTPStubs.onStubActivation { (_, _) -> Void in
-			expectation.fulfill()
-		}
 		
-		self.waitForExpectationsWithTimeout(3) { (error) in
-			if let _ = error {
-				XCTFail("Expectation not fulfilled")
-			}
-			XCTAssertEqual(5000, self.sut!.retryTime, "the retry time should be changed to 5000")
-		}
+		sleep(3)
+		
+		XCTAssertEqual(5000, sut!.retryTime, "the default retry time should be 3000")
 	}
 }
