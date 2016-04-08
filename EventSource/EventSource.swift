@@ -186,7 +186,6 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
             }
 
             if event.hasPrefix(":") {
-				self.onMessageCallback!(id: "a", event: "b", data: "c")
                 continue
             }
 
