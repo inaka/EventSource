@@ -156,7 +156,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         
         // Find first occurrence of delimiter
         var searchRange = NSMakeRange(0, receivedDataBuffer.length)
-        var foundRange = receivedDataBuffer.rangeOfData(delimiter, options: NSDataSearchOptions.allZeros, range: searchRange)
+        var foundRange = receivedDataBuffer.rangeOfData(delimiter, options: NSDataSearchOptions(), range: searchRange)
         while foundRange.location != NSNotFound {
             // Append event
             if foundRange.location > searchRange.location {
@@ -168,34 +168,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
             // Search for next occurrence of delimiter
             searchRange.location = foundRange.location + foundRange.length
             searchRange.length = receivedDataBuffer.length - searchRange.location
-            foundRange = receivedDataBuffer.rangeOfData(delimiter, options: NSDataSearchOptions.allZeros, range: searchRange)
-        }
-        
-        // Remove the found events from the buffer
-        receivedDataBuffer.replaceBytesInRange(NSMakeRange(0,searchRange.location), withBytes: nil, length: 0)
-        
-        return events
-    }
-
-    private func extractEventsFromBuffer() -> [String] {
-        let delimiter = "\n\n".dataUsingEncoding(NSUTF8StringEncoding)!
-        var events = [String]()
-        
-        // Find first occurrence of delimiter
-        var searchRange = NSMakeRange(0, receivedDataBuffer.length)
-        var foundRange = receivedDataBuffer.rangeOfData(delimiter, options: [], range: searchRange)
-        while foundRange.location != NSNotFound {
-            // Append event
-            if foundRange.location > searchRange.location {
-                let dataChunk = receivedDataBuffer.subdataWithRange(
-                    NSMakeRange(searchRange.location, foundRange.location - searchRange.location)
-                )
-                events.append(NSString(data: dataChunk, encoding: NSUTF8StringEncoding) as! String)
-            }
-            // Search for next occurrence of delimiter
-            searchRange.location = foundRange.location + foundRange.length
-            searchRange.length = receivedDataBuffer.length - searchRange.location
-            foundRange = receivedDataBuffer.rangeOfData(delimiter, options: [], range: searchRange)
+            foundRange = receivedDataBuffer.rangeOfData(delimiter, options: NSDataSearchOptions(), range: searchRange)
         }
         
         // Remove the found events from the buffer
