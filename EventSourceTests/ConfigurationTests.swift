@@ -22,6 +22,7 @@ class ConfigurationTests: XCTestCase {
 	
 	override class func tearDown() {
 		super.tearDown()
+		OHHTTPStubs.removeAllStubs()
 	}
 	
 	func testURL() {
