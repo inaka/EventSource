@@ -3,12 +3,6 @@ SSE Client written on Swift using NSURLSession.
 
 [![Build Status](https://api.travis-ci.org/inaka/EventSource.svg)](https://travis-ci.org/inaka/EventSource)
 
-```
-This library supports Swift 1.2 and Swift 2.0.
-Swift 1.2 is currently in branch master.
-Swift 2.0 is in branch swift-2.0
-```
-
 ### Abstract
 
 This is an EventSource implementation written on Swift trying to keep the API as similar as possible to the JavaScript one. Written following the [W3C EventSource](http://www.w3.org/TR/eventsource/). If something is missing or not completely right open an issue and I'll work on it!
