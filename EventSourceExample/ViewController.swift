@@ -19,11 +19,15 @@ class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
+		return
+		
         let server = "http://127.0.0.1:8080/sse"
         let username = "fe8b0af5-1b50-467d-ac0b-b29d2d30136b"
         let password = "ae10ff39ca41dgf0a8"
-        
+
+		return 
+		
         let basicAuthAuthorization = EventSource.basicAuth(username, password: password)
         
 
@@ -56,7 +60,7 @@ class ViewController: UIViewController {
         self.idLabel.text = ""
         
         if let eventID = id {
-            self.idLabel.text = id
+            self.idLabel.text = eventID
         }
         
         if let eventName = event {
@@ -76,7 +80,7 @@ class ViewController: UIViewController {
         self.squareConstraint.constant = 0
         self.view.layoutIfNeeded()
         
-        UIView.animateKeyframesWithDuration(2, delay: 0, options: UIViewKeyframeAnimationOptions.Repeat | UIViewKeyframeAnimationOptions.Autoreverse , animations: { () in
+        UIView.animateKeyframesWithDuration(2, delay: 0, options: [UIViewKeyframeAnimationOptions.Repeat, UIViewKeyframeAnimationOptions.Autoreverse] , animations: { () in
             self.squareConstraint.constant = finalPosition
             self.view.layoutIfNeeded()            
         }, completion: nil)

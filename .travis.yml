@@ -1,14 +1,18 @@
-osx_image: beta-xcode6.3
+osx_image: xcode7.3
 language: objective-c
 
-before_install: 
-- brew update
-- if brew outdated | grep -qx xctool; then brew upgrade xctool; fi
+before_install:
+- brew update || brew update
+- brew outdated xctool || brew upgrade xctool
 
 script: 
+<<<<<<< 7611446eb39d325d1468b07fce58af3f4d300dd8
 - xctool clean build -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator
 - xctool test -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator
 
 branches:
   except:
     - swift-2.0
+=======
+- xctool clean build -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator
+>>>>>>> updated .travis.yml

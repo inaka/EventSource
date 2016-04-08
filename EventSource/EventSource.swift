@@ -108,11 +108,10 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 //MARK: NSURLSessionDataDelegate
 
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-
         if readyState != EventSourceState.Open {
             return
         }
-
+        
         self.receivedDataBuffer.appendData(data)
         let eventStream = extractEventsFromBuffer()
         parseEventStream(eventStream)
@@ -142,7 +141,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 
         dispatch_async(dispatch_get_main_queue()) {
             if let errorCallback = self.onErrorCallback {
-                self.onErrorCallback!(error)
+                errorCallback(error)
             }else {
                 self.errorBeforeSetErrorCallBack = error
             }
@@ -178,11 +177,37 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         return events
     }
 
+    private func extractEventsFromBuffer() -> [String] {
+        let delimiter = "\n\n".dataUsingEncoding(NSUTF8StringEncoding)!
+        var events = [String]()
+        
+        // Find first occurrence of delimiter
+        var searchRange = NSMakeRange(0, receivedDataBuffer.length)
+        var foundRange = receivedDataBuffer.rangeOfData(delimiter, options: [], range: searchRange)
+        while foundRange.location != NSNotFound {
+            // Append event
+            if foundRange.location > searchRange.location {
+                let dataChunk = receivedDataBuffer.subdataWithRange(
+                    NSMakeRange(searchRange.location, foundRange.location - searchRange.location)
+                )
+                events.append(NSString(data: dataChunk, encoding: NSUTF8StringEncoding) as! String)
+            }
+            // Search for next occurrence of delimiter
+            searchRange.location = foundRange.location + foundRange.length
+            searchRange.length = receivedDataBuffer.length - searchRange.location
+            foundRange = receivedDataBuffer.rangeOfData(delimiter, options: [], range: searchRange)
+        }
+        
+        // Remove the found events from the buffer
+        receivedDataBuffer.replaceBytesInRange(NSMakeRange(0,searchRange.location), withBytes: nil, length: 0)
+        
+        return events
+    }
+    
     private func parseEventStream(events: [String]) {
         var parsedEvents: [(id: String?, event: String?, data: String?)] = Array()
-    
-        for event in events as [String] {
 
+        for event in events {
             if event.isEmpty {
                 continue
             }
@@ -201,23 +226,20 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
             parsedEvents.append(parseEvent(event))
         }
 
-        for parsedEvent in parsedEvents as [(id: String?, event: String?, data: String?)] {
+        for parsedEvent in parsedEvents {
             self.lastEventID = parsedEvent.id
 
-            if parsedEvent.event == nil && parsedEvent.data != nil {
-                if(self.onMessageCallback != nil) {
+            if parsedEvent.event == nil {
+                if let data = parsedEvent.data, onMessage = self.onMessageCallback {
                     dispatch_async(dispatch_get_main_queue()) {
-                        self.onMessageCallback!(id:self.lastEventID,event: "message",data: parsedEvent.data)
+                        onMessage(id: self.lastEventID, event: "message", data: data)
                     }
                 }
             }
 
-            if parsedEvent.event != nil && parsedEvent.data != nil {
-                if (self.eventListeners[parsedEvent.event!] != nil) {
-                    dispatch_async(dispatch_get_main_queue()) {
-                        let eventHandler = self.eventListeners[parsedEvent.event!]
-                        eventHandler!(id:self.lastEventID,event:parsedEvent.event!, data: parsedEvent.data!)
-                    }
+            if let event = parsedEvent.event, data = parsedEvent.data, eventHandler = self.eventListeners[event] {
+                dispatch_async(dispatch_get_main_queue()) {
+                    eventHandler(id: self.lastEventID, event: event, data: data)
                 }
             }
         }
@@ -259,6 +281,8 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
                     } else {
                         event[key as! String] = value! as String
                     }
+                } else if (key != nil && value == nil) {
+                    event[key as! String] = ""
                 }
             }
         }
@@ -272,7 +296,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         if let milli = eventString.componentsSeparatedByCharactersInSet(separators).last {
             let milliseconds = trim(milli)
 
-            if let intMiliseconds = milliseconds.toInt() {
+            if let intMiliseconds = Int(milliseconds) {
                 reconnectTime = intMiliseconds
             }
         }
@@ -286,7 +310,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     class public func basicAuth(username: String, password: String) -> String {
         let authString = "\(username):\(password)"
         let authData = authString.dataUsingEncoding(NSUTF8StringEncoding)
-        let base64String = authData!.base64EncodedStringWithOptions(nil)
+        let base64String = authData!.base64EncodedStringWithOptions([])
 
         return "Basic \(base64String)"
     }
