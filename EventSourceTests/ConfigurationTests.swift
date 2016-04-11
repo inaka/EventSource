@@ -12,32 +12,35 @@ import XCTest
 
 class ConfigurationTests: XCTestCase {
 	
-	var sut: EventSource?
-	var session = NSURLSession()
-	
-	override func setUp() {
-		super.setUp()
-		sut = EventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
-	}
-	
-	override class func tearDown() {
-		super.tearDown()
-		OHHTTPStubs.removeAllStubs()
-	}
-	
 	func testURL() {
-		XCTAssertEqual("http://test.com", sut!.url.absoluteString, "the URL should be the same")
+		let sut = EventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
+		XCTAssertEqual("http://test.com", sut.url.absoluteString, "the URL should be the same")
 	}
 	
 	func testDefaultRetryTimeAndChangeRetryTime() {
-		XCTAssertEqual(3000, sut!.retryTime, "the default retry time should be 3000")
-		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
+		let domain = NSUUID().UUIDString
+		let sut = EventSource(url: "http://\(domain).com", headers: ["Authorization" : "basic auth"])
+		weak var expectation = self.expectationWithDescription("")
+
+		XCTAssertEqual(3000, sut.retryTime, "the default retry time should be 3000")
+
+		OHHTTPStubs.removeAllStubs()
+		stub(isHost("\(domain).com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let retryEventData = "retry: 5000\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: retryEventData!, statusCode: 200, headers: nil)
 		}
-		
-		sleep(3)
-		
-		XCTAssertEqual(5000, sut!.retryTime, "the default retry time should be 3000")
+
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(3 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+			XCTAssertEqual(5000, sut.retryTime, "the default retry time should be 3000")
+			expectation?.fulfill()
+			expectation = nil
+		}
+
+		self.waitForExpectationsWithTimeout(5) { (error) in
+			if let _ = error{
+				XCTFail("Expectation not fulfilled")
+			}
+		}
+	
 	}
 }

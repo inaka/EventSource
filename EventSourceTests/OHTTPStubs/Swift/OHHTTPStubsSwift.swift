@@ -133,8 +133,9 @@ public func isScheme(scheme: String) -> OHHTTPStubsTestBlock {
  */
 public func isHost(host: String) -> OHHTTPStubsTestBlock {
     return {
-		req in req.URL?.host == host
- }
+		req in
+		 req.URL?.host == host
+	}
 }
 
 /**

@@ -64,11 +64,11 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         configuration.timeoutIntervalForResource = NSTimeInterval(INT_MAX)
         configuration.HTTPAdditionalHeaders = additionalHeaders
         
-        readyState = EventSourceState.Connecting
-        urlSession = newSession(configuration)
-        task = urlSession!.dataTaskWithURL(self.url);
+        self.readyState = EventSourceState.Connecting
+        self.urlSession = newSession(configuration)
+        self.task = urlSession!.dataTaskWithURL(self.url);
 
-        task!.resume()
+        self.task!.resume()
     }
 
     internal func newSession(configuration: NSURLSessionConfiguration) -> NSURLSession {
@@ -78,10 +78,22 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 //Mark: Close
 
     public func close() {
-        readyState = EventSourceState.Closed
-        urlSession?.invalidateAndCancel()
+        self.readyState = EventSourceState.Closed
+        self.urlSession?.invalidateAndCancel()
     }
-
+	
+	private func receivedMessageToClose(httpResponse: NSHTTPURLResponse?) -> Bool {
+		guard let response = httpResponse  else {
+			return false
+		}
+		
+		if(response.statusCode == 204) {
+			self.close()
+			return true
+		}
+		return false
+	}
+	
 //Mark: EventListeners
 
     public func onOpen(onOpenCallback: Void -> Void) {
@@ -108,19 +120,27 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 //MARK: NSURLSessionDataDelegate
 
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        if readyState != EventSourceState.Open {
+		if self.receivedMessageToClose(dataTask.response as? NSHTTPURLResponse) {
+			return
+		}
+
+		if self.readyState != EventSourceState.Open {
             return
         }
         
         self.receivedDataBuffer.appendData(data)
         let eventStream = extractEventsFromBuffer()
-        parseEventStream(eventStream)
+        self.parseEventStream(eventStream)
     }
 
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
         completionHandler(NSURLSessionResponseDisposition.Allow)
 
-        readyState = EventSourceState.Open
+		if self.receivedMessageToClose(dataTask.response as? NSHTTPURLResponse) {
+			return
+		}
+		
+        self.readyState = EventSourceState.Open
         if(self.onOpenCallback != nil) {
             dispatch_async(dispatch_get_main_queue()) {
                 self.onOpenCallback!()
@@ -129,7 +149,11 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     }
 
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
-        readyState = EventSourceState.Closed
+        self.readyState = EventSourceState.Closed
+		
+		if self.receivedMessageToClose(task.response as? NSHTTPURLResponse) {
+			return
+		}
 
         if(error == nil || error!.code != -999) {
             let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
@@ -172,7 +196,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         }
         
         // Remove the found events from the buffer
-        receivedDataBuffer.replaceBytesInRange(NSMakeRange(0,searchRange.location), withBytes: nil, length: 0)
+        self.receivedDataBuffer.replaceBytesInRange(NSMakeRange(0,searchRange.location), withBytes: nil, length: 0)
         
         return events
     }
