@@ -188,6 +188,7 @@ class EventSourceTests: XCTestCase {
 	func testAddEventListenerAndReceiveEvent() {
 		let expectation = self.expectationWithDescription("onEvent should be called")
 
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let data = "id: event-id\nevent:event-event\ndata:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: data!, statusCode: 200, headers: nil)
@@ -197,7 +198,7 @@ class EventSourceTests: XCTestCase {
 			XCTAssertEqual(event!, "event-event", "the event should be test")
 			XCTAssertEqual(id!, "event-id", "the event id should be received")
 			XCTAssertEqual(data!, "event-data", "the event data should be received")
-
+			
 			expectation.fulfill()
 		}
 		self.waitForExpectationsWithTimeout(4) { (error) in
