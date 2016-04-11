@@ -21,19 +21,19 @@ class EventSourceTests: XCTestCase {
 	
 	override class func tearDown() {
 		super.tearDown()
-		OHHTTPStubs.removeAllStubs()
 	}
 	
 // MARK: Testing onOpen and onError
 	
 	func testOnOpenGetsCalled(){
 		let expectation = self.expectationWithDescription("onOpen should be called")
-		
+
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let data = "".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: data!, statusCode: 200, headers: nil)
 		}
-		
+
 		sut!.onOpen {
 			expectation.fulfill()
 		}
@@ -64,11 +64,12 @@ class EventSourceTests: XCTestCase {
 	func testCorrectlyStoringLastEventID() {
 		let expectation = self.expectationWithDescription("onMessage should be called")
 
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let data = "id: event-id-1\ndata:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: data!, statusCode: 200, headers: nil)
 		}
-		
+
 		sut!.onMessage { (id, event, data) in
 			XCTAssertEqual(id!, "event-id-1", "the event id should be received")
 			expectation.fulfill()
@@ -86,6 +87,7 @@ class EventSourceTests: XCTestCase {
 		let expectation = self.expectationWithDescription("onMessage should be called")
 		self.sut!.lastEventID = "event-id-1"
 
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let data = "data:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: data!, statusCode: 200, headers: nil)
@@ -109,7 +111,8 @@ class EventSourceTests: XCTestCase {
 	
 	func testMultilineData() {
 		let expectation = self.expectationWithDescription("onMessage should be called")
-		
+
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let multipleLineData = "id: event-id\ndata:event-data-first\ndata:event-data-second\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: multipleLineData!, statusCode: 200, headers: nil)
@@ -135,6 +138,7 @@ class EventSourceTests: XCTestCase {
 	func testEmptyDataValue() {
 		let expectation = self.expectationWithDescription("onMessage should be called")
 		
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let emptyDataValueEvent = "event:done\ndata\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: emptyDataValueEvent!, statusCode: 200, headers: nil)
@@ -159,7 +163,8 @@ class EventSourceTests: XCTestCase {
 	
 	func testCloseConnectionIf204IsReceived() {
 		let expectation = self.expectationWithDescription("onMessage should be called")
-		
+
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let emptyDataValueEvent = "".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: emptyDataValueEvent!, statusCode: 204, headers: nil)
@@ -193,7 +198,7 @@ class EventSourceTests: XCTestCase {
 			let data = "id: event-id\nevent:event-event\ndata:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: data!, statusCode: 200, headers: nil)
 		}
-
+		
 		sut!.addEventListener("event-event") { (id, event, data) in
 			XCTAssertEqual(event!, "event-event", "the event should be test")
 			XCTAssertEqual(id!, "event-id", "the event id should be received")
@@ -211,6 +216,7 @@ class EventSourceTests: XCTestCase {
 	func testIgnoreCommets() {
 		let expectation = self.expectationWithDescription("3 seconds passed and method was not call")
 
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let commentEventData = ":coment\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: commentEventData!, statusCode: 200, headers: nil)

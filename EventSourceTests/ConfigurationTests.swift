@@ -22,7 +22,6 @@ class ConfigurationTests: XCTestCase {
 	
 	override class func tearDown() {
 		super.tearDown()
-		OHHTTPStubs.removeAllStubs()
 	}
 	
 	func testURL() {
@@ -31,11 +30,12 @@ class ConfigurationTests: XCTestCase {
 	
 	func testDefaultRetryTimeAndChangeRetryTime() {
 		XCTAssertEqual(3000, sut!.retryTime, "the default retry time should be 3000")
+		
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let retryEventData = "retry: 5000\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: retryEventData!, statusCode: 200, headers: nil)
 		}
-		
 		sleep(3)
 		
 		XCTAssertEqual(5000, sut!.retryTime, "the default retry time should be 3000")
