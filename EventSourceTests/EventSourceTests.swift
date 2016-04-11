@@ -153,6 +153,35 @@ class EventSourceTests: XCTestCase {
 			}
 		}
 	}
+	
+	
+	// MARK: Testing empty data. The event should be received with no data
+	
+	func testCloseConnectionIf204IsReceived() {
+		let expectation = self.expectationWithDescription("onMessage should be called")
+		
+		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
+			let emptyDataValueEvent = "".dataUsingEncoding(NSUTF8StringEncoding)
+			return OHHTTPStubsResponse(data: emptyDataValueEvent!, statusCode: 204, headers: nil)
+		}
+		
+		sut!.onMessage { (id, event, data) in
+			XCTFail()
+		}
+		
+		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+			if self.sut!.readyState == .Closed {
+				expectation.fulfill()
+			} else {
+				XCTFail()
+			}
+		}
+		self.waitForExpectationsWithTimeout(4) { (error) in
+			if let _ = error {
+				XCTFail("Expectation not fulfilled")
+			}
+		}
+	}
 
 // MARK: Testing comment events
 	
@@ -171,7 +200,7 @@ class EventSourceTests: XCTestCase {
 
 			expectation.fulfill()
 		}
-		self.waitForExpectationsWithTimeout(2) { (error) in
+		self.waitForExpectationsWithTimeout(4) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}

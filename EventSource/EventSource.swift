@@ -81,7 +81,19 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         readyState = EventSourceState.Closed
         urlSession?.invalidateAndCancel()
     }
-
+	
+	private func receivedMessageToClose(httpResponse: NSHTTPURLResponse?) -> Bool {
+		if httpResponse == nil {
+			return false
+		}
+		
+		if(httpResponse!.statusCode == 204) {
+			self.close();
+			return true
+		}
+		return false
+	}
+	
 //Mark: EventListeners
 
     public func onOpen(onOpenCallback: Void -> Void) {
@@ -108,7 +120,11 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 //MARK: NSURLSessionDataDelegate
 
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveData data: NSData) {
-        if readyState != EventSourceState.Open {
+		if receivedMessageToClose(dataTask.response as? NSHTTPURLResponse) {
+			return
+		}
+
+		if readyState != EventSourceState.Open {
             return
         }
         
@@ -120,6 +136,10 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     public func URLSession(session: NSURLSession, dataTask: NSURLSessionDataTask, didReceiveResponse response: NSURLResponse, completionHandler: ((NSURLSessionResponseDisposition) -> Void)) {
         completionHandler(NSURLSessionResponseDisposition.Allow)
 
+		if receivedMessageToClose(dataTask.response as? NSHTTPURLResponse) {
+			return
+		}
+		
         readyState = EventSourceState.Open
         if(self.onOpenCallback != nil) {
             dispatch_async(dispatch_get_main_queue()) {
@@ -130,6 +150,10 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 
     public func URLSession(session: NSURLSession, task: NSURLSessionTask, didCompleteWithError error: NSError?) {
         readyState = EventSourceState.Closed
+		
+		if receivedMessageToClose(task.response as? NSHTTPURLResponse) {
+			return
+		}
 
         if(error == nil || error!.code != -999) {
             let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
