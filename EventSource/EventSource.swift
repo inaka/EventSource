@@ -83,11 +83,11 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     }
 	
 	private func receivedMessageToClose(httpResponse: NSHTTPURLResponse?) -> Bool {
-		if httpResponse == nil {
+		guard let response = httpResponse  else {
 			return false
 		}
 		
-		if(httpResponse!.statusCode == 204) {
+		if(response.statusCode == 204) {
 			self.close()
 			return true
 		}
