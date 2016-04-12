@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name         = "IKEventSource"
-  s.version      = "1.1.0"
+  s.version      = "1.1.2"
   s.summary      = "Server-sent events EventSource implementation in Swift."
   s.homepage     = "https://github.com/inaka/EventSource"
   s.screenshots  = "http://giant.gfycat.com/BossyDistantHadrosaurus.gif"
