@@ -52,7 +52,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     
     func connect() {
         var additionalHeaders = self.headers
-        if let eventID = lastEventID {
+        if let eventID = self.lastEventID {
             additionalHeaders["Last-Event-Id"] = eventID
         }
         
