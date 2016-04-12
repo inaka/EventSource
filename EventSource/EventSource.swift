@@ -15,9 +15,10 @@ enum EventSourceState {
 }
 
 public class EventSource: NSObject, NSURLSessionDataDelegate {
+	static let DefaultsKey = "com.inaka.eventSource.lastEventId"
 
     let url: NSURL
-    private let lastEventIDKey = "com.inaka.eventSource.lastEventId"
+	private let lastEventIDKey: String
     private let receivedString: NSString?
     private var onOpenCallback: (Void -> Void)?
     private var onErrorCallback: (NSError? -> Void)?
@@ -31,10 +32,11 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     private var operationQueue: NSOperationQueue
     private var errorBeforeSetErrorCallBack: NSError?
     internal let receivedDataBuffer: NSMutableData
-    
+	private let uniqueIdentifier: String
+
     var event = Dictionary<String, String>()
 
-    
+
     public init(url: String, headers: [String : String]) {
 
         self.url = NSURL(string: url)!
@@ -43,6 +45,14 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         self.operationQueue = NSOperationQueue()
         self.receivedString = nil
         self.receivedDataBuffer = NSMutableData()
+
+
+		let port = self.url.port?.stringValue ?? ""
+		let relativePath = self.url.relativePath ?? ""
+		let host = self.url.host ?? ""
+
+		self.uniqueIdentifier = "\(self.url.scheme).\(host).\(port).\(relativePath)"
+		self.lastEventIDKey = "\(EventSource.DefaultsKey).\(self.uniqueIdentifier)"
 
         super.init();
         self.connect()
