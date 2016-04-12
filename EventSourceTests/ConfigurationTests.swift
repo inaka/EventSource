@@ -11,12 +11,26 @@ import XCTest
 @testable import EventSource
 
 class ConfigurationTests: XCTestCase {
-	
+
 	func testURL() {
 		let sut = EventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
 		XCTAssertEqual("http://test.com", sut.url.absoluteString, "the URL should be the same")
 	}
-	
+
+	func testBasicAuth() {
+		// basic auth token: "Basic base64(username + ':' + password)"
+		// basic auth token: "Basic base64("testUsername" + ":" + "testPassword")"
+		// basic auth token: "Basic dGVzdFVzZXJuYW1lOnRlc3RQYXNzd29yZA=="
+
+		let basicAuthToken = "Basic dGVzdFVzZXJuYW1lOnRlc3RQYXNzd29yZA=="
+
+		let username = "testUsername"
+		let password = "testPassword"
+		let basicAuthString = EventSource.basicAuth(username, password: password)
+
+		XCTAssertEqual(basicAuthString, basicAuthToken)
+	}
+
 	func testDefaultRetryTimeAndChangeRetryTime() {
 		let domain = NSUUID().UUIDString
 		let sut = EventSource(url: "http://\(domain).com", headers: ["Authorization" : "basic auth"])
@@ -41,6 +55,6 @@ class ConfigurationTests: XCTestCase {
 				XCTFail("Expectation not fulfilled")
 			}
 		}
-	
+
 	}
 }
