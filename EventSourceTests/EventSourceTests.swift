@@ -115,28 +115,41 @@ class EventSourceTests: XCTestCase {
 		let domain = NSUUID().UUIDString
 		let sut = EventSource(url: "http://\(domain).com", headers: ["Authorization" : "basic auth"])
 		let sut2 = EventSource(url: "http://\(domain).com.ar", headers: ["Authorization" : "basic auth"])
-		let expectation = self.expectationWithDescription("onMessage should be called")
-		let expectation2 = self.expectationWithDescription("onMessage should be called")
+		
+		weak var expectation = self.expectationWithDescription("onMessage should be called")
+		
 
 		OHHTTPStubs.removeAllStubs()
 		stub(isHost("\(domain).com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let data = "id: event-id-1\ndata:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: data!, statusCode: 200, headers: nil)
 		}
+		
+		sut.onMessage { (id, event, data) in
+			XCTAssertEqual(id!, "event-id-1", "the event id should be received")
+			expectation?.fulfill()
+			expectation = nil
+		}
+		
+		self.waitForExpectationsWithTimeout(5) { (error) in
+			if let _ = error {
+				XCTFail("Expectation not fulfilled")
+			}
+			XCTAssertEqual(sut.lastEventID!, "event-id-1", "last event id stored is different from sent")
+		}
 
+
+		expectation = self.expectationWithDescription("onMessage should be called")
+		OHHTTPStubs.removeAllStubs()
 		stub(isHost("\(domain).com.ar")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
 			let data = "id: event-id-99\ndata:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)
 			return OHHTTPStubsResponse(data: data!, statusCode: 200, headers: nil)
 		}
 
-		sut.onMessage { (id, event, data) in
-			XCTAssertEqual(id!, "event-id-1", "the event id should be received")
-			expectation.fulfill()
-		}
-
 		sut2.onMessage { (id, event, data) in
 			XCTAssertEqual(id!, "event-id-99", "the event id should be received")
-			expectation2.fulfill()
+			expectation?.fulfill()
+			expectation = nil
 		}
 
 		self.waitForExpectationsWithTimeout(5) { (error) in
