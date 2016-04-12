@@ -1,3 +1,5 @@
+![EventSource](header.png)
+
 ## EventSource
 SSE Client written on Swift using NSURLSession.
 
@@ -170,6 +172,13 @@ This is the example shipped with the app. If you run the server and run the app 
 ![2015-03-17 22_35_09](http://giant.gfycat.com/BossyDistantHadrosaurus.gif)
 </a>
 
+### Contributors
+Thanks to all the contributors for pointing out missing stuff or problems and fixing them or opening issues!!
+
+- [hleinone](https://github.com/hleinone)
+- [chrux](https://github.com/chrux)
+- [danielsht86](https://github.com/danielsht86)
+- [col](https://github.com/col)
 
 ### Contact Us
 For **questions** or **general comments** regarding the use of this library, please use our public
