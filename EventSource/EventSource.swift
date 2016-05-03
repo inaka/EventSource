@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum EventSourceState {
+public enum EventSourceState {
     case Connecting
     case Open
     case Closed
@@ -23,8 +23,8 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     private var onOpenCallback: (Void -> Void)?
     private var onErrorCallback: (NSError? -> Void)?
     private var onMessageCallback: ((id: String?, event: String?, data: String?) -> Void)?
-    private(set) var readyState: EventSourceState
-    private(set) var retryTime = 3000
+    public private(set) var readyState: EventSourceState
+    public private(set) var retryTime = 3000
     private var eventListeners = Dictionary<String, (id: String?, event: String?, data: String?) -> Void>()
     private var headers: Dictionary<String, String>
     internal var urlSession: NSURLSession?
