@@ -64,7 +64,7 @@ eventSource.close();
 #### Swift API:
 
 ```swift
-var eventSource: eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
+var eventSource: EventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
    
 eventSource.onOpen {
   // When opened
