@@ -14,6 +14,10 @@
 		41DFE4341A8E686F000C3519 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41DFE4321A8E686F000C3519 /* LaunchScreen.xib */; };
 		41DFE4401A8E6870000C3519 /* SplittedEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE43F1A8E6870000C3519 /* SplittedEvents.swift */; };
 		41DFE44B1A8E6D6F000C3519 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE44A1A8E6D6F000C3519 /* EventSource.swift */; };
+		57DD0EAB1CDB974C006428F4 /* IKEventSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 57DD0EAA1CDB974C006428F4 /* IKEventSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		57DD0EB21CDB974C006428F4 /* IKEventSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 57DD0EA81CDB974C006428F4 /* IKEventSource.framework */; };
+		57DD0EB71CDB974C006428F4 /* IKEventSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57DD0EB61CDB974C006428F4 /* IKEventSourceTests.swift */; };
+		57DD0EBF1CDB9760006428F4 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE44A1A8E6D6F000C3519 /* EventSource.swift */; };
 		C1F518E21C99D96200713047 /* EventSourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1F518E11C99D96200713047 /* EventSourceTests.swift */; };
 		C1F518F21C99D9BB00713047 /* OHHTTPStubsResponse+JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F518E61C99D9BB00713047 /* OHHTTPStubsResponse+JSON.m */; };
 		C1F518F31C99D9BB00713047 /* OHHTTPStubs+NSURLSessionConfiguration.m in Sources */ = {isa = PBXBuildFile; fileRef = C1F518E81C99D9BB00713047 /* OHHTTPStubs+NSURLSessionConfiguration.m */; };
@@ -33,6 +37,13 @@
 			remoteGlobalIDString = 41DFE4231A8E686F000C3519;
 			remoteInfo = EventSource;
 		};
+		57DD0EB31CDB974C006428F4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 41DFE41C1A8E686F000C3519 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 57DD0EA71CDB974C006428F4;
+			remoteInfo = IKEventSource;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -47,6 +58,12 @@
 		41DFE43E1A8E6870000C3519 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		41DFE43F1A8E6870000C3519 /* SplittedEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplittedEvents.swift; sourceTree = "<group>"; };
 		41DFE44A1A8E6D6F000C3519 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
+		57DD0EA81CDB974C006428F4 /* IKEventSource.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IKEventSource.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		57DD0EAA1CDB974C006428F4 /* IKEventSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IKEventSource.h; sourceTree = "<group>"; };
+		57DD0EAC1CDB974C006428F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		57DD0EB11CDB974C006428F4 /* IKEventSourceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IKEventSourceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		57DD0EB61CDB974C006428F4 /* IKEventSourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IKEventSourceTests.swift; sourceTree = "<group>"; };
+		57DD0EB81CDB974C006428F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C1F518E11C99D96200713047 /* EventSourceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSourceTests.swift; sourceTree = "<group>"; };
 		C1F518E31C99D9BA00713047 /* EventSourceTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "EventSourceTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		C1F518E51C99D9BB00713047 /* OHHTTPStubsResponse+JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "OHHTTPStubsResponse+JSON.h"; sourceTree = "<group>"; };
@@ -78,6 +95,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		57DD0EA41CDB974C006428F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57DD0EAE1CDB974C006428F4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57DD0EB21CDB974C006428F4 /* IKEventSource.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -87,6 +119,8 @@
 				41DFE4491A8E6B71000C3519 /* EventSource */,
 				41DFE4261A8E686F000C3519 /* EventSourceExample */,
 				41DFE43C1A8E6870000C3519 /* EventSourceTests */,
+				57DD0EA91CDB974C006428F4 /* IKEventSource */,
+				57DD0EB51CDB974C006428F4 /* IKEventSourceTests */,
 				41DFE4251A8E686F000C3519 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -96,6 +130,8 @@
 			children = (
 				41DFE4241A8E686F000C3519 /* EventSource.app */,
 				41DFE4391A8E6870000C3519 /* EventSourceTests.xctest */,
+				57DD0EA81CDB974C006428F4 /* IKEventSource.framework */,
+				57DD0EB11CDB974C006428F4 /* IKEventSourceTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -147,6 +183,24 @@
 				41DFE44A1A8E6D6F000C3519 /* EventSource.swift */,
 			);
 			path = EventSource;
+			sourceTree = "<group>";
+		};
+		57DD0EA91CDB974C006428F4 /* IKEventSource */ = {
+			isa = PBXGroup;
+			children = (
+				57DD0EAA1CDB974C006428F4 /* IKEventSource.h */,
+				57DD0EAC1CDB974C006428F4 /* Info.plist */,
+			);
+			path = IKEventSource;
+			sourceTree = "<group>";
+		};
+		57DD0EB51CDB974C006428F4 /* IKEventSourceTests */ = {
+			isa = PBXGroup;
+			children = (
+				57DD0EB61CDB974C006428F4 /* IKEventSourceTests.swift */,
+				57DD0EB81CDB974C006428F4 /* Info.plist */,
+			);
+			path = IKEventSourceTests;
 			sourceTree = "<group>";
 		};
 		C1F518DE1C99D8CC00713047 /* OHTTPStubs */ = {
@@ -202,6 +256,17 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		57DD0EA51CDB974C006428F4 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57DD0EAB1CDB974C006428F4 /* IKEventSource.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		41DFE4231A8E686F000C3519 /* EventSource */ = {
 			isa = PBXNativeTarget;
@@ -238,6 +303,42 @@
 			productReference = 41DFE4391A8E6870000C3519 /* EventSourceTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		57DD0EA71CDB974C006428F4 /* IKEventSource */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57DD0EBD1CDB974C006428F4 /* Build configuration list for PBXNativeTarget "IKEventSource" */;
+			buildPhases = (
+				57DD0EA31CDB974C006428F4 /* Sources */,
+				57DD0EA41CDB974C006428F4 /* Frameworks */,
+				57DD0EA51CDB974C006428F4 /* Headers */,
+				57DD0EA61CDB974C006428F4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IKEventSource;
+			productName = IKEventSource;
+			productReference = 57DD0EA81CDB974C006428F4 /* IKEventSource.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		57DD0EB01CDB974C006428F4 /* IKEventSourceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 57DD0EBE1CDB974C006428F4 /* Build configuration list for PBXNativeTarget "IKEventSourceTests" */;
+			buildPhases = (
+				57DD0EAD1CDB974C006428F4 /* Sources */,
+				57DD0EAE1CDB974C006428F4 /* Frameworks */,
+				57DD0EAF1CDB974C006428F4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				57DD0EB41CDB974C006428F4 /* PBXTargetDependency */,
+			);
+			name = IKEventSourceTests;
+			productName = IKEventSourceTests;
+			productReference = 57DD0EB11CDB974C006428F4 /* IKEventSourceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -245,7 +346,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftMigration = 0700;
-				LastSwiftUpdateCheck = 0720;
+				LastSwiftUpdateCheck = 0730;
 				LastUpgradeCheck = 0700;
 				ORGANIZATIONNAME = Inaka;
 				TargetAttributes = {
@@ -255,6 +356,12 @@
 					41DFE4381A8E6870000C3519 = {
 						CreatedOnToolsVersion = 6.0.1;
 						TestTargetID = 41DFE4231A8E686F000C3519;
+					};
+					57DD0EA71CDB974C006428F4 = {
+						CreatedOnToolsVersion = 7.3;
+					};
+					57DD0EB01CDB974C006428F4 = {
+						CreatedOnToolsVersion = 7.3;
 					};
 				};
 			};
@@ -273,6 +380,8 @@
 			targets = (
 				41DFE4231A8E686F000C3519 /* EventSource */,
 				41DFE4381A8E6870000C3519 /* EventSourceTests */,
+				57DD0EA71CDB974C006428F4 /* IKEventSource */,
+				57DD0EB01CDB974C006428F4 /* IKEventSourceTests */,
 			);
 		};
 /* End PBXProject section */
@@ -289,6 +398,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		41DFE4371A8E6870000C3519 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57DD0EA61CDB974C006428F4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57DD0EAF1CDB974C006428F4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -325,6 +448,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		57DD0EA31CDB974C006428F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57DD0EBF1CDB9760006428F4 /* EventSource.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		57DD0EAD1CDB974C006428F4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				57DD0EB71CDB974C006428F4 /* IKEventSourceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -332,6 +471,11 @@
 			isa = PBXTargetDependency;
 			target = 41DFE4231A8E686F000C3519 /* EventSource */;
 			targetProxy = 41DFE43A1A8E6870000C3519 /* PBXContainerItemProxy */;
+		};
+		57DD0EB41CDB974C006428F4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 57DD0EA71CDB974C006428F4 /* IKEventSource */;
+			targetProxy = 57DD0EB31CDB974C006428F4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -486,6 +630,102 @@
 			};
 			name = Release;
 		};
+		57DD0EB91CDB974C006428F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = IKEventSource/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.inaka.IKEventSource;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Debug;
+		};
+		57DD0EBA1CDB974C006428F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = IKEventSource/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.inaka.IKEventSource;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = "";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "macosx appletvos appletvsimulator iphoneos iphonesimulator watchos watchsimulator";
+				TARGETED_DEVICE_FAMILY = "1,2,3,4";
+				TVOS_DEPLOYMENT_TARGET = 9.0;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+				WATCHOS_DEPLOYMENT_TARGET = 2.0;
+			};
+			name = Release;
+		};
+		57DD0EBB1CDB974C006428F4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = IKEventSourceTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.inaka.IKEventSourceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		57DD0EBC1CDB974C006428F4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_NO_COMMON_BLOCKS = YES;
+				INFOPLIST_FILE = IKEventSourceTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.11;
+				PRODUCT_BUNDLE_IDENTIFIER = com.inaka.IKEventSourceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -512,6 +752,24 @@
 			buildConfigurations = (
 				41DFE4471A8E6870000C3519 /* Debug */,
 				41DFE4481A8E6870000C3519 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		57DD0EBD1CDB974C006428F4 /* Build configuration list for PBXNativeTarget "IKEventSource" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57DD0EB91CDB974C006428F4 /* Debug */,
+				57DD0EBA1CDB974C006428F4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		57DD0EBE1CDB974C006428F4 /* Build configuration list for PBXNativeTarget "IKEventSourceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				57DD0EBB1CDB974C006428F4 /* Debug */,
+				57DD0EBC1CDB974C006428F4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
