@@ -16,6 +16,11 @@ class ConfigurationTests: XCTestCase {
 		let sut = EventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
 		XCTAssertEqual("http://test.com", sut.url.absoluteString, "the URL should be the same")
 	}
+	
+	func testCreateEventSourceWithNoHeaders() {
+		let sut = EventSource(url: "http://test.com")
+		XCTAssertEqual("http://test.com", sut.url.absoluteString, "the URL should be the same")
+	}
 
 	func testBasicAuth() {
 		// basic auth token: "Basic base64(username + ':' + password)"

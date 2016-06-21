@@ -37,7 +37,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     var event = Dictionary<String, String>()
 
 
-    public init(url: String, headers: [String : String]) {
+    public init(url: String, headers: [String : String] = [:]) {
 
         self.url = NSURL(string: url)!
         self.headers = headers
