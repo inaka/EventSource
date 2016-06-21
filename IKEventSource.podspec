@@ -9,6 +9,7 @@ Pod::Spec.new do |s|
   s.author             = { "Andres Canal" => "andres@inakanetworks.com" }
   s.social_media_url   = "http://twitter.com/inaka"
   s.ios.deployment_target = '8.0'
+  s.tvos.deployment_target = '9.0'
   s.osx.deployment_target = '10.10'
   s.source       = { :git => "https://github.com/inaka/EventSource.git", :tag => "1.1.3" }
   s.source_files  = "EventSource", "EventSource/**/*.{h,m}"
