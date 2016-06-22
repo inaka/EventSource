@@ -14,12 +14,12 @@ class ConfigurationTests: XCTestCase {
 
 	let domain = "http://testdomain.com"
 	var sut: TestableEventSource!
-	
+
 	override func setUp() {
 		sut = TestableEventSource(url: domain, headers: ["Authorization" : "basic auth"])
 		super.setUp()
 	}
-	
+
 	func testURL() {
 		let sut = TestableEventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
 		XCTAssertEqual("http://test.com", sut.url.absoluteString, "the URL should be the same")
@@ -44,7 +44,7 @@ class ConfigurationTests: XCTestCase {
 		XCTAssertEqual(basicAuthString, basicAuthToken)
 	}
 
-	func testEventsList(){
+	func testEventsList() {
 		let sut = TestableEventSource(url: "http://test.com")
 		sut.addEventListener("first") { (id, event, data) in
 			print("id")
@@ -54,10 +54,10 @@ class ConfigurationTests: XCTestCase {
 			print("id")
 		}
 
-		XCTAssertEqual(sut.events(), ["first","second"])
+		XCTAssertEqual(sut.events(), ["first", "second"])
 	}
 
-	func testRemoveEventListeners(){
+	func testRemoveEventListeners() {
 		let sut = TestableEventSource(url: "http://test.com")
 		sut.addEventListener("first") { (id, event, data) in
 			print("id")
@@ -79,7 +79,7 @@ class ConfigurationTests: XCTestCase {
 
 		sut.callDidReceiveData("retry: 5000\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
 		self.waitForExpectationsWithTimeout(4) { (error) in
-			if let _ = error{
+			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
 		}

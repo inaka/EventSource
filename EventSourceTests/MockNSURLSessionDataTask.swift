@@ -11,11 +11,11 @@ import UIKit
 class MockNSURLSessionDataTask: NSURLSessionDataTask {
 
 	let fakeResponse: NSHTTPURLResponse
-	
+
 	init(response: NSHTTPURLResponse) {
 		self.fakeResponse = response
 	}
-	
+
 	override var response: NSHTTPURLResponse {
 		get {
 			return self.fakeResponse
