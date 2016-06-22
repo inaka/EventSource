@@ -12,67 +12,51 @@ import XCTest
 
 class SplittedEvents: XCTestCase {
     
-    var sut: EventSource?
-
+    var sut: TestableEventSource!
+	
 	override func setUp() {
+		sut = TestableEventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
 		super.setUp()
-		sut = EventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
+	}
+
+	func testEventDataIsRemovedFromBufferWhenProcessed() {
+		let expectation = self.expectationWithDescription("onMessage should be called")
+		let eventData = "id: event-id\ndata:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)
+		sut.onMessage { (id, event, data) in
+			expectation.fulfill()
+		}
+		
+		sut.callDidReceiveResponse()
+		sut.callDidReceiveData(eventData!)
+		self.waitForExpectationsWithTimeout(2) { (error) in
+			if let _ = error{
+				XCTFail("Expectation not fulfilled")
+			}
+		}
+		XCTAssertEqual(sut!.receivedDataBuffer.length, 0)
 	}
 	
-	override class func tearDown() {
-		super.tearDown()
-		OHHTTPStubs.removeAllStubs()
+	func testEventDataSplitOverMultiplePackets() {
+		let expectation = self.expectationWithDescription("onMessage should be called")
+		
+		let dataPacket1 = "id: event-id\nda".dataUsingEncoding(NSUTF8StringEncoding)
+		let dataPacket2 = "ta:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)
+		sut.onMessage { (id, event, data) in
+			XCTAssertEqual(event!, "message", "the event should be message")
+			XCTAssertEqual(id!, "event-id", "the event id should be received")
+			XCTAssertEqual(data!, "event-data", "the event data should be received")
+			
+			expectation.fulfill()
+		}
+		
+		sut.callDidReceiveResponse()
+		sut.callDidReceiveData(dataPacket1!)
+		sut.callDidReceiveData(dataPacket2!)
+		
+		self.waitForExpectationsWithTimeout(2) { (error) in
+			if let _ = error{
+				XCTFail("Expectation not fulfilled")
+			}
+		}
 	}
-	
-    func testEventDataIsRemovedFromBufferWhenProcessed() {
-        let expectation = self.expectationWithDescription("onMessage should be called")
-
-		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
-			let data = "id: event-id\ndata:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)
-			return OHHTTPStubsResponse(data: data!, statusCode: 200, headers: nil)
-		}
-
-        sut!.onMessage { (id, event, data) in
-            expectation.fulfill()
-        }
-		
-        self.waitForExpectationsWithTimeout(2) { (error) in
-            if let _ = error{
-                XCTFail("Expectation not fulfilled")
-            }
-        }
-        XCTAssertEqual(sut!.receivedDataBuffer.length, 0)
-    }
-	
-	
-/*
-    func testEventDataSplitOverMultiplePackets() {
-        let expectation = self.expectationWithDescription("onMessage should be called")
-
-		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
-			let dataPacket2 = "ta:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)
-			return OHHTTPStubsResponse(data: dataPacket2!, statusCode: 200, headers: nil)
-		}
-		
-		stub(isHost("test.com")) { (request: NSURLRequest) -> OHHTTPStubsResponse in
-			let dataPacket1 = "id: event-id\nda".dataUsingEncoding(NSUTF8StringEncoding)
-			return OHHTTPStubsResponse(data: dataPacket1!, statusCode: 200, headers: nil)
-		}
-		
-		sut!.onMessage { (id, event, data) in
-            XCTAssertEqual(event!, "message", "the event should be message")
-            XCTAssertEqual(id!, "event-id", "the event id should be received")
-            XCTAssertEqual(data!, "event-data", "the event data should be received")
-            
-            expectation.fulfill()
-        }
-
-        self.waitForExpectationsWithTimeout(5) { (error) in
-            if let _ = error{
-                XCTFail("Expectation not fulfilled")
-            }
-        }
-    }
-
-*/
 }

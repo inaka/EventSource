@@ -23,7 +23,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     private var onOpenCallback: (Void -> Void)?
     private var onErrorCallback: (NSError? -> Void)?
     private var onMessageCallback: ((id: String?, event: String?, data: String?) -> Void)?
-    public private(set) var readyState: EventSourceState
+    public internal(set) var readyState: EventSourceState
     public private(set) var retryTime = 3000
     private var eventListeners = Dictionary<String, (id: String?, event: String?, data: String?) -> Void>()
     private var headers: Dictionary<String, String>
@@ -78,8 +78,12 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         self.urlSession = newSession(configuration)
         self.task = urlSession!.dataTaskWithURL(self.url);
 
-        self.task!.resume()
+		self.resumeSession()
     }
+	
+	internal func resumeSession(){
+		self.task!.resume()
+	}
 
     internal func newSession(configuration: NSURLSessionConfiguration) -> NSURLSession {
         return NSURLSession(configuration: configuration, delegate: self, delegateQueue: operationQueue)
