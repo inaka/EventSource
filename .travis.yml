@@ -7,8 +7,8 @@ before_install:
 # - git clone https://github.com/facebook/xctool.git
 
 script: 
-- xctool clean build -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator
-- xcodebuild -scheme EventSource -project EventSource.xcodeproj -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6S,OS=9.0' test
+- "xctool clean build -project EventSource.xcodeproj -scheme EventSource -sdk iphonesimulator"
+- "xcodebuild -scheme EventSource -project EventSource.xcodeproj -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 6S,OS=9.0' test"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)

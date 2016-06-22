@@ -130,6 +130,14 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     public func addEventListener(event: String, handler: (id: String?, event: String?, data: String?) -> Void) {
         self.eventListeners[event] = handler
     }
+	
+	public func removeEventListener(event: String) -> Void {
+		self.eventListeners.removeValueForKey(event)
+	}
+	
+	public func events() -> Array<String> {
+		return Array(self.eventListeners.keys)
+	}
 
 //MARK: NSURLSessionDataDelegate
 

@@ -21,12 +21,12 @@ class ConfigurationTests: XCTestCase {
 	}
 	
 	func testURL() {
-		let sut = EventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
+		let sut = TestableEventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
 		XCTAssertEqual("http://test.com", sut.url.absoluteString, "the URL should be the same")
 	}
-	
+
 	func testCreateEventSourceWithNoHeaders() {
-		let sut = EventSource(url: "http://test.com")
+		let sut = TestableEventSource(url: "http://test.com")
 		XCTAssertEqual("http://test.com", sut.url.absoluteString, "the URL should be the same")
 	}
 
@@ -42,6 +42,29 @@ class ConfigurationTests: XCTestCase {
 		let basicAuthString = EventSource.basicAuth(username, password: password)
 
 		XCTAssertEqual(basicAuthString, basicAuthToken)
+	}
+
+	func testEventsList(){
+		let sut = TestableEventSource(url: "http://test.com")
+		sut.addEventListener("first") { (id, event, data) in
+			print("id")
+		}
+
+		sut.addEventListener("second") { (id, event, data) in
+			print("id")
+		}
+
+		XCTAssertEqual(sut.events(), ["first","second"])
+	}
+
+	func testRemoveEventListeners(){
+		let sut = TestableEventSource(url: "http://test.com")
+		sut.addEventListener("first") { (id, event, data) in
+			print("id")
+		}
+
+		sut.removeEventListener("first")
+		XCTAssertEqual(sut.events().count, 0)
 	}
 
 	func testDefaultRetryTimeAndChangeRetryTime() {
