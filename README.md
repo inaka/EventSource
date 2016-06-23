@@ -85,6 +85,13 @@ eventSource.addEventListener("event-name") { (id, event, data) in
 eventSource.close()
 ```
 
+We added the following methods that are not available on JavaScript EventSource API but we think they might be useful:
+
+```swift
+public func removeEventListener(event: String) -> Void
+public func events() -> Array<String>
+```
+
 Also the following properties are available: 
 
 - **readyState**: Status of EventSource
@@ -168,9 +175,7 @@ nothing it's a comment
 
 This is the example shipped with the app. If you run the server and run the app you will be able to see this example live. The moving box is just to show that everything works on background and the main thread performance shows no degradation. (The gif is pretty bad to see that, but if you click on the image you will be taken to the gfycat version of the gif which runs way smoother) 
 
-<a href="http://gfycat.com/ifr/BossyDistantHadrosaurus">
-![2015-03-17 22_35_09](http://giant.gfycat.com/BossyDistantHadrosaurus.gif)
-</a>
+![Sample](sample.gif)
 
 ### Contributors
 Thanks to all the contributors for pointing out missing stuff or problems and fixing them or opening issues!!
@@ -179,6 +184,8 @@ Thanks to all the contributors for pointing out missing stuff or problems and fi
 - [chrux](https://github.com/chrux)
 - [danielsht86](https://github.com/danielsht86)
 - [col](https://github.com/col)
+- [heyzooi](https://github.com/heyzooi)
+- [alexpalman](https://github.com/alexpalman)
 
 ### Contact Us
 For **questions** or **general comments** regarding the use of this library, please use our public
