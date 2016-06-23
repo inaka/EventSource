@@ -36,7 +36,7 @@ class TestableEventSource: EventSource {
 
 	}
 
-	override internal func resumeSession(){
+	override internal func resumeSession() {
 		self.readyState = EventSourceState.Open
 	}
 }
