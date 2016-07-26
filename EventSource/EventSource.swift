@@ -33,6 +33,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
     private var errorBeforeSetErrorCallBack: NSError?
     internal let receivedDataBuffer: NSMutableData
 	private let uniqueIdentifier: String
+    private let validNewlineCharacters = ["\r\n", "\n", "\r"]
 
     var event = Dictionary<String, String>()
 
@@ -199,13 +200,11 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 //MARK: Helpers
 
     private func extractEventsFromBuffer() -> [String] {
-        let delimiter = "\n\n".dataUsingEncoding(NSUTF8StringEncoding)!
         var events = [String]()
 
         // Find first occurrence of delimiter
 		var searchRange =  NSRange(location: 0, length: receivedDataBuffer.length)
-        var foundRange = receivedDataBuffer.rangeOfData(delimiter, options: NSDataSearchOptions(), range: searchRange)
-        while foundRange.location != NSNotFound {
+        while let foundRange = searchForEventInRange(searchRange) {
             // Append event
             if foundRange.location > searchRange.location {
                 let dataChunk = receivedDataBuffer.subdataWithRange(
@@ -216,13 +215,27 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
             // Search for next occurrence of delimiter
             searchRange.location = foundRange.location + foundRange.length
             searchRange.length = receivedDataBuffer.length - searchRange.location
-            foundRange = receivedDataBuffer.rangeOfData(delimiter, options: NSDataSearchOptions(), range: searchRange)
         }
 
         // Remove the found events from the buffer
         self.receivedDataBuffer.replaceBytesInRange(NSRange(location: 0, length: searchRange.location), withBytes: nil, length: 0)
 
         return events
+    }
+
+    private func searchForEventInRange(searchRange: NSRange) -> NSRange? {
+        let delimiters = validNewlineCharacters.map { "\($0)\($0)".dataUsingEncoding(NSUTF8StringEncoding)! }
+
+        for delimiter in delimiters {
+            let foundRange = receivedDataBuffer.rangeOfData(delimiter,
+                                                            options: NSDataSearchOptions(),
+                                                            range: searchRange)
+            if foundRange.location != NSNotFound {
+                return foundRange
+            }
+        }
+
+        return nil
     }
 
     private func parseEventStream(events: [String]) {
@@ -290,11 +303,7 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
 
         for line in eventString.componentsSeparatedByCharactersInSet(NSCharacterSet.newlineCharacterSet()) as [String] {
             autoreleasepool {
-                var key: NSString?, value: NSString?
-                let scanner = NSScanner(string: line)
-                scanner.scanUpToString(":", intoString: &key)
-                scanner.scanString(":", intoString: nil)
-                scanner.scanUpToString("\n", intoString: &value)
+                let (key, value) = self.parseKeyValuePair(line)
 
                 if key != nil && value != nil {
                     if event[key as! String] != nil {
@@ -309,6 +318,21 @@ public class EventSource: NSObject, NSURLSessionDataDelegate {
         }
 
         return (event["id"], event["event"], event["data"])
+    }
+
+    private func parseKeyValuePair(line: String) -> (NSString?, NSString?) {
+        var key: NSString?, value: NSString?
+        let scanner = NSScanner(string: line)
+        scanner.scanUpToString(":", intoString: &key)
+        scanner.scanString(":", intoString: nil)
+
+        for newline in validNewlineCharacters {
+            if scanner.scanUpToString(newline, intoString: &value) {
+                break
+            }
+        }
+
+        return (key, value)
     }
 
     private func parseRetryTime(eventString: String) -> Int? {
