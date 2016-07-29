@@ -183,6 +183,7 @@ Thanks to all the contributors for pointing out missing stuff or problems and fi
 - [hleinone](https://github.com/hleinone)
 - [chrux](https://github.com/chrux)
 - [danielsht86](https://github.com/danielsht86)
+- [Zeeker](https://github.com/Zeeker)
 - [col](https://github.com/col)
 - [heyzooi](https://github.com/heyzooi)
 - [alexpalman](https://github.com/alexpalman)
