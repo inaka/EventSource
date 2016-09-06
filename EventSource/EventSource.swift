@@ -48,8 +48,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.receivedDataBuffer = NSMutableData()
 
 
-		let port = self.url.port?.stringValue ?? ""
-		let relativePath = self.url.relativePath ?? ""
+        var port = ""
+        if let optionalPort = self.url.port {
+            port = String(optionalPort)
+        }
+		let relativePath = self.url.relativePath
 		let host = self.url.host ?? ""
 
 		self.uniqueIdentifier = "\(self.url.scheme).\(host).\(port).\(relativePath)"
@@ -113,11 +116,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
 //Mark: EventListeners
 
-    open func onOpen(_ onOpenCallback: (Void) -> Void) {
+    open func onOpen(_ onOpenCallback: ((Void) -> Void)) {
         self.onOpenCallback = onOpenCallback
     }
 
-    open func onError(_ onErrorCallback: (NSError?) -> Void) {
+    open func onError(_ onErrorCallback: ((NSError?) -> Void)) {
         self.onErrorCallback = onErrorCallback
 
         if let errorBeforeSet = self.errorBeforeSetErrorCallBack {
@@ -126,11 +129,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         }
     }
 
-    open func onMessage(_ onMessageCallback: (_ id: String?, _ event: String?, _ data: String?) -> Void) {
+    open func onMessage(_ onMessageCallback: ((_ id: String?, _ event: String?, _ data: String?) -> Void)) {
         self.onMessageCallback = onMessageCallback
     }
 
-    open func addEventListener(_ event: String, handler: (_ id: String?, _ event: String?, _ data: String?) -> Void) {
+    open func addEventListener(_ event: String, handler: ((_ id: String?, _ event: String?, _ data: String?) -> Void)) {
         self.eventListeners[event] = handler
     }
 
@@ -180,7 +183,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 			return
 		}
 
-        if error == nil || error!.code != -999 {
+        if error == nil || (error as! NSError).code != -999 {
             let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
             let delayTime = DispatchTime.now() + Double(Int64(nanoseconds)) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: delayTime) {
@@ -192,7 +195,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             if let errorCallback = self.onErrorCallback {
                 errorCallback(error as NSError?)
             } else {
-                self.errorBeforeSetErrorCallBack = error
+                self.errorBeforeSetErrorCallBack = error as? NSError
             }
         }
     }
