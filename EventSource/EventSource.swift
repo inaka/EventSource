@@ -116,11 +116,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
 //Mark: EventListeners
 
-    open func onOpen(_ onOpenCallback: ((Void) -> Void)) {
+    open func onOpen(_ onOpenCallback: @escaping ((Void) -> Void)) {
         self.onOpenCallback = onOpenCallback
     }
 
-    open func onError(_ onErrorCallback: ((NSError?) -> Void)) {
+    open func onError(_ onErrorCallback: @escaping ((NSError?) -> Void)) {
         self.onErrorCallback = onErrorCallback
 
         if let errorBeforeSet = self.errorBeforeSetErrorCallBack {
@@ -129,11 +129,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         }
     }
 
-    open func onMessage(_ onMessageCallback: ((_ id: String?, _ event: String?, _ data: String?) -> Void)) {
+    open func onMessage(_ onMessageCallback: @escaping ((_ id: String?, _ event: String?, _ data: String?) -> Void)) {
         self.onMessageCallback = onMessageCallback
     }
 
-    open func addEventListener(_ event: String, handler: ((_ id: String?, _ event: String?, _ data: String?) -> Void)) {
+    open func addEventListener(_ event: String, handler: @escaping ((_ id: String?, _ event: String?, _ data: String?) -> Void)) {
         self.eventListeners[event] = handler
     }
 
@@ -145,7 +145,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 		return Array(self.eventListeners.keys)
 	}
 
-//MARK: NSURLSessionDataDelegate
+//MARK: URLSessionDataDelegate
 
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
 		if self.receivedMessageToClose(dataTask.response as? HTTPURLResponse) {
@@ -161,8 +161,8 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.parseEventStream(eventStream)
     }
 
-    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: ((Foundation.URLSession.ResponseDisposition) -> Void)) {
-        completionHandler(Foundation.URLSession.ResponseDisposition.allow)
+    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        completionHandler(URLSession.ResponseDisposition.allow)
 
 		if self.receivedMessageToClose(dataTask.response as? HTTPURLResponse) {
 			return
