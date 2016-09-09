@@ -3,7 +3,7 @@ language: objective-c
 
 before_install:
 - brew update || brew update
-- brew outdated xctool || brew upgrade xctool
+- brew outdated xctool || brew upgrade --HEAD xctool
 # - git clone https://github.com/facebook/xctool.git
 
 script: 
