@@ -54,7 +54,7 @@ class ConfigurationTests: XCTestCase {
 			print("id")
 		}
 
-		XCTAssertEqual(sut.events(), ["first", "second"])
+		XCTAssertEqual(sut.events(), ["second", "first"])
 	}
 
 	func testRemoveEventListeners() {
