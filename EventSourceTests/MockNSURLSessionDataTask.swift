@@ -8,15 +8,15 @@
 
 import UIKit
 
-class MockNSURLSessionDataTask: NSURLSessionDataTask {
+class MockNSURLSessionDataTask: URLSessionDataTask {
 
-	let fakeResponse: NSHTTPURLResponse
+	let fakeResponse: HTTPURLResponse
 
-	init(response: NSHTTPURLResponse) {
+	init(response: HTTPURLResponse) {
 		self.fakeResponse = response
 	}
 
-	override var response: NSHTTPURLResponse {
+	override var response: HTTPURLResponse {
 		get {
 			return self.fakeResponse
 		}

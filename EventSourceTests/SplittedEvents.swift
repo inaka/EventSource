@@ -20,15 +20,15 @@ class SplittedEvents: XCTestCase {
 	}
 
 	func testEventDataIsRemovedFromBufferWhenProcessed() {
-		let expectation = self.expectationWithDescription("onMessage should be called")
-		let eventData = "id: event-id\ndata:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)
+		let expectation = self.expectation(description: "onMessage should be called")
+		let eventData = "id: event-id\ndata:event-data\n\n".data(using: String.Encoding.utf8)
 		sut.onMessage { (id, event, data) in
 			expectation.fulfill()
 		}
 
 		sut.callDidReceiveResponse()
 		sut.callDidReceiveData(eventData!)
-		self.waitForExpectationsWithTimeout(2) { (error) in
+		self.waitForExpectations(timeout: 2) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -37,10 +37,10 @@ class SplittedEvents: XCTestCase {
     }
     
     func testEventDataSplitOverMultiplePackets() {
-        let expectation = self.expectationWithDescription("onMessage should be called")
+        let expectation = self.expectation(description: "onMessage should be called")
         
-        let dataPacket1 = "id: event-id\nda".dataUsingEncoding(NSUTF8StringEncoding)
-        let dataPacket2 = "ta:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)
+        let dataPacket1 = "id: event-id\nda".data(using: String.Encoding.utf8)
+        let dataPacket2 = "ta:event-data\n\n".data(using: String.Encoding.utf8)
         sut.onMessage { (id, event, data) in
             XCTAssertEqual(event!, "message", "the event should be message")
             XCTAssertEqual(id!, "event-id", "the event id should be received")
@@ -53,7 +53,7 @@ class SplittedEvents: XCTestCase {
         sut.callDidReceiveData(dataPacket1!)
         sut.callDidReceiveData(dataPacket2!)
         
-        self.waitForExpectationsWithTimeout(2) { (error) in
+        self.waitForExpectations(timeout: 2) { (error) in
             if let _ = error {
                 XCTFail("Expectation not fulfilled")
             }
@@ -61,9 +61,9 @@ class SplittedEvents: XCTestCase {
     }
     
     func testEventDataSplitByCariageReturnAndUnixNewline() {
-        let expectation = self.expectationWithDescription("onMessage should be called")
+        let expectation = self.expectation(description: "onMessage should be called")
         
-        let eventData = "id: event-id\r\ndata:event-data\r\n\r\n".dataUsingEncoding(NSUTF8StringEncoding)
+        let eventData = "id: event-id\r\ndata:event-data\r\n\r\n".data(using: String.Encoding.utf8)
         sut.onMessage { (id, event, data) in
             XCTAssertEqual(event!, "message", "the event should be message")
             XCTAssertEqual(id!, "event-id", "the event id should be received")
@@ -75,7 +75,7 @@ class SplittedEvents: XCTestCase {
         sut.callDidReceiveResponse()
         sut.callDidReceiveData(eventData!)
         
-        self.waitForExpectationsWithTimeout(2) { (error) in
+        self.waitForExpectations(timeout: 2) { (error) in
             if let _ = error {
                 XCTFail("Expectation not fulfilled")
             }
@@ -83,9 +83,9 @@ class SplittedEvents: XCTestCase {
     }
     
     func testEventDataSplitByCariageReturn() {
-        let expectation = self.expectationWithDescription("onMessage should be called")
+        let expectation = self.expectation(description: "onMessage should be called")
         
-        let eventData = "id: event-id\rdata:event-data\r\r".dataUsingEncoding(NSUTF8StringEncoding)
+        let eventData = "id: event-id\rdata:event-data\r\r".data(using: String.Encoding.utf8)
         sut.onMessage { (id, event, data) in
             XCTAssertEqual(event!, "message", "the event should be message")
             XCTAssertEqual(id!, "event-id", "the event id should be received")
@@ -97,7 +97,7 @@ class SplittedEvents: XCTestCase {
         sut.callDidReceiveResponse()
         sut.callDidReceiveData(eventData!)
         
-        self.waitForExpectationsWithTimeout(2) { (error) in
+        self.waitForExpectations(timeout: 2) { (error) in
             if let _ = error {
                 XCTFail("Expectation not fulfilled")
             }

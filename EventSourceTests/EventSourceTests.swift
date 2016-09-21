@@ -23,7 +23,7 @@ class EventSourceTests: XCTestCase {
 // MARK: Testing onOpen and onError
 
 	func testOnOpenGetsCalled() {
-		let expectation = self.expectationWithDescription("onOpen should be called")
+		let expectation = self.expectation(description: "onOpen should be called")
 
 		sut.onOpen {
 			expectation.fulfill()
@@ -31,7 +31,7 @@ class EventSourceTests: XCTestCase {
 
 		sut.callDidReceiveResponse()
 
-		self.waitForExpectationsWithTimeout(2) { (error) in
+		self.waitForExpectations(timeout: 2) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -39,7 +39,7 @@ class EventSourceTests: XCTestCase {
 	}
 
 	func testOnErrorGetsCalled() {
-		let expectation = self.expectationWithDescription("onError should be called")
+		let expectation = self.expectation(description: "onError should be called")
 
 		sut.onError { (error) -> Void in
 			expectation.fulfill()
@@ -47,7 +47,7 @@ class EventSourceTests: XCTestCase {
 
 		sut.callDidCompleteWithError("error")
 
-		self.waitForExpectationsWithTimeout(2) { (error) in
+		self.waitForExpectations(timeout: 2) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -57,7 +57,7 @@ class EventSourceTests: XCTestCase {
 // MARK: Testing event-id behaviours
 
 	func testCorrectlyStoringLastEventID() {
-		let expectation = self.expectationWithDescription("onMessage should be called")
+		let expectation = self.expectation(description: "onMessage should be called")
 
 		sut.onMessage { (id, event, data) in
 			XCTAssertEqual(id!, "event-id-1", "the event id should be received")
@@ -65,9 +65,9 @@ class EventSourceTests: XCTestCase {
 		}
 
 		sut.callDidReceiveResponse()
-		sut.callDidReceiveData("id: event-id-1\ndata:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+		sut.callDidReceiveData("id: event-id-1\ndata:event-data-first\n\n".data(using: String.Encoding.utf8)!)
 
-		self.waitForExpectationsWithTimeout(2) { (error) in
+		self.waitForExpectations(timeout: 2) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -78,16 +78,16 @@ class EventSourceTests: XCTestCase {
 	func testLastEventIDNotUpdatedForEventWithNoID() {
 		self.sut.lastEventID = "event-id-1"
 
-		let expectation = self.expectationWithDescription("onMessage should be called")
+		let expectation = self.expectation(description: "onMessage should be called")
 		self.sut.onMessage { (id, event, data) in
 			XCTAssertEqual(id!, "event-id-1", "the event id should be received")
 			expectation.fulfill()
 		}
 
 		self.sut.callDidReceiveResponse()
-		self.sut.callDidReceiveData("data:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+		self.sut.callDidReceiveData("data:event-data-first\n\n".data(using: String.Encoding.utf8)!)
 
-		self.waitForExpectationsWithTimeout(2) { (error) in
+		self.waitForExpectations(timeout: 2) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -96,29 +96,29 @@ class EventSourceTests: XCTestCase {
 	}
 
 	func testCorrectlyStoringLastEventIDForMultipleEventSourceInstances() {
-		weak var expectation = self.expectationWithDescription("onMessage should be called")
+		weak var expectation = self.expectation(description: "onMessage should be called")
 		sut.onMessage { (id, event, data) in
 			XCTAssertEqual(id!, "event-id-1", "the event id should be received")
 			expectation!.fulfill()
 		}
-		sut.callDidReceiveData("id: event-id-1\ndata:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+		sut.callDidReceiveData("id: event-id-1\ndata:event-data-first\n\n".data(using: String.Encoding.utf8)!)
 
-		self.waitForExpectationsWithTimeout(5) { (error) in
+		self.waitForExpectations(timeout: 5) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
 			XCTAssertEqual(self.sut.lastEventID!, "event-id-1", "last event id stored is different from sent")
 		}
 
-		expectation = self.expectationWithDescription("onMessage should be called")
+		expectation = self.expectation(description: "onMessage should be called")
 		let secondSut = TestableEventSource(url: "http://otherdomain.com", headers: ["Authorization" : "basic auth"])
 		secondSut.onMessage { (id, event, data) in
 			XCTAssertEqual(id!, "event-id-99", "the event id should be received")
 			expectation!.fulfill()
 		}
-		secondSut.callDidReceiveData("id: event-id-99\ndata:event-data-first\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+		secondSut.callDidReceiveData("id: event-id-99\ndata:event-data-first\n\n".data(using: String.Encoding.utf8)!)
 
-		self.waitForExpectationsWithTimeout(5) { (error) in
+		self.waitForExpectations(timeout: 5) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -130,7 +130,7 @@ class EventSourceTests: XCTestCase {
 // MARK: Testing multiple line data is correctly received
 
 	func testMultilineData() {
-		let expectation = self.expectationWithDescription("onMessage should be called")
+		let expectation = self.expectation(description: "onMessage should be called")
 
 		sut.onMessage { (id, event, data) in
 			XCTAssertEqual(event!, "message", "the event should be message")
@@ -141,9 +141,9 @@ class EventSourceTests: XCTestCase {
 		}
 
 		sut.callDidReceiveResponse()
-		sut.callDidReceiveData("id: event-id\ndata:event-data-first\ndata:event-data-second\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+		sut.callDidReceiveData("id: event-id\ndata:event-data-first\ndata:event-data-second\n\n".data(using: String.Encoding.utf8)!)
 
-		self.waitForExpectationsWithTimeout(2) { (error) in
+		self.waitForExpectations(timeout: 2) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -153,7 +153,7 @@ class EventSourceTests: XCTestCase {
 // MARK: Testing empty data. The event should be received with no data
 
 	func testEmptyDataValue() {
-		let expectation = self.expectationWithDescription("onMessage should be called")
+		let expectation = self.expectation(description: "onMessage should be called")
 
 		sut.addEventListener("done") { (id, event, data) in
 			XCTAssertEqual(event!, "done", "the event should be message")
@@ -163,9 +163,9 @@ class EventSourceTests: XCTestCase {
 		}
 
 		sut.callDidReceiveResponse()
-		sut.callDidReceiveData("event:done\ndata\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+		sut.callDidReceiveData("event:done\ndata\n\n".data(using: String.Encoding.utf8)!)
 
-		self.waitForExpectationsWithTimeout(2) { (error) in
+		self.waitForExpectations(timeout: 2) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -177,17 +177,17 @@ class EventSourceTests: XCTestCase {
 
 	func testCloseConnectionIf204IsReceived() {
 		let domain = "http://test.com"
-		let response =  NSHTTPURLResponse(URL: NSURL(string: domain)!, statusCode: 204, HTTPVersion: "1.1", headerFields: nil)!
+		let response =  HTTPURLResponse(url: URL(string: domain)!, statusCode: 204, httpVersion: "1.1", headerFields: nil)!
 		let dataTask = MockNSURLSessionDataTask(response: response)
 
-		weak var expectation = self.expectationWithDescription("onMessage should be called")
+		weak var expectation = self.expectation(description: "onMessage should be called")
 
 		sut.onMessage { (id, event, data) in
 			XCTFail()
 		}
 
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
-			if self.sut.readyState == .Closed {
+		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
+			if self.sut.readyState == .closed {
 				expectation?.fulfill()
 			} else {
 				XCTFail()
@@ -196,7 +196,7 @@ class EventSourceTests: XCTestCase {
 
 		sut.callDidReceiveDataWithResponse(dataTask)
 
-		self.waitForExpectationsWithTimeout(10) { (error) in
+		self.waitForExpectations(timeout: 10) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -205,7 +205,7 @@ class EventSourceTests: XCTestCase {
 
 // MARK: Testing comment events
 	func testAddEventListenerAndReceiveEvent() {
-		let expectation = self.expectationWithDescription("onEvent should be called")
+		let expectation = self.expectation(description: "onEvent should be called")
 
 		sut.addEventListener("event-event") { (id, event, data) in
 			XCTAssertEqual(event!, "event-event", "the event should be test")
@@ -216,9 +216,9 @@ class EventSourceTests: XCTestCase {
 		}
 
 		sut.callDidReceiveResponse()
-		sut.callDidReceiveData("id: event-id\nevent:event-event\ndata:event-data\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+		sut.callDidReceiveData("id: event-id\nevent:event-event\ndata:event-data\n\n".data(using: String.Encoding.utf8)!)
 
-		self.waitForExpectationsWithTimeout(2) { (error) in
+		self.waitForExpectations(timeout: 2) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
@@ -235,6 +235,6 @@ class EventSourceTests: XCTestCase {
 		}
 
 		sut.callDidReceiveResponse()
-		sut.callDidReceiveData(":coment\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
+		sut.callDidReceiveData(":coment\n\n".data(using: String.Encoding.utf8)!)
 	}
 }

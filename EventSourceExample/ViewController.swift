@@ -10,11 +10,11 @@ import UIKit
 
 class ViewController: UIViewController {
 
-    @IBOutlet private weak var status: UILabel!
-    @IBOutlet private weak var dataLabel: UILabel!
-    @IBOutlet private weak var nameLabel: UILabel!
-    @IBOutlet private weak var idLabel: UILabel!
-    @IBOutlet private weak var squareConstraint: NSLayoutConstraint!
+    @IBOutlet fileprivate weak var status: UILabel!
+    @IBOutlet fileprivate weak var dataLabel: UILabel!
+    @IBOutlet fileprivate weak var nameLabel: UILabel!
+    @IBOutlet fileprivate weak var idLabel: UILabel!
+    @IBOutlet fileprivate weak var squareConstraint: NSLayoutConstraint!
     var eventSource: EventSource?
 
     override func viewDidLoad() {
@@ -49,7 +49,7 @@ class ViewController: UIViewController {
 //        eventSource.close()
     }
 
-    func updateLabels(id: String?, event: String?, data: String?) -> Void {
+    func updateLabels(_ id: String?, event: String?, data: String?) -> Void {
         self.idLabel.text = ""
         self.idLabel.text = ""
         self.idLabel.text = ""
@@ -67,7 +67,7 @@ class ViewController: UIViewController {
         }
     }
 
-    override func viewDidAppear(animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         let finalPosition = self.view.frame.size.width - 50
@@ -75,7 +75,7 @@ class ViewController: UIViewController {
         self.squareConstraint.constant = 0
         self.view.layoutIfNeeded()
 
-        UIView.animateKeyframesWithDuration(2, delay: 0, options: [UIViewKeyframeAnimationOptions.Repeat, UIViewKeyframeAnimationOptions.Autoreverse], animations: { () in
+        UIView.animateKeyframes(withDuration: 2, delay: 0, options: [UIViewKeyframeAnimationOptions.repeat, UIViewKeyframeAnimationOptions.autoreverse], animations: { () in
             self.squareConstraint.constant = finalPosition
             self.view.layoutIfNeeded()
         }, completion: nil)
