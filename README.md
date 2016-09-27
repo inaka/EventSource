@@ -187,6 +187,7 @@ Thanks to all the contributors for pointing out missing stuff or problems and fi
 - [col](https://github.com/col)
 - [heyzooi](https://github.com/heyzooi)
 - [alexpalman](https://github.com/alexpalman)
+- [robbiet480](https://github.com/robbiet480)
 
 ### Contact Us
 For **questions** or **general comments** regarding the use of this library, please use our public
