@@ -54,7 +54,9 @@ class ConfigurationTests: XCTestCase {
 			print("id")
 		}
 
-		XCTAssertEqual(sut.events(), ["first", "second"])
+        XCTAssertEqual(sut.events().count, 2)
+		XCTAssertTrue(sut.events().contains("first"))
+        XCTAssertTrue(sut.events().contains("second"))
 	}
 
 	func testRemoveEventListeners() {
@@ -68,17 +70,17 @@ class ConfigurationTests: XCTestCase {
 	}
 
 	func testDefaultRetryTimeAndChangeRetryTime() {
-		let expectation = self.expectationWithDescription("")
+		let expectation = self.expectation(description: "")
 
 		XCTAssertEqual(3000, self.sut.retryTime, "the default retry time should be 3000")
 
-		dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(2 * Double(NSEC_PER_SEC))), dispatch_get_main_queue()) {
+		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
 			XCTAssertEqual(5000, self.sut.retryTime, "the retry time should be 5000 after changing it")
 			expectation.fulfill()
 		}
 
-		sut.callDidReceiveData("retry: 5000\n\n".dataUsingEncoding(NSUTF8StringEncoding)!)
-		self.waitForExpectationsWithTimeout(4) { (error) in
+		sut.callDidReceiveData("retry: 5000\n\n".data(using: String.Encoding.utf8)!)
+		self.waitForExpectations(timeout: 4) { (error) in
 			if let _ = error {
 				XCTFail("Expectation not fulfilled")
 			}
