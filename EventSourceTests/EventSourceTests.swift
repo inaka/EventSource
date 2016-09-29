@@ -14,9 +14,11 @@ class EventSourceTests: XCTestCase {
 
 	let domain = "http://testdomain.com"
 	var sut: TestableEventSource!
+    var anotherSut: TestableEventSource!
 
 	override func setUp() {
 		sut = TestableEventSource(url: domain, headers: ["Authorization" : "basic auth"])
+        anotherSut = TestableEventSource(url: domain, headers: ["Authorization" : "basic auth"], closeCodes: [401])
 		super.setUp()
 	}
 
@@ -202,6 +204,34 @@ class EventSourceTests: XCTestCase {
 			}
 		}
 	}
+
+    func testCloseConnectionIfCloseCodeIsReceived() {
+        let domain = "http://test.com"
+        let response =  HTTPURLResponse(url: URL(string: domain)!, statusCode: 401, httpVersion: "1.1", headerFields: nil)!
+        let dataTask = MockNSURLSessionDataTask(response: response)
+
+        weak var expectation = self.expectation(description: "onMessage should be called")
+
+        anotherSut.onMessage { (id, event, data) in
+            XCTFail()
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
+            if self.anotherSut.readyState == .closed {
+                expectation?.fulfill()
+            } else {
+                XCTFail()
+            }
+        }
+
+        anotherSut.callDidReceiveDataWithResponse(dataTask)
+        
+        self.waitForExpectations(timeout: 10) { (error) in
+            if let _ = error {
+                XCTFail("Expectation not fulfilled")
+            }
+        }
+    }
 
 // MARK: Testing comment events
 	func testAddEventListenerAndReceiveEvent() {
