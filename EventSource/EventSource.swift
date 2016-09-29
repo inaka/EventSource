@@ -34,11 +34,12 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     internal let receivedDataBuffer: NSMutableData
 	fileprivate let uniqueIdentifier: String
     fileprivate let validNewlineCharacters = ["\r\n", "\n", "\r"]
+    fileprivate let closeCodes: [Int]
 
     var event = Dictionary<String, String>()
 
 
-    public init(url: String, headers: [String : String] = [:]) {
+    public init(url: String, headers: [String : String] = [:], closeCodes: [Int] = [204]) {
 
         self.url = URL(string: url)!
         self.headers = headers
@@ -46,7 +47,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.operationQueue = OperationQueue()
         self.receivedString = nil
         self.receivedDataBuffer = NSMutableData()
-
+        self.closeCodes = closeCodes
 
         var port = ""
         if let optionalPort = self.url.port {
@@ -107,7 +108,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 			return false
 		}
 
-		if response.statusCode == 204 {
+        if closeCodes.contains(response.statusCode) {
 			self.close()
 			return true
 		}
