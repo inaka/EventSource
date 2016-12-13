@@ -36,7 +36,6 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.receivedString = nil
         self.receivedDataBuffer = NSMutableData()
 
-
         var port = ""
         if let optionalPort = self.url.port {
             port = String(optionalPort)
@@ -230,7 +229,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     }
 
     fileprivate func parseEventStream(_ events: [String]) {
-        var parsedEvents: [(id: String?, event: String?, data: String?)] = Array()
+        var parsedEvents: [SSEEvent] = []
 
         for event in events {
             if event.isEmpty {
@@ -274,26 +273,27 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
     internal var lastEventID: String?
 
-    fileprivate func parseEvent(_ eventString: String) -> (id: String?, event: String?, data: String?) {
-        var event = Dictionary<String, String>()
+    fileprivate func parseEvent(_ eventString: String) -> SSEEvent {
+        var eventData = Dictionary<String, String>()
 
         for line in eventString.components(separatedBy: CharacterSet.newlines) as [String] {
             autoreleasepool {
                 let (key, value) = self.parseKeyValuePair(line)
 
                 if key != nil && value != nil {
-                    if event[key as! String] != nil {
-                        event[key as! String] = "\(event[key as! String]!)\n\(value!)"
+                    if eventData[key as! String] != nil {
+                        eventData[key as! String] = "\(eventData[key as! String]!)\n\(value!)"
                     } else {
-                        event[key as! String] = value! as String
+                        eventData[key as! String] = value! as String
                     }
                 } else if key != nil && value == nil {
-                    event[key as! String] = ""
+                    eventData[key as! String] = ""
                 }
             }
         }
 
-        return (event["id"], event["event"], event["data"])
+        let event = SSEEvent(id: eventData["id"], event: eventData["event"], data: eventData["data"])
+        return event
     }
 
     fileprivate func parseKeyValuePair(_ line: String) -> (NSString?, NSString?) {
