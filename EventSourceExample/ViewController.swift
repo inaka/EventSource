@@ -34,7 +34,7 @@ class ViewController: UIViewController {
             guard let event = event else {
                 return
             }
-            
+
             self.updateLabels(event.id, event: event.event, data: event.data)
         }
 
@@ -42,7 +42,7 @@ class ViewController: UIViewController {
             guard let event = event else {
                 return
             }
-            
+
             self.updateLabels(event.id, event: event.event, data: event.data)
         }
 
