@@ -7,10 +7,7 @@ public enum EventSourceState {
 }
 
 open class EventSource: NSObject, URLSessionDataDelegate {
-	static let DefaultsKey = "com.inaka.eventSource.lastEventId"
-
     let url: URL
-	fileprivate let lastEventIDKey: String
     fileprivate let receivedString: NSString?
     fileprivate var onOpenCallback: ((Void) -> Void)?
     fileprivate var onErrorCallback: ((NSError?) -> Void)?
@@ -48,7 +45,6 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 		let host = self.url.host ?? ""
 
 		self.uniqueIdentifier = "\(self.url.scheme).\(host).\(port).\(relativePath)"
-		self.lastEventIDKey = "\(EventSource.DefaultsKey).\(self.uniqueIdentifier)"
 
         super.init()
         self.connect()
@@ -274,24 +270,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         }
     }
 
-    internal var lastEventID: String? {
-        set {
-            if let lastEventID = newValue {
-                let defaults = UserDefaults.standard
-                defaults.set(lastEventID, forKey: lastEventIDKey)
-                defaults.synchronize()
-            }
-        }
-
-        get {
-            let defaults = UserDefaults.standard
-
-            if let lastEventID = defaults.string(forKey: lastEventIDKey) {
-                return lastEventID
-            }
-            return nil
-        }
-    }
+    internal var lastEventID: String?
 
     fileprivate func parseEvent(_ eventString: String) -> (id: String?, event: String?, data: String?) {
         var event = Dictionary<String, String>()
