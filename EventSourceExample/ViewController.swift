@@ -1,11 +1,3 @@
-//
-//  ViewController.swift
-//  EventSource
-//
-//  Created by Andres on 2/13/15.
-//  Copyright (c) 2015 Inaka. All rights reserved.
-//
-
 import UIKit
 
 class ViewController: UIViewController {
@@ -38,12 +30,20 @@ class ViewController: UIViewController {
             self.status.text = "DISCONNECTED"
         }
 
-        self.eventSource?.onMessage { (id, event, data) in
-            self.updateLabels(id, event: event, data: data)
+        self.eventSource?.onMessage { (event) in
+            guard let event = event else {
+                return
+            }
+            
+            self.updateLabels(event.id, event: event.event, data: event.data)
         }
 
-        self.eventSource?.addEventListener("user-connected") { (id, event, data) in
-            self.updateLabels(id, event: event, data: data)
+        self.eventSource?.addEventListener("user-connected") { (event) in
+            guard let event = event else {
+                return
+            }
+            
+            self.updateLabels(event.id, event: event.event, data: event.data)
         }
 
 //        eventSource.close()

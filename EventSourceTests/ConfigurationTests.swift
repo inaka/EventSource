@@ -46,11 +46,11 @@ class ConfigurationTests: XCTestCase {
 
 	func testEventsList() {
 		let sut = TestableEventSource(url: "http://test.com")
-		sut.addEventListener("first") { (id, event, data) in
+		sut.addEventListener("first") { (event) in
 			print("id")
 		}
 
-		sut.addEventListener("second") { (id, event, data) in
+		sut.addEventListener("second") { (event) in
 			print("id")
 		}
 
@@ -61,7 +61,7 @@ class ConfigurationTests: XCTestCase {
 
 	func testRemoveEventListeners() {
 		let sut = TestableEventSource(url: "http://test.com")
-		sut.addEventListener("first") { (id, event, data) in
+		sut.addEventListener("first") { (event) in
 			print("id")
 		}
 
