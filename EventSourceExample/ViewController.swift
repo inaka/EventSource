@@ -30,20 +30,20 @@ class ViewController: UIViewController {
             self.status.text = "DISCONNECTED"
         }
 
-        self.eventSource?.onMessage { (event) in
-            guard let event = event else {
+        self.eventSource?.onMessagesReceived { (events) in
+            guard let lastEvent = events.last else {
                 return
             }
-
-            self.updateLabels(event.id, event: event.event, data: event.data)
+            
+            self.updateLabels(lastEvent.id, event: lastEvent.event, data: lastEvent.data)
         }
 
-        self.eventSource?.addEventListener("user-connected") { (event) in
-            guard let event = event else {
+        self.eventSource?.addEventListener("user-connected") { (events) in
+            guard let lastEvent = events.last else {
                 return
             }
-
-            self.updateLabels(event.id, event: event.event, data: event.data)
+            
+            self.updateLabels(lastEvent.id, event: lastEvent.event, data: lastEvent.data)
         }
 
 //        eventSource.close()

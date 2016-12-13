@@ -11,10 +11,10 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     fileprivate let receivedString: NSString?
     fileprivate var onOpenCallback: ((Void) -> Void)?
     fileprivate var onErrorCallback: ((NSError?) -> Void)?
-    fileprivate var onMessageCallback: ((SSEEvent?) -> Void)?
+    fileprivate var onMessagesReceivedCallback: (([SSEEvent]) -> Void)?
     open internal(set) var readyState: EventSourceState
     open fileprivate(set) var retryTime = 3000
-    fileprivate var eventListeners = Dictionary<String, (SSEEvent) -> Void>()
+    fileprivate var eventListeners = Dictionary<String, ([SSEEvent]) -> Void>()
     fileprivate var headers: Dictionary<String, String>
     internal var urlSession: Foundation.URLSession?
     internal var task: URLSessionDataTask?
@@ -23,6 +23,8 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     internal let receivedDataBuffer: NSMutableData
 	fileprivate let uniqueIdentifier: String
     fileprivate let validNewlineCharacters = ["\r\n", "\n", "\r"]
+
+    public internal(set) var lastEventID: String?
 
     var event = Dictionary<String, String>()
 
@@ -116,11 +118,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         }
     }
 
-    open func onMessage(_ onMessageCallback: @escaping ((SSEEvent?) -> Void)) {
-        self.onMessageCallback = onMessageCallback
+    open func onMessagesReceived(_ onMessagesReceivedCallback: @escaping (([SSEEvent]) -> Void)) {
+        self.onMessagesReceivedCallback = onMessagesReceivedCallback
     }
 
-    open func addEventListener(_ event: String, handler: @escaping ((SSEEvent?) -> Void)) {
+    open func addEventListener(_ event: String, handler: @escaping (([SSEEvent]) -> Void)) {
         self.eventListeners[event] = handler
     }
 
@@ -250,28 +252,18 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             parsedEvents.append(parseEvent(event))
         }
 
+        if let onMessagesReceivedCallback = onMessagesReceivedCallback {
+            onMessagesReceivedCallback(parsedEvents)
+        }
+
         for parsedEvent in parsedEvents {
             self.lastEventID = parsedEvent.id
 
-            if parsedEvent.event == nil {
-                if let data = parsedEvent.data, let onMessage = self.onMessageCallback {
-                    DispatchQueue.main.async {
-                        let event = SSEEvent(id: self.lastEventID, event: "message", data: data)
-                        onMessage(event)
-                    }
-                }
-            }
-
-            if let event = parsedEvent.event, let data = parsedEvent.data, let eventHandler = self.eventListeners[event] {
-                DispatchQueue.main.async {
-                    let event = SSEEvent(id: self.lastEventID, event: event, data: data)
-                    eventHandler(event)
-                }
+            if let event = parsedEvent.event, let eventHandler = self.eventListeners[event] {
+                eventHandler([parsedEvent])
             }
         }
     }
-
-    internal var lastEventID: String?
 
     fileprivate func parseEvent(_ eventString: String) -> SSEEvent {
         var eventData = Dictionary<String, String>()

@@ -22,7 +22,7 @@ class SplittedEvents: XCTestCase {
 	func testEventDataIsRemovedFromBufferWhenProcessed() {
 		let expectation = self.expectation(description: "onMessage should be called")
 		let eventData = "id: event-id\ndata:event-data\n\n".data(using: String.Encoding.utf8)
-		sut.onMessage { (event) in
+		sut.onMessagesReceived { (events) in
 			expectation.fulfill()
 		}
 
@@ -41,7 +41,8 @@ class SplittedEvents: XCTestCase {
 
         let dataPacket1 = "id: event-id\nda".data(using: String.Encoding.utf8)
         let dataPacket2 = "ta:event-data\n\n".data(using: String.Encoding.utf8)
-        sut.onMessage { (event) in
+        sut.onMessagesReceived { (events) in
+            let event = events.last
             XCTAssertEqual(event!.event!, "message", "the event should be message")
             XCTAssertEqual(event!.id!, "event-id", "the event id should be received")
             XCTAssertEqual(event!.data!, "event-data", "the event data should be received")
@@ -64,7 +65,8 @@ class SplittedEvents: XCTestCase {
         let expectation = self.expectation(description: "onMessage should be called")
 
         let eventData = "id: event-id\r\ndata:event-data\r\n\r\n".data(using: String.Encoding.utf8)
-        sut.onMessage { (event) in
+        sut.onMessagesReceived { (events) in
+            let event = events.last
             XCTAssertEqual(event!.event!, "message", "the event should be message")
             XCTAssertEqual(event!.id!, "event-id", "the event id should be received")
             XCTAssertEqual(event!.data!, "event-data", "the event data should be received")
@@ -86,7 +88,8 @@ class SplittedEvents: XCTestCase {
         let expectation = self.expectation(description: "onMessage should be called")
 
         let eventData = "id: event-id\rdata:event-data\r\r".data(using: String.Encoding.utf8)
-        sut.onMessage { (event) in
+        sut.onMessagesReceived { (events) in
+            let event = events.last
             XCTAssertEqual(event!.event!, "message", "the event should be message")
             XCTAssertEqual(event!.id!, "event-id", "the event id should be received")
             XCTAssertEqual(event!.data!, "event-data", "the event data should be received")
