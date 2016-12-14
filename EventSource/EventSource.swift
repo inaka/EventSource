@@ -231,7 +231,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     }
 
     fileprivate func parseEventStream(_ events: [String]) {
-        var parsedEvents: [SSEEvent] = []
+        var parsedEvents: [SSEEvent] = [SSEEvent]()
 
         for event in events {
             if event.isEmpty {
