@@ -9,3 +9,13 @@ public class SSEEvent {
         self.data = data
     }
  }
+
+extension SSEEvent: Equatable {}
+
+public func ==(lhs: SSEEvent, rhs: SSEEvent) -> Bool {
+    let idsEqual = (lhs.id == rhs.id)
+    let eventsEqual = (lhs.event == rhs.event)
+    let dataEqual = (lhs.data == rhs.data)
+
+    return idsEqual && eventsEqual && dataEqual
+}
