@@ -7,7 +7,7 @@ public enum EventSourceState {
 }
 
 open class EventSource: NSObject, URLSessionDataDelegate {
-    let url: URL
+    public let url: URL
     fileprivate let receivedString: NSString?
     fileprivate var onOpenCallback: ((Void) -> Void)?
     fileprivate var onErrorCallback: ((NSError?) -> Void)?
