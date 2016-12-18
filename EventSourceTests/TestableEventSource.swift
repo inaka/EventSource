@@ -1,12 +1,5 @@
-//
-//  TestableEventSource.swift
-//  EventSource
-//
-//  Created by Andres Canal on 6/21/16.
-//  Copyright © 2016 Inaka. All rights reserved.
-//
-
 import UIKit
+@testable import EventSource
 
 class TestableEventSource: EventSource {
 

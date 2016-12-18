@@ -82,7 +82,7 @@ class EventSourceTests: XCTestCase {
 		let expectation = self.expectation(description: "onMessage should be called")
 		self.sut.onMessagesReceived { (events) in
             let event = events.last
-			XCTAssertEqual(event!.id!, "event-id-1", "the event id should be received")
+			XCTAssertNil(event!.id)
 			expectation.fulfill()
 		}
 
@@ -138,7 +138,7 @@ class EventSourceTests: XCTestCase {
 
 		sut.onMessagesReceived { (events) in
             let event = events.last
-			XCTAssertEqual(event!.event!, "message", "the event should be message")
+			XCTAssertNil(event!.event)
 			XCTAssertEqual(event!.id!, "event-id", "the event id should be received")
 			XCTAssertEqual(event!.data!, "event-data-first\nevent-data-second", "the event data should be received")
 
@@ -232,16 +232,18 @@ class EventSourceTests: XCTestCase {
 		}
 	}
 
-	func testIgnoreCommets() {
+	func testIgnoreComments() {
 		sut.addEventListener("event") { (events) in
-			XCTAssert(false, "got event in comment")
+            let didParseComments = events.count > 0
+            XCTAssert(!didParseComments, "Interpreted a comment as an event")
 		}
 
 		sut.onMessagesReceived { (events) in
-			XCTAssert(false, "got event in comment")
+            let didParseComments = events.count > 0
+			XCTAssert(!didParseComments, "Interpreted a comment as an event")
 		}
 
 		sut.callDidReceiveResponse()
-		sut.callDidReceiveData(":coment\n\n".data(using: String.Encoding.utf8)!)
+		sut.callDidReceiveData(":comment\n\n".data(using: String.Encoding.utf8)!)
 	}
 }
