@@ -21,7 +21,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 	fileprivate let lastEventIDKey: String
     fileprivate let receivedString: NSString?
     fileprivate var onOpenCallback: ((Void) -> Void)?
-    fileprivate var onErrorCallback: ((NSError?) -> Void)?
+    fileprivate var onErrorCallback: ((NSError) -> Void)?
     fileprivate var onMessageCallback: ((_ id: String?, _ event: String?, _ data: String?) -> Void)?
     open internal(set) var readyState: EventSourceState
     open fileprivate(set) var retryTime = 3000
@@ -120,12 +120,12 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.onOpenCallback = onOpenCallback
     }
 
-    open func onError(_ onErrorCallback: @escaping ((NSError?) -> Void)) {
+    open func onError(_ onErrorCallback: @escaping ((NSError) -> Void)) {
         self.onErrorCallback = onErrorCallback
 
         if let errorBeforeSet = self.errorBeforeSetErrorCallBack {
-            self.onErrorCallback!(errorBeforeSet)
             self.errorBeforeSetErrorCallBack = nil
+            self.onErrorCallback?(errorBeforeSet)
         }
     }
 
@@ -190,12 +190,16 @@ open class EventSource: NSObject, URLSessionDataDelegate {
                 self.connect()
             }
         }
-
+        
+        guard let unwrapedError = error else {
+            return
+        }
+        
         DispatchQueue.main.async {
             if let errorCallback = self.onErrorCallback {
-                errorCallback(error as NSError?)
+                errorCallback(unwrapedError as NSError)
             } else {
-                self.errorBeforeSetErrorCallBack = error as? NSError
+                self.errorBeforeSetErrorCallBack = unwrapedError as NSError
             }
         }
     }
