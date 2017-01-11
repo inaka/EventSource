@@ -120,7 +120,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.onOpenCallback = onOpenCallback
     }
 
-    open func onError(_ onErrorCallback: @escaping ((NSError?) -> Void)) {
+    open func onError(_ onErrorCallback: @escaping ((NSError) -> Void)) {
         self.onErrorCallback = onErrorCallback
 
         if let errorBeforeSet = self.errorBeforeSetErrorCallBack {
