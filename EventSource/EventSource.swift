@@ -21,7 +21,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 	fileprivate let lastEventIDKey: String
     fileprivate let receivedString: NSString?
     fileprivate var onOpenCallback: ((Void) -> Void)?
-    fileprivate var onErrorCallback: ((NSError?) -> Void)?
+    fileprivate var onErrorCallback: ((NSError) -> Void)?
     fileprivate var onMessageCallback: ((_ id: String?, _ event: String?, _ data: String?) -> Void)?
     open internal(set) var readyState: EventSourceState
     open fileprivate(set) var retryTime = 3000
