@@ -124,8 +124,8 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.onErrorCallback = onErrorCallback
 
         if let errorBeforeSet = self.errorBeforeSetErrorCallBack {
-            self.onErrorCallback!(errorBeforeSet)
             self.errorBeforeSetErrorCallBack = nil
+            self.onErrorCallback?(errorBeforeSet)
         }
     }
 
@@ -190,12 +190,16 @@ open class EventSource: NSObject, URLSessionDataDelegate {
                 self.connect()
             }
         }
-
+        
+        guard let unwrapedError = error else {
+            return
+        }
+        
         DispatchQueue.main.async {
             if let errorCallback = self.onErrorCallback {
-                errorCallback(error as NSError?)
+                errorCallback(unwrapedError as NSError)
             } else {
-                self.errorBeforeSetErrorCallBack = error as? NSError
+                self.errorBeforeSetErrorCallBack = unwrapedError as NSError
             }
         }
     }
