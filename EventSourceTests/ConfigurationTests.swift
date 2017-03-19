@@ -10,6 +10,14 @@ import UIKit
 import XCTest
 @testable import EventSource
 
+fileprivate func basicAuth(_ username: String, password: String) -> String {
+    let authString = "\(username):\(password)"
+    let authData = authString.data(using: String.Encoding.utf8)
+    let base64String = authData!.base64EncodedString(options: [])
+
+    return "Basic \(base64String)"
+}
+
 class ConfigurationTests: XCTestCase {
 
 	let domain = "http://testdomain.com"
@@ -39,7 +47,7 @@ class ConfigurationTests: XCTestCase {
 
 		let username = "testUsername"
 		let password = "testPassword"
-		let basicAuthString = EventSource.basicAuth(username, password: password)
+		let basicAuthString = basicAuth(username, password: password)
 
 		XCTAssertEqual(basicAuthString, basicAuthToken)
 	}

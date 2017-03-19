@@ -1,6 +1,14 @@
 import UIKit
 import EventSource
 
+fileprivate func basicAuth(_ username: String, password: String) -> String {
+    let authString = "\(username):\(password)"
+    let authData = authString.data(using: String.Encoding.utf8)
+    let base64String = authData!.base64EncodedString(options: [])
+
+    return "Basic \(base64String)"
+}
+
 class ViewController: UIViewController {
 
     @IBOutlet fileprivate weak var status: UILabel!
@@ -17,7 +25,7 @@ class ViewController: UIViewController {
         let username = "fe8b0af5-1b50-467d-ac0b-b29d2d30136b"
         let password = "ae10ff39ca41dgf0a8"
 
-        let basicAuthAuthorization = EventSource.basicAuth(username, password: password)
+        let basicAuthAuthorization = basicAuth(username, password: password)
 
         self.eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
 
@@ -31,20 +39,12 @@ class ViewController: UIViewController {
             self.status.text = "DISCONNECTED"
         }
 
-        self.eventSource?.onMessagesReceived { (events) in
-            guard let lastEvent = events.last else {
-                return
-            }
-
-            self.updateLabels(lastEvent.id, event: lastEvent.event, data: lastEvent.data)
+        self.eventSource?.onEventDispatched { event in
+            self.updateLabels(event.lastEventId, event: event.type, data: event.data)
         }
 
-        self.eventSource?.addEventListener("user-connected") { (events) in
-            guard let lastEvent = events.last else {
-                return
-            }
-
-            self.updateLabels(lastEvent.id, event: lastEvent.event, data: lastEvent.data)
+        self.eventSource?.addEventListener("user-connected") { event in
+            self.updateLabels(event.lastEventId, event: event.type, data: event.data)
         }
 
 //        eventSource.close()

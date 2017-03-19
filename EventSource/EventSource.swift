@@ -11,10 +11,9 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     fileprivate let receivedString: NSString?
     fileprivate var onOpenCallback: ((Void) -> Void)?
     fileprivate var onErrorCallback: ((NSError?) -> Void)?
-    fileprivate var onMessagesReceivedCallback: (([SSEEvent]) -> Void)?
+    fileprivate var onEventDispatchedCallback: ((SSEMessageEvent) -> ())?
     open internal(set) var readyState: EventSourceState
     open fileprivate(set) var retryTime = 3000
-    fileprivate var eventListeners = Dictionary<String, ([SSEEvent]) -> Void>()
     fileprivate var headers: Dictionary<String, String>
     internal var urlSession: Foundation.URLSession?
     internal var task: URLSessionDataTask?
@@ -23,140 +22,153 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     internal let receivedDataBuffer: NSMutableData
     fileprivate let uniqueIdentifier: String
     fileprivate let validNewlineCharacters = ["\r\n", "\n", "\r"]
-    
-    public internal(set) var lastEventID: String?
-    
+
+    public private(set) var lastEventID: String?
+
     var event = Dictionary<String, String>()
-    
-    
+
+    fileprivate let eventProcessor = EventProcessor()
+
     public init(url: String, headers: [String : String] = [:]) {
-        
+
         self.url = URL(string: url)!
         self.headers = headers
         self.readyState = EventSourceState.closed
         self.operationQueue = OperationQueue()
         self.receivedString = nil
         self.receivedDataBuffer = NSMutableData()
-        
+
         var port = ""
         if let optionalPort = self.url.port {
             port = String(optionalPort)
         }
         let relativePath = self.url.relativePath
         let host = self.url.host ?? ""
-        
+
         self.uniqueIdentifier = "\(self.url.scheme).\(host).\(port).\(relativePath)"
-        
+
         super.init()
+
+        eventProcessor.onEventDispatched = { event in
+            self.lastEventID = event.lastEventId
+            if let callback = self.onEventDispatchedCallback {
+                callback(event)
+            }
+        }
+
+        eventProcessor.onRetryTimeChanged = { updatedTime in
+            self.retryTime = updatedTime
+        }
+
         self.connect()
     }
-    
+
     //Mark: Connect
-    
+
     func connect() {
         var additionalHeaders = self.headers
         if let eventID = self.lastEventID {
             additionalHeaders["Last-Event-Id"] = eventID
         }
-        
+
         additionalHeaders["Accept"] = "text/event-stream"
         additionalHeaders["Cache-Control"] = "no-cache"
-        
+
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = TimeInterval(INT_MAX)
         configuration.timeoutIntervalForResource = TimeInterval(INT_MAX)
         configuration.httpAdditionalHeaders = additionalHeaders
-        
+
         self.readyState = EventSourceState.connecting
         self.urlSession = newSession(configuration)
         self.task = urlSession!.dataTask(with: self.url)
-        
+
         self.resumeSession()
     }
-    
+
     internal func resumeSession() {
         self.task!.resume()
     }
-    
+
     internal func newSession(_ configuration: URLSessionConfiguration) -> Foundation.URLSession {
         return Foundation.URLSession(configuration: configuration,
                                      delegate: self,
                                      delegateQueue: operationQueue)
     }
-    
+
     //Mark: Close
-    
+
     open func close() {
         self.readyState = EventSourceState.closed
         self.urlSession?.invalidateAndCancel()
     }
-    
+
     fileprivate func receivedMessageToClose(_ httpResponse: HTTPURLResponse?) -> Bool {
         guard let response = httpResponse  else {
             return false
         }
-        
+
         if response.statusCode == 204 {
             self.close()
             return true
         }
         return false
     }
-    
+
     //Mark: EventListeners
-    
+
     open func onOpen(_ onOpenCallback: @escaping ((Void) -> Void)) {
         self.onOpenCallback = onOpenCallback
     }
-    
+
     open func onError(_ onErrorCallback: @escaping ((NSError?) -> Void)) {
         self.onErrorCallback = onErrorCallback
-        
+
         if let errorBeforeSet = self.errorBeforeSetErrorCallBack {
             self.onErrorCallback!(errorBeforeSet)
             self.errorBeforeSetErrorCallBack = nil
         }
     }
-    
-    open func onMessagesReceived(_ onMessagesReceivedCallback: @escaping (([SSEEvent]) -> Void)) {
-        self.onMessagesReceivedCallback = onMessagesReceivedCallback
+
+    open func onEventDispatched(_ onEventDispatched: @escaping ((SSEMessageEvent) -> Void)) {
+        onEventDispatchedCallback = onEventDispatched
     }
-    
-    open func addEventListener(_ event: String, handler: @escaping (([SSEEvent]) -> Void)) {
-        self.eventListeners[event] = handler
+
+    open func addEventListener(_ event: String, handler: @escaping ((SSEMessageEvent) -> Void)) {
+        eventProcessor.eventListeners[event] = handler
     }
-    
+
     open func removeEventListener(_ event: String) -> Void {
-        self.eventListeners.removeValue(forKey: event)
+        eventProcessor.eventListeners.removeValue(forKey: event)
     }
-    
+
     open func events() -> Array<String> {
-        return Array(self.eventListeners.keys)
+        return Array(eventProcessor.eventListeners.keys)
     }
-    
+
     //MARK: URLSessionDataDelegate
-    
+
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
         if self.receivedMessageToClose(dataTask.response as? HTTPURLResponse) {
             return
         }
-        
+
         if self.readyState != EventSourceState.open {
             return
         }
-        
+
         self.receivedDataBuffer.append(data)
-        let eventStream = extractEventsFromBuffer()
-        self.parseEventStream(eventStream)
+        let eventStream = extractStringsFromDataBuffer()
+        eventProcessor.processSSEStream(eventStream)
     }
-    
+
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         completionHandler(URLSession.ResponseDisposition.allow)
-        
+
         if self.receivedMessageToClose(dataTask.response as? HTTPURLResponse) {
             return
         }
-        
+
         self.readyState = EventSourceState.open
         if self.onOpenCallback != nil {
             DispatchQueue.main.async {
@@ -164,14 +176,14 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             }
         }
     }
-    
+
     open func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
         self.readyState = EventSourceState.closed
-        
+
         if self.receivedMessageToClose(task.response as? HTTPURLResponse) {
             return
         }
-        
+
         if error == nil || (error as! NSError).code != -999 {
             let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
             let delayTime = DispatchTime.now() + Double(Int64(nanoseconds)) / Double(NSEC_PER_SEC)
@@ -179,7 +191,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
                 self.connect()
             }
         }
-        
+
         DispatchQueue.main.async {
             if let errorCallback = self.onErrorCallback {
                 errorCallback(error as NSError?)
@@ -188,12 +200,12 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             }
         }
     }
-    
+
     //MARK: Helpers
-    
-    fileprivate func extractEventsFromBuffer() -> [String] {
+
+    fileprivate func extractStringsFromDataBuffer() -> [String] {
         var events = [String]()
-        
+
         // Find first occurrence of delimiter
         var searchRange =  NSRange(location: 0, length: receivedDataBuffer.length)
         while let foundRange = searchForEventInRange(searchRange) {
@@ -208,16 +220,16 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             searchRange.location = foundRange.location + foundRange.length
             searchRange.length = receivedDataBuffer.length - searchRange.location
         }
-        
+
         // Remove the found events from the buffer
         self.receivedDataBuffer.replaceBytes(in: NSRange(location: 0, length: searchRange.location), withBytes: nil, length: 0)
-        
+
         return events
     }
-    
+
     fileprivate func searchForEventInRange(_ searchRange: NSRange) -> NSRange? {
         let delimiters = validNewlineCharacters.map { "\($0)\($0)".data(using: String.Encoding.utf8)! }
-        
+
         for delimiter in delimiters {
             let foundRange = receivedDataBuffer.range(of: delimiter,
                                                       options: NSData.SearchOptions(),
@@ -226,107 +238,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
                 return foundRange
             }
         }
-        
+
         return nil
-    }
-    
-    fileprivate func parseEventStream(_ events: [String]) {
-        var parsedEvents: [SSEEvent] = [SSEEvent]()
-        
-        for event in events {
-            if event.isEmpty {
-                continue
-            }
-            
-            if event.hasPrefix(":") {
-                continue
-            }
-            
-            if (event as NSString).contains("retry:") {
-                if let reconnectTime = parseRetryTime(event) {
-                    self.retryTime = reconnectTime
-                }
-                continue
-            }
-            
-            parsedEvents.append(parseEvent(event))
-        }
-        
-        if let onMessagesReceivedCallback = onMessagesReceivedCallback {
-            onMessagesReceivedCallback(parsedEvents)
-        }
-        
-        for parsedEvent in parsedEvents {
-            if let parsedEventId = parsedEvent.id {
-                self.lastEventID = parsedEventId
-            }
-            
-            if let event = parsedEvent.event, let eventHandler = self.eventListeners[event] {
-                eventHandler([parsedEvent])
-            }
-        }
-    }
-    
-    fileprivate func parseEvent(_ eventString: String) -> SSEEvent {
-        var eventData = Dictionary<String, String>()
-        
-        for line in eventString.components(separatedBy: CharacterSet.newlines) as [String] {
-            autoreleasepool {
-                let (key, value) = self.parseKeyValuePair(line)
-                
-                if key != nil && value != nil {
-                    if eventData[key as! String] != nil {
-                        eventData[key as! String] = "\(eventData[key as! String]!)\n\(value!)"
-                    } else {
-                        eventData[key as! String] = value! as String
-                    }
-                } else if key != nil && value == nil {
-                    eventData[key as! String] = ""
-                }
-            }
-        }
-        
-        let event = SSEEvent(id: eventData["id"], event: eventData["event"], data: eventData["data"])
-        return event
-    }
-    
-    fileprivate func parseKeyValuePair(_ line: String) -> (NSString?, NSString?) {
-        var key: NSString?, value: NSString?
-        let scanner = Scanner(string: line)
-        scanner.scanUpTo(":", into: &key)
-        scanner.scanString(":", into: nil)
-        
-        for newline in validNewlineCharacters {
-            if scanner.scanUpTo(newline, into: &value) {
-                break
-            }
-        }
-        
-        return (key, value)
-    }
-    
-    fileprivate func parseRetryTime(_ eventString: String) -> Int? {
-        var reconnectTime: Int?
-        let separators = CharacterSet(charactersIn: ":")
-        if let milli = eventString.components(separatedBy: separators).last {
-            let milliseconds = trim(milli)
-            
-            if let intMiliseconds = Int(milliseconds) {
-                reconnectTime = intMiliseconds
-            }
-        }
-        return reconnectTime
-    }
-    
-    fileprivate func trim(_ string: String) -> String {
-        return string.trimmingCharacters(in: CharacterSet.whitespaces)
-    }
-    
-    class open func basicAuth(_ username: String, password: String) -> String {
-        let authString = "\(username):\(password)"
-        let authData = authString.data(using: String.Encoding.utf8)
-        let base64String = authData!.base64EncodedString(options: [])
-        
-        return "Basic \(base64String)"
     }
 }
