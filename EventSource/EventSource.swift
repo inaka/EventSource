@@ -128,15 +128,19 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         }
     }
 
-    public func onMessage(_ onMessageCallback: @escaping ((String, String, String) -> Void)) {
+    open func onMessage(_ onMessageCallback: @escaping ((String, String, String) -> Void)) {
             self.onMessageCallback = onMessageCallback
     }
 
-    open func onEventDispatched(_ onEventDispatched: @escaping ((SSEMessageEvent) -> Void)) {
+    open func addEventListener(_ event: String, handler: @escaping ((String, String, String) -> Void)) {
+        eventProcessor.eventListenersJsVersion[event] = handler
+    }
+
+    public func onEventDispatched(_ onEventDispatched: @escaping ((SSEMessageEvent) -> Void)) {
         onEventDispatchedCallback = onEventDispatched
     }
 
-    open func addEventListener(_ event: String, handler: @escaping ((SSEMessageEvent) -> Void)) {
+    public func addEventListener(_ event: String, handler: @escaping ((SSEMessageEvent) -> Void)) {
         eventProcessor.eventListeners[event] = handler
     }
 

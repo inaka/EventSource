@@ -6,6 +6,7 @@ class EventProcessorTests: XCTestCase {
     fileprivate var subject: EventProcessor!
     fileprivate var dispatchedEvents: [SSEMessageEvent] = []
     fileprivate var registeredEventsDispatched: [String : SSEMessageEvent] = [:]
+    fileprivate var registeredEventsDispatchedJsVersion: [String : (id: String, event: String, data: String)] = [:]
     private var retryTimeUpdates: [Int] = []
 
     override func setUp() {
@@ -19,6 +20,10 @@ class EventProcessorTests: XCTestCase {
 
         subject.eventListeners["event name"] = { event in
             self.registeredEventsDispatched[event.type] = event
+        }
+
+        subject.eventListenersJsVersion["event name"] = { id, event, data in
+            self.registeredEventsDispatchedJsVersion[event] = (id, event, data)
         }
 
         subject.onRetryTimeChanged = { retryTime in
@@ -41,6 +46,15 @@ class EventProcessorTests: XCTestCase {
         }
 
         assertDispatchProperties(event: registeredEvent, expectedId: "someotherid", expectedData: "good data", expectedType: "event name")
+
+        guard let registeredEventJsVersionResult = registeredEventsDispatchedJsVersion["event name"] else {
+            XCTFail("Failed to call registered handler (JS version) for the 'event name' type of event")
+            return
+        }
+
+        XCTAssertEqual(registeredEventJsVersionResult.id, "someotherid")
+        XCTAssertEqual(registeredEventJsVersionResult.data, "good data")
+        XCTAssertEqual(registeredEventJsVersionResult.event, "event name")
     }
 
     func test_processSSEStream_whenDataSplitAcrossMultipleStreamItems() {

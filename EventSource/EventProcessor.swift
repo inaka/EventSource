@@ -3,6 +3,7 @@ import Foundation
 class EventProcessor {
     var onEventDispatched: ((SSEMessageEvent) -> Void)?
     var eventListeners: [String: ((SSEMessageEvent) -> Void)] = [:]
+    var eventListenersJsVersion: [String: ((String, String, String) -> Void)] = [:]
     var onRetryTimeChanged: ((Int) -> Void)?
 
     private var inputInProcess: String = ""
@@ -104,6 +105,9 @@ class EventProcessor {
         dispatchCallback(event)
         if let specificEventHandler = eventListeners[event.type] {
             specificEventHandler(event)
+        }
+        if let specificEventHandlerJsVersion = eventListenersJsVersion[event.type] {
+            specificEventHandlerJsVersion(event.lastEventId, event.type, event.data)
         }
     }
 
