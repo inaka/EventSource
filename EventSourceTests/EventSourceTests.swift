@@ -58,12 +58,21 @@ class EventSourceTests: XCTestCase {
 // MARK: Testing event-id behaviours
 
 	func testCorrectlyStoringLastEventID() {
-		let expectation = self.expectation(description: "onMessage should be called")
+		let expectation = self.expectation(description: "onMessage and onEventDispatched should be called")
 
+        var didCallEventHandler = false
+        var didCallMessageHandler = false
 		sut.onEventDispatched { event in
 			XCTAssertEqual(event.lastEventId, "event-id-1", "the event id should be received")
-			expectation.fulfill()
+            didCallEventHandler = true
+            if didCallEventHandler && didCallMessageHandler { expectation.fulfill() }
 		}
+
+        sut.onMessage() { id, _, _ in
+            XCTAssertEqual(id, "event-id-1", "the event id should be received")
+            didCallMessageHandler = true
+            if didCallEventHandler && didCallMessageHandler { expectation.fulfill() }
+        }
 
 		sut.callDidReceiveResponse()
 		sut.callDidReceiveData("id: event-id-1\ndata:event-data-first\n\n".data(using: String.Encoding.utf8)!)
@@ -78,11 +87,19 @@ class EventSourceTests: XCTestCase {
 	}
 
 	func testCorrectlyStoringLastEventIDForMultipleEventSourceInstances() {
-		weak var expectation = self.expectation(description: "onMessage should be called")
+		weak var expectation = self.expectation(description: "onMessage and onEventDispatched should be called")
+        var didCallEventHandler = false
+        var didCallMessageHandler = false
 		sut.onEventDispatched { event in
 			XCTAssertEqual(event.lastEventId, "event-id-1", "the event id should be received")
-			expectation!.fulfill()
+            didCallEventHandler = true
+			if didCallEventHandler && didCallMessageHandler { expectation!.fulfill() }
 		}
+        sut.onMessage() { id, _, _ in
+            XCTAssertEqual(id, "event-id-1", "the event id should be received")
+            didCallMessageHandler = true
+            if didCallEventHandler && didCallMessageHandler { expectation!.fulfill() }
+        }
 		sut.callDidReceiveData("id: event-id-1\ndata:event-data-first\n\n".data(using: String.Encoding.utf8)!)
 
 		self.waitForExpectations(timeout: 5) { (error) in
@@ -93,12 +110,22 @@ class EventSourceTests: XCTestCase {
 			XCTAssertEqual(self.sut.lastEventID!, "event-id-1", "last event id stored is different from sent")
 		}
 
-		expectation = self.expectation(description: "onMessage should be called")
+		expectation = self.expectation(description: "onMessage and onEventDispatched should be called")
 		let secondSut = TestableEventSource(url: "http://otherdomain.com", headers: ["Authorization" : "basic auth"])
+        var didCallSecondEventHandler = false
+        var didCallSecondMessageHandler = false
 		secondSut.onEventDispatched { event in
 			XCTAssertEqual(event.lastEventId, "event-id-99", "the event id should be received")
-			expectation!.fulfill()
+            didCallSecondEventHandler = true
+            if didCallSecondEventHandler && didCallSecondMessageHandler { expectation!.fulfill() }
 		}
+
+        secondSut.onMessage() { id, _, _ in
+            XCTAssertEqual(id, "event-id-99", "the event id should be received")
+            didCallSecondMessageHandler = true
+            if didCallSecondEventHandler && didCallSecondMessageHandler { expectation!.fulfill() }
+        }
+
 		secondSut.callDidReceiveData("id: event-id-99\ndata:event-data-first\n\n".data(using: String.Encoding.utf8)!)
 
 		self.waitForExpectations(timeout: 5) { (error) in
@@ -114,15 +141,27 @@ class EventSourceTests: XCTestCase {
 // MARK: Testing multiple line data is correctly received
 
 	func testMultilineData() {
-		let expectation = self.expectation(description: "onMessage should be called")
+		let expectation = self.expectation(description: "onMessage and onEventDispatched should be called")
 
+        var didCallEventHandler = false
+        var didCallMessageHandler = false
 		sut.onEventDispatched { event in
 			XCTAssertEqual(event.type, "message", "unknown event type received:'\(event.type)'")
 			XCTAssertEqual(event.lastEventId, "event-id", "the event id should be received")
 			XCTAssertEqual(event.data, "event-data-first\nevent-data-second", "the event data should be received")
 
-			expectation.fulfill()
+            didCallEventHandler = true
+            if didCallEventHandler && didCallMessageHandler { expectation.fulfill() }
 		}
+
+        sut.onMessage() { id, event, data in
+            XCTAssertEqual(event, "message", "unknown event type received:'\(event)'")
+            XCTAssertEqual(id, "event-id", "the event id should be received")
+            XCTAssertEqual(data, "event-data-first\nevent-data-second", "the event data should be received")
+
+            didCallMessageHandler = true
+            if didCallEventHandler && didCallMessageHandler { expectation.fulfill() }
+        }
 
 		sut.callDidReceiveResponse()
 		sut.callDidReceiveData("id: event-id\ndata:event-data-first\ndata:event-data-second\n\n".data(using: String.Encoding.utf8)!)
@@ -139,11 +178,15 @@ class EventSourceTests: XCTestCase {
 		let response =  HTTPURLResponse(url: URL(string: domain)!, statusCode: 204, httpVersion: "1.1", headerFields: nil)!
 		let dataTask = MockNSURLSessionDataTask(response: response)
 
-		weak var expectation = self.expectation(description: "onMessage should be called")
+		weak var expectation = self.expectation(description: "onMessage and onEventDispatched should be called")
 
 		sut.onEventDispatched { event in
 			XCTFail()
 		}
+
+        sut.onMessage() { _, _, _ in
+            XCTFail()
+        }
 
 		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
 			if self.sut.readyState == .closed {
@@ -164,7 +207,7 @@ class EventSourceTests: XCTestCase {
 
 // MARK: Testing comment events
 	func testAddEventListenerAndReceiveEvent() {
-		let expectation = self.expectation(description: "onEvent should be called")
+		let expectation = self.expectation(description: "onMessage and onEventDispatched should be called")
 
 		sut.addEventListener("event-event") { event in
 			XCTAssertEqual(event.type, "event-event", "the event should be test")
@@ -192,6 +235,10 @@ class EventSourceTests: XCTestCase {
 		sut.onEventDispatched { _ in
             XCTAssert(false, "Interpreted a comment as an event")
 		}
+
+        sut.onMessage() { _, _, _ in
+            XCTAssert(false, "Interpreted a comment as an event")
+        }
 
 		sut.callDidReceiveResponse()
 		sut.callDidReceiveData(":comment\n\n".data(using: String.Encoding.utf8)!)

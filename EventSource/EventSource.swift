@@ -11,6 +11,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     fileprivate let receivedString: NSString?
     fileprivate var onOpenCallback: ((Void) -> Void)?
     fileprivate var onErrorCallback: ((NSError?) -> Void)?
+    fileprivate var onMessageCallback: ((String, String, String) -> Void)?
     fileprivate var onEventDispatchedCallback: ((SSEMessageEvent) -> ())?
     open internal(set) var readyState: EventSourceState
     open fileprivate(set) var retryTime = 3000
@@ -30,7 +31,6 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     fileprivate let eventProcessor = EventProcessor()
 
     public init(url: String, headers: [String : String] = [:]) {
-
         self.url = URL(string: url)!
         self.headers = headers
         self.readyState = EventSourceState.closed
@@ -51,8 +51,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
         eventProcessor.onEventDispatched = { event in
             self.lastEventID = event.lastEventId
-            if let callback = self.onEventDispatchedCallback {
-                callback(event)
+            if let eventCallback = self.onEventDispatchedCallback {
+                eventCallback(event)
+            }
+            if let messageCallback = self.onMessageCallback {
+                messageCallback(event.lastEventId, event.type, event.data)
             }
         }
 
@@ -128,6 +131,10 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             self.onErrorCallback!(errorBeforeSet)
             self.errorBeforeSetErrorCallBack = nil
         }
+    }
+
+    public func onMessage(_ onMessageCallback: @escaping ((String, String, String) -> Void)) {
+            self.onMessageCallback = onMessageCallback
     }
 
     open func onEventDispatched(_ onEventDispatched: @escaping ((SSEMessageEvent) -> Void)) {
