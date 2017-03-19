@@ -8,7 +8,6 @@ public enum EventSourceState {
 
 open class EventSource: NSObject, URLSessionDataDelegate {
     public let url: URL
-    fileprivate let receivedString: NSString?
     fileprivate var onOpenCallback: ((Void) -> Void)?
     fileprivate var onErrorCallback: ((NSError?) -> Void)?
     fileprivate var onMessageCallback: ((String, String, String) -> Void)?
@@ -22,11 +21,8 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     fileprivate var errorBeforeSetErrorCallBack: NSError?
     internal let receivedDataBuffer: NSMutableData
     fileprivate let uniqueIdentifier: String
-    fileprivate let validNewlineCharacters = ["\r\n", "\n", "\r"]
 
     public private(set) var lastEventID: String?
-
-    var event = Dictionary<String, String>()
 
     fileprivate let eventProcessor = EventProcessor()
 
@@ -35,7 +31,6 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.headers = headers
         self.readyState = EventSourceState.closed
         self.operationQueue = OperationQueue()
-        self.receivedString = nil
         self.receivedDataBuffer = NSMutableData()
 
         var port = ""
@@ -235,6 +230,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     }
 
     fileprivate func searchForEventInRange(_ searchRange: NSRange) -> NSRange? {
+        let validNewlineCharacters = ["\r\n", "\n", "\r"]
         let delimiters = validNewlineCharacters.map { "\($0)\($0)".data(using: String.Encoding.utf8)! }
 
         for delimiter in delimiters {
