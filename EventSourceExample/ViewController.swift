@@ -43,7 +43,7 @@ class ViewController: UIViewController {
             self.updateLabels(event.lastEventId, event: event.type, data: event.data)
         }
 
-        self.eventSource?.addEventListener("user-connected") { event in
+        self.eventSource?.addListenerForEvent(withType: "user-connected") { event in
             self.updateLabels(event.lastEventId, event: event.type, data: event.data)
         }
 

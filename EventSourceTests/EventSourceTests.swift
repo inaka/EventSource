@@ -211,7 +211,7 @@ class EventSourceTests: XCTestCase {
 
         var didCallObjectCallback = false
         var didCallJsCallback = false
-        sut.addEventListener("event-event") { (event: SSEMessageEvent) in
+        sut.addListenerForEvent(withType: "event-event") { event in
             XCTAssertEqual(event.type, "event-event", "the event should be test")
             XCTAssertEqual(event.lastEventId, "event-id", "the event id should be received")
             XCTAssertEqual(event.data, "event-data", "the event data should be received")
@@ -240,7 +240,7 @@ class EventSourceTests: XCTestCase {
     }
 
     func testIgnoreComments() {
-        sut.addEventListener("event") { (_: SSEMessageEvent) in
+        sut.addListenerForEvent(withType: "event") { _ in
             XCTAssert(false, "Interpreted a comment as an event")
         }
 

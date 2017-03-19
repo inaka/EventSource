@@ -140,8 +140,8 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         onEventDispatchedCallback = onEventDispatched
     }
 
-    public func addEventListener(_ event: String, handler: @escaping ((SSEMessageEvent) -> Void)) {
-        eventProcessor.eventListeners[event] = handler
+    public func addListenerForEvent(withType type: String, handler: @escaping ((SSEMessageEvent) -> Void)) {
+        eventProcessor.eventListeners[type] = handler
     }
 
     open func removeEventListener(_ event: String) -> Void {
