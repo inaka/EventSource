@@ -40,7 +40,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         let relativePath = self.url.relativePath
         let host = self.url.host ?? ""
 
-        self.uniqueIdentifier = "\(self.url.scheme).\(host).\(port).\(relativePath)"
+        var uniqueIdPrependValue = ""
+        if let urlScheme = self.url.scheme {
+            uniqueIdPrependValue = urlScheme
+        }
+        self.uniqueIdentifier = "\(uniqueIdPrependValue).\(host).\(port).\(relativePath)"
 
         super.init()
 
@@ -190,7 +194,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             return
         }
 
-        if error == nil || (error as! NSError).code != -999 {
+        if error == nil || (error! as NSError).code != -999 {
             let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
             let delayTime = DispatchTime.now() + Double(Int64(nanoseconds)) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: delayTime) {
@@ -202,7 +206,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             if let errorCallback = self.onErrorCallback {
                 errorCallback(error as NSError?)
             } else {
-                self.errorBeforeSetErrorCallBack = error as? NSError
+                self.errorBeforeSetErrorCallBack = error as NSError?
             }
         }
     }
@@ -220,7 +224,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
                 let dataChunk = receivedDataBuffer.subdata(
                     with: NSRange(location: searchRange.location, length: foundRange.location - searchRange.location)
                 )
-                events.append(NSString(data: dataChunk, encoding: String.Encoding.utf8.rawValue) as! String)
+                events.append(NSString(data: dataChunk, encoding: String.Encoding.utf8.rawValue)! as String)
             }
             // Search for next occurrence of delimiter
             searchRange.location = foundRange.location + foundRange.length
