@@ -136,11 +136,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         eventProcessor.eventListenersJsVersion[event] = handler
     }
 
-    public func onEventDispatched(_ onEventDispatched: @escaping ((SSEMessageEvent) -> Void)) {
+    open func onEventDispatched(_ onEventDispatched: @escaping ((SSEMessageEvent) -> Void)) {
         onEventDispatchedCallback = onEventDispatched
     }
 
-    public func addListenerForEvent(withType type: String, handler: @escaping ((SSEMessageEvent) -> Void)) {
+    open func addListenerForEvent(withType type: String, handler: @escaping ((SSEMessageEvent) -> Void)) {
         eventProcessor.eventListeners[type] = handler
     }
 
