@@ -12,7 +12,7 @@
 		41DFE42F1A8E686F000C3519 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 41DFE42D1A8E686F000C3519 /* Main.storyboard */; };
 		41DFE4311A8E686F000C3519 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 41DFE4301A8E686F000C3519 /* Images.xcassets */; };
 		41DFE4341A8E686F000C3519 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 41DFE4321A8E686F000C3519 /* LaunchScreen.xib */; };
-		41DFE4401A8E6870000C3519 /* SplittedEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE43F1A8E6870000C3519 /* SplittedEvents.swift */; };
+		41DFE4401A8E6870000C3519 /* SplitEventsTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DFE43F1A8E6870000C3519 /* SplitEventsTest.swift */; };
 		7B673E6F1E7B9B2300CAC921 /* EventProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B673E6E1E7B9B2300CAC921 /* EventProcessor.swift */; };
 		7B673E711E7B9BA900CAC921 /* EventProcessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B673E701E7B9BA900CAC921 /* EventProcessorTests.swift */; };
 		7BC0750A1E06F58600883F71 /* EventSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 7BC074FC1E06F58600883F71 /* EventSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -52,7 +52,7 @@
 		41DFE4331A8E686F000C3519 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		41DFE4391A8E6870000C3519 /* EventSourceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = EventSourceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		41DFE43E1A8E6870000C3519 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		41DFE43F1A8E6870000C3519 /* SplittedEvents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplittedEvents.swift; sourceTree = "<group>"; };
+		41DFE43F1A8E6870000C3519 /* SplitEventsTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplitEventsTest.swift; sourceTree = "<group>"; };
 		41DFE44A1A8E6D6F000C3519 /* EventSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventSource.swift; sourceTree = "<group>"; };
 		7B673E6E1E7B9B2300CAC921 /* EventProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventProcessor.swift; sourceTree = "<group>"; };
 		7B673E701E7B9BA900CAC921 /* EventProcessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EventProcessorTests.swift; sourceTree = "<group>"; };
@@ -139,7 +139,7 @@
 				7B673E701E7B9BA900CAC921 /* EventProcessorTests.swift */,
 				C11719F51D19C16800807B3B /* TestableEventSource.swift */,
 				C11719F71D19CF3F00807B3B /* MockNSURLSessionDataTask.swift */,
-				41DFE43F1A8E6870000C3519 /* SplittedEvents.swift */,
+				41DFE43F1A8E6870000C3519 /* SplitEventsTest.swift */,
 				C1F518E11C99D96200713047 /* EventSourceTests.swift */,
 				C1F518F91C99E3A300713047 /* ConfigurationTests.swift */,
 				41DFE43D1A8E6870000C3519 /* Supporting Files */,
@@ -324,7 +324,7 @@
 			files = (
 				7B673E711E7B9BA900CAC921 /* EventProcessorTests.swift in Sources */,
 				C1F518E21C99D96200713047 /* EventSourceTests.swift in Sources */,
-				41DFE4401A8E6870000C3519 /* SplittedEvents.swift in Sources */,
+				41DFE4401A8E6870000C3519 /* SplitEventsTest.swift in Sources */,
 				C11719F81D19CF3F00807B3B /* MockNSURLSessionDataTask.swift in Sources */,
 				C1F518FA1C99E3A300713047 /* ConfigurationTests.swift in Sources */,
 				C11719F61D19C16800807B3B /* TestableEventSource.swift in Sources */,

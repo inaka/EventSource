@@ -2,7 +2,7 @@ import UIKit
 import XCTest
 @testable import EventSource
 
-class SplittedEvents: XCTestCase {
+class SplitEventsTest: XCTestCase {
     var sut: TestableEventSource!
 
 	override func setUp() {
