@@ -167,9 +167,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             return
         }
 
-        self.receivedDataBuffer.append(data)
-        let eventStream = extractStringsFromDataBuffer()
-        eventProcessor.processSSEStream(eventStream)
+        eventProcessor.process(data)
     }
 
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {

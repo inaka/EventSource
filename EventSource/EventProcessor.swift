@@ -1,6 +1,8 @@
 import Foundation
 
 class EventProcessor {
+    var dataBuffer = DataBuffer()
+
     var onEventDispatched: ((SSEMessageEvent) -> Void)?
     var eventListeners: [String: ((SSEMessageEvent) -> Void)] = [:]
     var eventListenersJsVersion: [String: ((String, String, String) -> Void)] = [:]
@@ -8,47 +10,27 @@ class EventProcessor {
 
     private var inputInProcess: String = ""
     private var lastEventId = ""
-    private var dataBuffer = ""
+    private var eventDataBuffer = ""
     private var eventNameBuffer = ""
 
     private let validNewlineCharacters = ["\r\n", "\n", "\r"]
 
-    func processSSEStream(_ stream: [String]) {
-        for item in stream {
+    func process(_ data: Data) {
+        dataBuffer.injest(data)
+        let parsedDataStrings = dataBuffer.extractParsedStrings()
+
+        for item in parsedDataStrings {
             processSSEItem(item)
         }
+    }
 
-        if inputInProcess != "" {
-            processLine(inputInProcess)
+    private func processSSEItem(_ input: String) {
+        let lines = input.components(separatedBy: CharacterSet.newlines) as [String]
+        for (_, line) in lines.enumerated() {
+            processLine(line)
         }
 
         dispatch()
-    }
-
-    func processSSEItem(_ input: String) {
-        inputInProcess += input
-        let lines = inputInProcess.components(separatedBy: CharacterSet.newlines) as [String]
-        let lastLineIndex = lines.count - 1
-        for (index, line) in lines.enumerated() {
-            let trimmedLine = line.trimmingCharacters(in: CharacterSet.whitespaces)
-            if trimmedLine == "" {
-                dispatch()
-                continue
-            }
-
-
-            if index != lastLineIndex {
-                processLine(line)
-            }
-        }
-
-        if let lastLine = lines.last {
-            if lastLine != "" {
-                inputInProcess = lastLine
-            } else {
-                inputInProcess = ""
-            }
-        }
     }
 
     private func processLine(_ line: String) {
@@ -59,8 +41,8 @@ class EventProcessor {
         if field == "event" {
             eventNameBuffer = value
         } else if field == "data" {
-            dataBuffer += value
-            dataBuffer += "\n"
+            eventDataBuffer += value
+            eventDataBuffer += "\n"
         } else if field == "id" {
             lastEventId = value
         } else if field == "retry" {
@@ -79,13 +61,13 @@ class EventProcessor {
     private func dispatch() {
         guard let dispatchCallback = onEventDispatched else { return }
 
-        if dataBuffer == "" {
+        if eventDataBuffer == "" {
             eventNameBuffer = ""
             return
         }
 
-        if dataBuffer.characters.last == "\n" {
-            dataBuffer = dataBuffer.substring(to: dataBuffer.index(before: dataBuffer.endIndex))
+        if eventDataBuffer.characters.last == "\n" {
+            eventDataBuffer = eventDataBuffer.substring(to: eventDataBuffer.index(before: eventDataBuffer.endIndex))
         }
 
         var type = "message"
@@ -96,10 +78,10 @@ class EventProcessor {
         let event = SSEMessageEvent(
             lastEventId: lastEventId,
             type: type,
-            data: dataBuffer
+            data: eventDataBuffer
         )
 
-        dataBuffer = ""
+        eventDataBuffer = ""
         eventNameBuffer = ""
 
         dispatchCallback(event)
