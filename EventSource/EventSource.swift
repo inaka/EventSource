@@ -12,6 +12,7 @@ public enum EventSourceState {
     case connecting
     case open
     case closed
+    case invalidated
 }
 
 open class EventSource: NSObject, URLSessionDataDelegate {
@@ -65,6 +66,8 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 //Mark: Connect
 
     func connect() {
+        guard self.readyState != .invalidated else { return }
+
         var additionalHeaders = self.headers
         if let eventID = self.lastEventID {
             additionalHeaders["Last-Event-Id"] = eventID
@@ -113,6 +116,13 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 		}
 		return false
 	}
+
+//Mark: Invalidate
+
+    open func invalidate() {
+        self.readyState = EventSourceState.invalidated
+        self.urlSession?.invalidateAndCancel()
+    }
 
 //Mark: EventListeners
 
