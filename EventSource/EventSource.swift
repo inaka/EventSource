@@ -245,11 +245,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         var parsedEvents: [(id: String?, event: String?, data: String?)] = Array()
 
         for event in events {
-            if event.isEmpty {
-                continue
-            }
+            let event = event.components(separatedBy: "\n")
+                .filter {!$0.hasPrefix(":")} // remove comment lines
+                .joined(separator: "\n")
 
-            if event.hasPrefix(":") {
+            if event.isEmpty {
                 continue
             }
 
