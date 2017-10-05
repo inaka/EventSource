@@ -20,7 +20,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     let url: URL
 	fileprivate let lastEventIDKey: String
     fileprivate let receivedString: NSString?
-    fileprivate var onOpenCallback: ((Void) -> Void)?
+    fileprivate var onOpenCallback: (() -> Void)?
     fileprivate var onErrorCallback: ((NSError?) -> Void)?
     fileprivate var onMessageCallback: ((_ id: String?, _ event: String?, _ data: String?) -> Void)?
     open internal(set) var readyState: EventSourceState
@@ -47,15 +47,12 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.receivedString = nil
         self.receivedDataBuffer = NSMutableData()
 
-
-        var port = ""
-        if let optionalPort = self.url.port {
-            port = String(optionalPort)
-        }
+        let port = String(self.url.port ?? 80)
 		let relativePath = self.url.relativePath
 		let host = self.url.host ?? ""
+        let scheme = self.url.scheme ?? ""
 
-		self.uniqueIdentifier = "\(self.url.scheme).\(host).\(port).\(relativePath)"
+		self.uniqueIdentifier = "\(scheme).\(host).\(port).\(relativePath)"
 		self.lastEventIDKey = "\(EventSource.DefaultsKey).\(self.uniqueIdentifier)"
 
         super.init()
@@ -116,7 +113,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
 //Mark: EventListeners
 
-    open func onOpen(_ onOpenCallback: @escaping ((Void) -> Void)) {
+    open func onOpen(_ onOpenCallback: @escaping (() -> Void)) {
         self.onOpenCallback = onOpenCallback
     }
 
@@ -183,7 +180,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 			return
 		}
 
-        if error == nil || (error as! NSError).code != -999 {
+        if error == nil || (error! as NSError).code != -999 {
             let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
             let delayTime = DispatchTime.now() + Double(Int64(nanoseconds)) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: delayTime) {
@@ -195,7 +192,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             if let errorCallback = self.onErrorCallback {
                 errorCallback(error as NSError?)
             } else {
-                self.errorBeforeSetErrorCallBack = error as? NSError
+                self.errorBeforeSetErrorCallBack = error as NSError?
             }
         }
     }
@@ -213,7 +210,10 @@ open class EventSource: NSObject, URLSessionDataDelegate {
                 let dataChunk = receivedDataBuffer.subdata(
 					with: NSRange(location: searchRange.location, length: foundRange.location - searchRange.location)
                 )
-                events.append(NSString(data: dataChunk, encoding: String.Encoding.utf8.rawValue) as! String)
+
+                if let text = String(bytes: dataChunk, encoding: .utf8) {
+                    events.append(text)
+                }
             }
             // Search for next occurrence of delimiter
             searchRange.location = foundRange.location + foundRange.length
@@ -306,16 +306,17 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
         for line in eventString.components(separatedBy: CharacterSet.newlines) as [String] {
             autoreleasepool {
-                let (key, value) = self.parseKeyValuePair(line)
+                let (k, value) = self.parseKeyValuePair(line)
+                guard let key = k else { return }
 
-                if key != nil && value != nil {
-                    if event[key as! String] != nil {
-                        event[key as! String] = "\(event[key as! String]!)\n\(value!)"
+                if let value = value {
+                    if event[key] != nil {
+                        event[key] = "\(event[key]!)\n\(value)"
                     } else {
-                        event[key as! String] = value! as String
+                        event[key] = value
                     }
-                } else if key != nil && value == nil {
-                    event[key as! String] = ""
+                } else if value == nil {
+                    event[key] = ""
                 }
             }
         }
@@ -323,7 +324,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         return (event["id"], event["event"], event["data"])
     }
 
-    fileprivate func parseKeyValuePair(_ line: String) -> (NSString?, NSString?) {
+    fileprivate func parseKeyValuePair(_ line: String) -> (String?, String?) {
         var key: NSString?, value: NSString?
         let scanner = Scanner(string: line)
         scanner.scanUpTo(":", into: &key)
@@ -335,7 +336,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             }
         }
 
-        return (key, value)
+        return (key as String?, value as String?)
     }
 
     fileprivate func parseRetryTime(_ eventString: String) -> Int? {
