@@ -1,10 +1,10 @@
-osx_image: xcode8
+osx_image: xcode9
 language: objective-c
 
 script:
 - "xcodebuild -sdk iphonesimulator clean"
-- "xcodebuild -scheme EventSource -project EventSource.xcodeproj -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' build-for-testing"
-- "xcodebuild -scheme EventSource -project EventSource.xcodeproj -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7,OS=10.0' test-without-building"
+- "xcodebuild -scheme EventSource -project EventSource.xcodeproj -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0' build-for-testing"
+- "xcodebuild -scheme EventSource -project EventSource.xcodeproj -sdk iphonesimulator -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0' test-without-building"
 
 after_success:
   - bash <(curl -s https://codecov.io/bash)
