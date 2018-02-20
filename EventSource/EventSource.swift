@@ -192,9 +192,9 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         if error == nil || (error! as NSError).code != -999 {
             let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
             let delayTime = DispatchTime.now() + Double(Int64(nanoseconds)) / Double(NSEC_PER_SEC)
-            DispatchQueue.main.asyncAfter(deadline: delayTime) { [weak self] in
-                if isAborted == false {
-                    self?.connect()
+            DispatchQueue.main.asyncAfter(deadline: delayTime) {
+                if self.isAborted == false {
+                    self.connect()
                 }
             }
         }
