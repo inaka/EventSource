@@ -72,8 +72,8 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         additionalHeaders["Cache-Control"] = "no-cache"
 
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = TimeInterval(INT_MAX)
-        configuration.timeoutIntervalForResource = TimeInterval(INT_MAX)
+        configuration.timeoutIntervalForRequest = 30
+        configuration.timeoutIntervalForResource = 30
         configuration.httpAdditionalHeaders = additionalHeaders
 
         self.readyState = EventSourceState.connecting
