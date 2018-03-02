@@ -35,6 +35,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 	fileprivate let uniqueIdentifier: String
     fileprivate let validNewlineCharacters = ["\r\n", "\n", "\r"]
 
+    fileprivate var isAborted = false
     var event = Dictionary<String, String>()
 
 
@@ -71,8 +72,8 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         additionalHeaders["Cache-Control"] = "no-cache"
 
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = TimeInterval(INT_MAX)
-        configuration.timeoutIntervalForResource = TimeInterval(INT_MAX)
+        configuration.timeoutIntervalForRequest = 30
+        configuration.timeoutIntervalForResource = 30
         configuration.httpAdditionalHeaders = additionalHeaders
 
         self.readyState = EventSourceState.connecting
@@ -97,6 +98,14 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     open func close() {
         self.readyState = EventSourceState.closed
         self.urlSession?.invalidateAndCancel()
+    }
+    
+    open func abort() {
+        
+        self.readyState = EventSourceState.closed
+        self.urlSession?.invalidateAndCancel()
+        isAborted = true
+        
     }
 
 	fileprivate func receivedMessageToClose(_ httpResponse: HTTPURLResponse?) -> Bool {
@@ -184,7 +193,9 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
             let delayTime = DispatchTime.now() + Double(Int64(nanoseconds)) / Double(NSEC_PER_SEC)
             DispatchQueue.main.asyncAfter(deadline: delayTime) {
-                self.connect()
+                if self.isAborted == false {
+                    self.connect()
+                }
             }
         }
 
