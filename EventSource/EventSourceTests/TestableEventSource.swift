@@ -7,6 +7,7 @@
 //
 
 import UIKit
+@testable import EventSource
 
 class TestableEventSource: EventSource {
 
