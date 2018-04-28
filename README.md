@@ -24,18 +24,50 @@ Also in `sse-server` folder you will find an extremely simple `node.js` server t
 
 ### Install
 
-You can just drag the `EventSource.swift` file to your project or using CocoaPods:
+EventSource delivers itself as a framework. There are a couple ways to include in your app.
+
+#### Cocoapods
+
+1) Include EventSource in your `Podfile`:
+`pod 'IKEventSource'`
+
+2) Run `pod install`
 
 ```
 pod 'IKEventSource'
 
 ```
 
-Then import the library:
+3) Import the framework:
 
 ```
 import IKEventSource
 ```
+
+#### Carthage
+
+1) Include EventSource in your `Cartfile`:
+`github "inaka/EventSource"`
+
+2) Run `carthage update --platform 'iOS'`
+
+3) In your app target, navigate to the `Link Binary with Libraries` section, and add `EventSource.framework`, which you should be able to find in your `Carthage/Build/iOS` directory
+
+4) To your test target, add a `Run Script` to call the Carthage `copy-frameworks` script:
+
+`/usr/local/bin/carthage copy-frameworks`
+
+Additionally, add as an input file the Event Source framework. The path probably looks something like this:
+
+`$(SRCROOT)/Carthage/Build/iOS/EventSource.framework`
+
+5) Import the framework:
+
+```
+import IKEventSource
+```
+
+For further reference see [Carthage's documentation](https://github.com/Carthage/Carthage/blob/master/README.md).
 
 #### Javascript API:
 
@@ -188,6 +220,8 @@ Thanks to all the contributors for pointing out missing stuff or problems and fi
 - [heyzooi](https://github.com/heyzooi)
 - [alexpalman](https://github.com/alexpalman)
 - [robbiet480](https://github.com/robbiet480)
+- [tbaranes](https://github.com/tbaranes)
+- [jwfriese](https://github.com/jwfriese)
 
 ### Contact Us
 If you find any **bugs** or have a **problem** while using this library, please [open an issue](https://github.com/inaka/EventSource/issues/new) in this repo (or a pull request :)).
