@@ -40,12 +40,17 @@ class EventSourceTests: XCTestCase {
 
 	func testOnErrorGetsCalled() {
 		let expectation = self.expectation(description: "onError should be called")
+        let response =  HTTPURLResponse(url: URL(string: domain)!, statusCode: 404, httpVersion: "1.1", headerFields: nil)!
+        let dataTask = MockNSURLSessionDataTask(response: response)
 
 		sut.onError { (error) -> Void in
 			expectation.fulfill()
 		}
 
-		sut.callDidCompleteWithError("error")
+		sut.callDidCompleteWithError(
+            dataTask: dataTask,
+            error: NSError(domain: "Mock", code: 0, userInfo: ["mock": "test"])
+        )
 
 		self.waitForExpectations(timeout: 2) { (error) in
 			if let _ = error {
@@ -176,32 +181,54 @@ class EventSourceTests: XCTestCase {
 // MARK: Testing empty data. The event should be received with no data
 
 	func testCloseConnectionIf204IsReceived() {
-		let domain = "http://test.com"
-		let response =  HTTPURLResponse(url: URL(string: domain)!, statusCode: 204, httpVersion: "1.1", headerFields: nil)!
-		let dataTask = MockNSURLSessionDataTask(response: response)
+        let domain = "http://test.com"
+        let response =  HTTPURLResponse(url: URL(string: domain)!, statusCode: 204, httpVersion: "1.1", headerFields: nil)!
+        let dataTask = MockNSURLSessionDataTask(response: response)
 
-		weak var expectation = self.expectation(description: "onMessage should be called")
+        weak var expectation = self.expectation(description: "onMessage should be called")
 
-		sut.onMessage { (id, event, data) in
-			XCTFail()
-		}
+        sut.onMessage { (id, event, data) in
+            XCTFail()
+        }
 
-		DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
-			if self.sut.readyState == .closed {
-				expectation?.fulfill()
-			} else {
-				XCTFail()
-			}
-		}
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + Double(Int64(2 * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)) {
+            if self.sut.readyState == .closed {
+                expectation?.fulfill()
+            } else {
+                XCTFail()
+            }
+        }
 
-		sut.callDidReceiveDataWithResponse(dataTask)
+        sut.callDidReceiveDataWithResponse(dataTask)
 
-		self.waitForExpectations(timeout: 10) { (error) in
-			if let _ = error {
-				XCTFail("Expectation not fulfilled")
-			}
-		}
+        self.waitForExpectations(timeout: 10) { (error) in
+            if let _ = error {
+                XCTFail("Expectation not fulfilled")
+            }
+        }
 	}
+
+    func testCloseConnectionIfHttpCodeErrorIsReceived() {
+        let domain = "http://test.com"
+        let response =  HTTPURLResponse(url: URL(string: domain)!, statusCode: 404, httpVersion: "1.1", headerFields: nil)!
+        let dataTask = MockNSURLSessionDataTask(response: response)
+
+        var expectation = self.expectation(description: "onMessage should not called")
+
+        sut.onError { (error) -> Void in
+            let message = error!.userInfo["message"] as! String
+            XCTAssertEqual(message, "HTTP Status Code: 404")
+            expectation.fulfill()
+        }
+
+        sut.callDidCompleteWithError(dataTask: dataTask)
+
+        self.waitForExpectations(timeout: 10) { (error) in
+            if let _ = error {
+                XCTFail("Expectation not fulfilled")
+            }
+        }
+    }
 
 // MARK: Testing comment events
 	func testAddEventListenerAndReceiveEvent() {

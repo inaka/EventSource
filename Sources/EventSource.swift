@@ -23,23 +23,23 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     fileprivate var onOpenCallback: (() -> Void)?
     fileprivate var onErrorCallback: ((NSError?) -> Void)?
     fileprivate var onMessageCallback: ((_ id: String?, _ event: String?, _ data: String?) -> Void)?
-    open internal(set) var readyState: EventSourceState
-    open fileprivate(set) var retryTime = 3000
     fileprivate var eventListeners = Dictionary<String, (_ id: String?, _ event: String?, _ data: String?) -> Void>()
     fileprivate var headers: Dictionary<String, String>
-    internal var urlSession: Foundation.URLSession?
-    internal var task: URLSessionDataTask?
     fileprivate var operationQueue: OperationQueue
     fileprivate var errorBeforeSetErrorCallBack: NSError?
-    internal let receivedDataBuffer: NSMutableData
-	fileprivate let uniqueIdentifier: String
+    fileprivate let uniqueIdentifier: String
     fileprivate let validNewlineCharacters = ["\r\n", "\n", "\r"]
+
+    open internal(set) var readyState: EventSourceState
+    open fileprivate(set) var retryTime = 3000
+
+    internal var urlSession: Foundation.URLSession?
+    internal var task: URLSessionDataTask?
+    internal let receivedDataBuffer: NSMutableData
 
     var event = Dictionary<String, String>()
 
-
     public init(url: String, headers: [String : String] = [:]) {
-
         self.url = URL(string: url)!
         self.headers = headers
         self.readyState = EventSourceState.closed
@@ -100,7 +100,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     }
 
 	fileprivate func receivedMessageToClose(_ httpResponse: HTTPURLResponse?) -> Bool {
-		guard let response = httpResponse  else {
+		guard let response = httpResponse else {
 			return false
 		}
 
@@ -177,22 +177,35 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         self.readyState = EventSourceState.closed
 
 		if self.receivedMessageToClose(task.response as? HTTPURLResponse) {
-			return
-		}
+            return
+        }
 
-        if error == nil || (error! as NSError).code != -999 {
-            let nanoseconds = Double(self.retryTime) / 1000.0 * Double(NSEC_PER_SEC)
-            let delayTime = DispatchTime.now() + Double(Int64(nanoseconds)) / Double(NSEC_PER_SEC)
-            DispatchQueue.main.asyncAfter(deadline: delayTime) {
+        guard let urlResponse = task.response as? HTTPURLResponse else {
+            return
+        }
+
+        if !hasHttpError(code: urlResponse.statusCode) && (error == nil || (error! as NSError).code != -999) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(retryTime)) {
                 self.connect()
             }
         }
 
         DispatchQueue.main.async {
+            var theError: NSError? = error as NSError?
+
+            if self.hasHttpError(code: urlResponse.statusCode) {
+                theError = NSError(
+                    domain: "com.inaka.eventSource.error",
+                    code: -1,
+                    userInfo: ["message": "HTTP Status Code: \(urlResponse.statusCode)"]
+                )
+                self.close()
+            }
+
             if let errorCallback = self.onErrorCallback {
-                errorCallback(error as NSError?)
+                errorCallback(theError)
             } else {
-                self.errorBeforeSetErrorCallBack = error as NSError?
+                self.errorBeforeSetErrorCallBack = theError
             }
         }
     }
@@ -354,6 +367,10 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
     fileprivate func trim(_ string: String) -> String {
         return string.trimmingCharacters(in: CharacterSet.whitespaces)
+    }
+
+    fileprivate func hasHttpError(code: Int) -> Bool {
+        return code >= 400
     }
 
     class open func basicAuth(_ username: String, password: String) -> String {
