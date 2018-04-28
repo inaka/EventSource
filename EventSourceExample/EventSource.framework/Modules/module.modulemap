@@ -1,0 +1,11 @@
+framework module EventSource {
+  umbrella header "EventSource.h"
+
+  export *
+  module * { export * }
+}
+
+module EventSource.Swift {
+    header "EventSource-Swift.h"
+    requires objc
+}

@@ -29,12 +29,9 @@ class TestableEventSource: EventSource {
 		delegate.urlSession!(self.urlSession!, dataTask: self.task!, didReceive: data)
 	}
 
-	func callDidCompleteWithError(_ error: String) {
-		let errorToReturn = NSError(domain: "Mock", code: 0, userInfo: ["mock":error])
-
+    func callDidCompleteWithError(dataTask: URLSessionDataTask, error: NSError? = nil) {
 		let delegate = self as URLSessionDataDelegate
-		delegate.urlSession!(self.urlSession!, task: self.task!, didCompleteWithError: errorToReturn)
-
+		delegate.urlSession!(self.urlSession!, task: dataTask, didCompleteWithError: error)
 	}
 
 	override internal func resumeSession() {
