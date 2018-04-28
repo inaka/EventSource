@@ -86,10 +86,12 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 		self.task!.resume()
 	}
 
-    internal func newSession(_ configuration: URLSessionConfiguration) -> Foundation.URLSession {
-        return Foundation.URLSession(configuration: configuration,
-								 delegate: self,
-						    delegateQueue: operationQueue)
+    internal func newSession(_ configuration: URLSessionConfiguration) -> URLSession {
+        return URLSession(
+            configuration: configuration,
+            delegate: self,
+            delegateQueue: operationQueue
+        )
     }
 
 //Mark: Close
