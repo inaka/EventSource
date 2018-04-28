@@ -1,4 +1,4 @@
-osx_image: xcode9
+osx_image: xcode9.3
 language: objective-c
 script:
 - "xcodebuild -workspace EventSource.xcworkspace -scheme EventSource -destination 'platform=iOS Simulator,name=iPhone 7,OS=11.0' -configuration Release ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty"

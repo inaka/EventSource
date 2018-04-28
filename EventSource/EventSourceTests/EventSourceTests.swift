@@ -173,7 +173,7 @@ class EventSourceTests: XCTestCase {
 	}
 
 
-	// MARK: Testing empty data. The event should be received with no data
+// MARK: Testing empty data. The event should be received with no data
 
 	func testCloseConnectionIf204IsReceived() {
 		let domain = "http://test.com"
