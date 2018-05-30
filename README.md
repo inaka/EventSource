@@ -29,7 +29,7 @@ EventSource delivers itself as a framework. There are a couple ways to include i
 #### Cocoapods
 
 1) Include EventSource in your `Podfile`:
-`pod 'EventSource'`
+`pod 'IKEventSource'`
 
 2) Run `pod install`
 
