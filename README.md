@@ -41,7 +41,7 @@ pod 'IKEventSource'
 3) Import the framework:
 
 ```
-import IKEventSource
+import EventSource
 ```
 
 #### Carthage
@@ -64,7 +64,7 @@ Additionally, add as an input file the Event Source framework. The path probably
 5) Import the framework:
 
 ```
-import IKEventSource
+import EventSource
 ```
 
 For further reference see [Carthage's documentation](https://github.com/Carthage/Carthage/blob/master/README.md).
