@@ -146,6 +146,14 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
 //MARK: URLSessionDataDelegate
 
+    open func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        var newRequest = request
+        self.headers.forEach {
+            newRequest.setValue($1, forHTTPHeaderField: $0)
+        }
+        completionHandler(newRequest)
+    }
+    
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
 		if self.receivedMessageToClose(dataTask.response as? HTTPURLResponse) {
 			return
@@ -374,7 +382,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     fileprivate func hasHttpError(code: Int) -> Bool {
         return code >= 400
     }
-
+    
     class open func basicAuth(_ username: String, password: String) -> String {
         let authString = "\(username):\(password)"
         let authData = authString.data(using: String.Encoding.utf8)
