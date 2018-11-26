@@ -17,7 +17,7 @@ public enum EventSourceState {
 open class EventSource: NSObject, URLSessionDataDelegate {
 	static let DefaultsKey = "com.inaka.eventSource.lastEventId"
 
-    let url: URL
+    var url: URL
 	fileprivate let lastEventIDKey: String
     fileprivate let receivedString: NSString?
     fileprivate var onOpenCallback: (() -> Void)?
@@ -146,6 +146,14 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
 //MARK: URLSessionDataDelegate
 
+    open func urlSession(_ session: URLSession, task: URLSessionTask, willPerformHTTPRedirection response: HTTPURLResponse, newRequest request: URLRequest, completionHandler: @escaping (URLRequest?) -> Void) {
+        if needHttpRedirection(code: response.statusCode), let redirectionURL = request.url {
+            self.close()
+            self.url = redirectionURL
+            self.connect()
+        }
+    }
+    
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
 		if self.receivedMessageToClose(dataTask.response as? HTTPURLResponse) {
 			return
@@ -374,7 +382,11 @@ open class EventSource: NSObject, URLSessionDataDelegate {
     fileprivate func hasHttpError(code: Int) -> Bool {
         return code >= 400
     }
-
+    
+    fileprivate func needHttpRedirection(code: Int) -> Bool {
+        return code == 307 || code == 301 || code == 302
+    }
+    
     class open func basicAuth(_ username: String, password: String) -> String {
         let authString = "\(username):\(password)"
         let authData = authString.data(using: String.Encoding.utf8)
