@@ -39,7 +39,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
     var event = Dictionary<String, String>()
 
-    public init(url: String, headers: [String : String] = [:]) {
+    public init(url: String, headers: [String : String] = [:], resetLastEventID: Bool = false) {
         self.url = URL(string: url)!
         self.headers = headers
         self.readyState = EventSourceState.closed
@@ -56,6 +56,9 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 		self.lastEventIDKey = "\(EventSource.DefaultsKey).\(self.uniqueIdentifier)"
 
         super.init()
+	if resetLastEventID {
+        	self.resetLastEventID()
+	}
         self.connect()
     }
 
@@ -295,6 +298,12 @@ open class EventSource: NSObject, URLSessionDataDelegate {
                 }
             }
         }
+    }
+	
+    fileprivate func resetLastEventID() {
+    	let defaults = UserDefaults.standard
+	defaults.set(lastEventID, forKey: lastEventIDKey)
+	defaults.synchronize()
     }
 
     internal var lastEventID: String? {
