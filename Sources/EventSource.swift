@@ -302,8 +302,8 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 	
     fileprivate func resetLastEventID() {
     	let defaults = UserDefaults.standard
-	defaults.set(lastEventID, forKey: lastEventIDKey)
-	defaults.synchronize()
+	defaults.removeObject(forKey: lastEventIDKey)
+        defaults.synchronize()
     }
 
     internal var lastEventID: String? {
