@@ -3,7 +3,7 @@
 ## EventSource
 SSE Client written on Swift using NSURLSession.
 
-[![Build Status](https://api.travis-ci.org/inaka/EventSource.svg)](https://travis-ci.org/inaka/EventSource) [![codecov.io](https://codecov.io/github/inaka/EventSource/badge.svg?branch=master)](https://codecov.io/github/inaka/EventSource?branch=master) [![codecov.io](https://img.shields.io/badge/pod-v2.2.0-brightgreen.svg)](https://github.com/inaka/EventSource/blob/master/IKEventSource.podspec)
+[![Build Status](https://api.travis-ci.org/inaka/EventSource.svg)](https://travis-ci.org/inaka/EventSource) [![codecov.io](https://codecov.io/github/inaka/EventSource/badge.svg?branch=master)](https://codecov.io/github/inaka/EventSource?branch=master) [![codecov.io](https://img.shields.io/badge/pod-v2.2.1-brightgreen.svg)](https://github.com/inaka/EventSource/blob/master/IKEventSource.podspec)
 
 ### Abstract
 
