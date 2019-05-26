@@ -76,7 +76,7 @@ class ViewController: UIViewController {
         self.squareConstraint.constant = 0
         self.view.layoutIfNeeded()
 
-        UIView.animateKeyframes(withDuration: 2, delay: 0, options: [UIViewKeyframeAnimationOptions.repeat, UIViewKeyframeAnimationOptions.autoreverse], animations: { () in
+        UIView.animateKeyframes(withDuration: 2, delay: 0, options: [UIView.KeyframeAnimationOptions.repeat, UIView.KeyframeAnimationOptions.autoreverse], animations: { () in
             self.squareConstraint.constant = finalPosition
             self.view.layoutIfNeeded()
         }, completion: nil)
