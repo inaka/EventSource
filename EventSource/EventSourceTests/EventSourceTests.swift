@@ -80,26 +80,6 @@ class EventSourceTests: XCTestCase {
 		}
 	}
 
-	func testLastEventIDNotUpdatedForEventWithNoID() {
-		self.sut.lastEventID = "event-id-1"
-
-		let expectation = self.expectation(description: "onMessage should be called")
-		self.sut.onMessage { (id, event, data) in
-			XCTAssertEqual(id!, "event-id-1", "the event id should be received")
-			expectation.fulfill()
-		}
-
-		self.sut.callDidReceiveResponse()
-		self.sut.callDidReceiveData("data:event-data-first\n\n".data(using: String.Encoding.utf8)!)
-
-		self.waitForExpectations(timeout: 2) { (error) in
-			if let _ = error {
-				XCTFail("Expectation not fulfilled")
-			}
-			XCTAssertEqual(self.sut.lastEventID!, "event-id-1", "last event id stored is different from sent")
-		}
-	}
-
 	func testCorrectlyStoringLastEventIDForMultipleEventSourceInstances() {
 		weak var expectation = self.expectation(description: "onMessage should be called")
 		sut.onMessage { (id, event, data) in
@@ -213,7 +193,7 @@ class EventSourceTests: XCTestCase {
         let response =  HTTPURLResponse(url: URL(string: domain)!, statusCode: 404, httpVersion: "1.1", headerFields: nil)!
         let dataTask = MockNSURLSessionDataTask(response: response)
 
-        var expectation = self.expectation(description: "onMessage should not called")
+        let expectation = self.expectation(description: "onMessage should not called")
 
         sut.onError { (error) -> Void in
             let message = error!.userInfo["message"] as! String
