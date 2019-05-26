@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E297A2F120494B32002E0920 /* EventSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E297A2E720494B32002E0920 /* EventSource.framework */; };
+		E0402127229AC7A5002A290A /* EventSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E297A2E720494B32002E0920 /* EventSource.framework */; };
 		E297A2F820494B32002E0920 /* EventSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E297A2EA20494B32002E0920 /* EventSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E297A30520494B7D002E0920 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297A30420494B7D002E0920 /* EventSource.swift */; };
 		E297A30D20494B97002E0920 /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297A30720494B97002E0920 /* ConfigurationTests.swift */; };
@@ -53,19 +53,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E297A2F120494B32002E0920 /* EventSource.framework in Frameworks */,
+				E0402127229AC7A5002A290A /* EventSource.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E0402126229AC7A5002A290A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E297A2DD20494B32002E0920 = {
 			isa = PBXGroup;
 			children = (
 				E297A2E920494B32002E0920 /* EventSource */,
 				E297A2F420494B32002E0920 /* EventSourceTests */,
 				E297A2E820494B32002E0920 /* Products */,
+				E0402126229AC7A5002A290A /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};

@@ -52,13 +52,13 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 		let host = self.url.host ?? ""
         let scheme = self.url.scheme ?? ""
 
-		self.uniqueIdentifier = "\(scheme).\(host).\(port).\(relativePath)"
+        self.uniqueIdentifier = "\(scheme).\(host).\(port).\(relativePath)"
 		self.lastEventIDKey = "\(EventSource.DefaultsKey).\(self.uniqueIdentifier)"
 
         super.init()
-	if resetLastEventID {
-        	self.resetLastEventID()
-	}
+        if resetLastEventID {
+            self.resetLastEventID()
+        }
         self.connect()
     }
 
@@ -302,7 +302,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 	
     fileprivate func resetLastEventID() {
     	let defaults = UserDefaults.standard
-	defaults.removeObject(forKey: lastEventIDKey)
+        defaults.removeObject(forKey: lastEventIDKey)
         defaults.synchronize()
     }
 
