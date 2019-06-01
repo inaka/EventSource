@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		E0402127229AC7A5002A290A /* EventSource.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E297A2E720494B32002E0920 /* EventSource.framework */; };
+		E0C2BA8122A00167007B8017 /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C2BA8022A00167007B8017 /* EventStreamParser.swift */; };
+		E0C2BA8322A00C30007B8017 /* EventStreamParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C2BA8222A00C30007B8017 /* EventStreamParserTests.swift */; };
+		E0C2BA8422A00C78007B8017 /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C2BA8022A00167007B8017 /* EventStreamParser.swift */; };
+		E0EDE5C122A2C76800EEC3FE /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0EDE5C022A2C76800EEC3FE /* Event.swift */; };
+		E0EDE5C222A2C76C00EEC3FE /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0EDE5C022A2C76800EEC3FE /* Event.swift */; };
+		E0EDE5C422A2DD4000EEC3FE /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0EDE5C322A2DD4000EEC3FE /* EventTests.swift */; };
 		E297A2F820494B32002E0920 /* EventSource.h in Headers */ = {isa = PBXBuildFile; fileRef = E297A2EA20494B32002E0920 /* EventSource.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		E297A30520494B7D002E0920 /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297A30420494B7D002E0920 /* EventSource.swift */; };
 		E297A30D20494B97002E0920 /* ConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E297A30720494B97002E0920 /* ConfigurationTests.swift */; };
@@ -28,6 +34,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		E0C2BA8022A00167007B8017 /* EventStreamParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStreamParser.swift; sourceTree = "<group>"; };
+		E0C2BA8222A00C30007B8017 /* EventStreamParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStreamParserTests.swift; sourceTree = "<group>"; };
+		E0EDE5C022A2C76800EEC3FE /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
+		E0EDE5C322A2DD4000EEC3FE /* EventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
 		E297A2E720494B32002E0920 /* EventSource.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EventSource.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E297A2EA20494B32002E0920 /* EventSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = EventSource.h; sourceTree = "<group>"; };
 		E297A2EB20494B32002E0920 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -105,6 +115,8 @@
 				E297A30720494B97002E0920 /* ConfigurationTests.swift */,
 				E297A30B20494B97002E0920 /* EventSourceTests.swift */,
 				E297A30620494B97002E0920 /* Info.plist */,
+				E0C2BA8222A00C30007B8017 /* EventStreamParserTests.swift */,
+				E0EDE5C322A2DD4000EEC3FE /* EventTests.swift */,
 			);
 			path = EventSourceTests;
 			sourceTree = "<group>";
@@ -113,6 +125,8 @@
 			isa = PBXGroup;
 			children = (
 				E297A30420494B7D002E0920 /* EventSource.swift */,
+				E0C2BA8022A00167007B8017 /* EventStreamParser.swift */,
+				E0EDE5C022A2C76800EEC3FE /* Event.swift */,
 			);
 			name = Sources;
 			path = ../../Sources;
@@ -230,6 +244,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E297A30520494B7D002E0920 /* EventSource.swift in Sources */,
+				E0EDE5C122A2C76800EEC3FE /* Event.swift in Sources */,
+				E0C2BA8122A00167007B8017 /* EventStreamParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -237,10 +253,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0C2BA8422A00C78007B8017 /* EventStreamParser.swift in Sources */,
 				E297A30E20494B97002E0920 /* MockNSURLSessionDataTask.swift in Sources */,
 				E297A31020494B97002E0920 /* SplittedEvents.swift in Sources */,
+				E0EDE5C222A2C76C00EEC3FE /* Event.swift in Sources */,
 				E297A30F20494B97002E0920 /* TestableEventSource.swift in Sources */,
+				E0C2BA8322A00C30007B8017 /* EventStreamParserTests.swift in Sources */,
 				E297A30D20494B97002E0920 /* ConfigurationTests.swift in Sources */,
+				E0EDE5C422A2DD4000EEC3FE /* EventTests.swift in Sources */,
 				E297A31120494B97002E0920 /* EventSourceTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
