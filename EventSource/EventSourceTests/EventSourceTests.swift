@@ -16,7 +16,7 @@ class EventSourceTests: XCTestCase {
 	var sut: TestableEventSource!
 
 	override func setUp() {
-		sut = TestableEventSource(url: domain, headers: ["Authorization" : "basic auth"])
+		sut = TestableEventSource(url: domain, headers: ["Authorization": "basic auth"])
 		super.setUp()
 	}
 
@@ -43,7 +43,7 @@ class EventSourceTests: XCTestCase {
         let response =  HTTPURLResponse(url: URL(string: domain)!, statusCode: 404, httpVersion: "1.1", headerFields: nil)!
         let dataTask = MockNSURLSessionDataTask(response: response)
 
-		sut.onError { (error) -> Void in
+		sut.onError { (_) -> Void in
 			expectation.fulfill()
 		}
 
@@ -64,7 +64,7 @@ class EventSourceTests: XCTestCase {
 	func testCorrectlyStoringLastEventID() {
 		let expectation = self.expectation(description: "onMessage should be called")
 
-		sut.onMessage { (id, event, data) in
+		sut.onMessage { (id, _, _) in
 			XCTAssertEqual(id!, "event-id-1", "the event id should be received")
 			expectation.fulfill()
 		}
@@ -82,7 +82,7 @@ class EventSourceTests: XCTestCase {
 
 	func testCorrectlyStoringLastEventIDForMultipleEventSourceInstances() {
 		weak var expectation = self.expectation(description: "onMessage should be called")
-		sut.onMessage { (id, event, data) in
+		sut.onMessage { (id, _, _) in
 			XCTAssertEqual(id!, "event-id-1", "the event id should be received")
 			expectation!.fulfill()
 		}
@@ -96,8 +96,8 @@ class EventSourceTests: XCTestCase {
 		}
 
 		expectation = self.expectation(description: "onMessage should be called")
-		let secondSut = TestableEventSource(url: "http://otherdomain.com", headers: ["Authorization" : "basic auth"])
-		secondSut.onMessage { (id, event, data) in
+		let secondSut = TestableEventSource(url: "http://otherdomain.com", headers: ["Authorization": "basic auth"])
+		secondSut.onMessage { (id, _, _) in
 			XCTAssertEqual(id!, "event-id-99", "the event id should be received")
 			expectation!.fulfill()
 		}
@@ -110,7 +110,6 @@ class EventSourceTests: XCTestCase {
 			XCTAssertEqual(secondSut.lastEventID!, "event-id-99", "last event id stored is different from sent")
 		}
 	}
-
 
 // MARK: Testing multiple line data is correctly received
 
@@ -140,7 +139,7 @@ class EventSourceTests: XCTestCase {
 	func testEmptyDataValue() {
 		let expectation = self.expectation(description: "onMessage should be called")
 
-		sut.addEventListener("done") { (id, event, data) in
+		sut.addEventListener("done") { (_, event, data) in
 			XCTAssertEqual(event!, "done", "the event should be message")
 			XCTAssertEqual(data!, "", "the event data should an empty string")
 
@@ -157,7 +156,6 @@ class EventSourceTests: XCTestCase {
 		}
 	}
 
-
 // MARK: Testing empty data. The event should be received with no data
 
 	func testCloseConnectionIf204IsReceived() {
@@ -167,7 +165,7 @@ class EventSourceTests: XCTestCase {
 
         weak var expectation = self.expectation(description: "onMessage should be called")
 
-        sut.onMessage { (id, event, data) in
+        sut.onMessage { (_, _, _) in
             XCTFail()
         }
 
@@ -233,11 +231,11 @@ class EventSourceTests: XCTestCase {
 	}
 
 	func testIgnoreCommets() {
-		sut.addEventListener("event") { (id, event, data) in
+		sut.addEventListener("event") { (_, _, _) in
 			XCTAssert(false, "got event in comment")
 		}
 
-		sut.onMessage { (id, event, data) in
+		sut.onMessage { (_, _, _) in
 			XCTAssert(false, "got event in comment")
 		}
 

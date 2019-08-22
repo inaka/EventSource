@@ -16,12 +16,12 @@ class ConfigurationTests: XCTestCase {
 	var sut: TestableEventSource!
 
 	override func setUp() {
-		sut = TestableEventSource(url: domain, headers: ["Authorization" : "basic auth"])
+		sut = TestableEventSource(url: domain, headers: ["Authorization": "basic auth"])
 		super.setUp()
 	}
 
 	func testURL() {
-		let sut = TestableEventSource(url: "http://test.com", headers: ["Authorization" : "basic auth"])
+		let sut = TestableEventSource(url: "http://test.com", headers: ["Authorization": "basic auth"])
 		XCTAssertEqual("http://test.com", sut.url.absoluteString, "the URL should be the same")
 	}
 
@@ -46,11 +46,11 @@ class ConfigurationTests: XCTestCase {
 
 	func testEventsList() {
 		let sut = TestableEventSource(url: "http://test.com")
-		sut.addEventListener("first") { (id, event, data) in
+		sut.addEventListener("first") { (_, _, _) in
 			print("id")
 		}
 
-		sut.addEventListener("second") { (id, event, data) in
+		sut.addEventListener("second") { (_, _, _) in
 			print("id")
 		}
 
@@ -61,7 +61,7 @@ class ConfigurationTests: XCTestCase {
 
 	func testRemoveEventListeners() {
 		let sut = TestableEventSource(url: "http://test.com")
-		sut.addEventListener("first") { (id, event, data) in
+		sut.addEventListener("first") { (_, _, _) in
 			print("id")
 		}
 

@@ -11,7 +11,6 @@
 		E0C2BA8122A00167007B8017 /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C2BA8022A00167007B8017 /* EventStreamParser.swift */; };
 		E0C2BA8322A00C30007B8017 /* EventStreamParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C2BA8222A00C30007B8017 /* EventStreamParserTests.swift */; };
 		E0C2BA8422A00C78007B8017 /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0C2BA8022A00167007B8017 /* EventStreamParser.swift */; };
-		E0CCBAD3230DDDAF001AC44A /* EventSourceSessionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CCBAD2230DDDAF001AC44A /* EventSourceSessionDelegate.swift */; };
 		E0EDE5C122A2C76800EEC3FE /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0EDE5C022A2C76800EEC3FE /* Event.swift */; };
 		E0EDE5C222A2C76C00EEC3FE /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0EDE5C022A2C76800EEC3FE /* Event.swift */; };
 		E0EDE5C422A2DD4000EEC3FE /* EventTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0EDE5C322A2DD4000EEC3FE /* EventTests.swift */; };
@@ -37,7 +36,6 @@
 /* Begin PBXFileReference section */
 		E0C2BA8022A00167007B8017 /* EventStreamParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStreamParser.swift; sourceTree = "<group>"; };
 		E0C2BA8222A00C30007B8017 /* EventStreamParserTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventStreamParserTests.swift; sourceTree = "<group>"; };
-		E0CCBAD2230DDDAF001AC44A /* EventSourceSessionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventSourceSessionDelegate.swift; sourceTree = "<group>"; };
 		E0EDE5C022A2C76800EEC3FE /* Event.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Event.swift; sourceTree = "<group>"; };
 		E0EDE5C322A2DD4000EEC3FE /* EventTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventTests.swift; sourceTree = "<group>"; };
 		E297A2E720494B32002E0920 /* EventSource.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EventSource.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -129,7 +127,6 @@
 				E297A30420494B7D002E0920 /* EventSource.swift */,
 				E0C2BA8022A00167007B8017 /* EventStreamParser.swift */,
 				E0EDE5C022A2C76800EEC3FE /* Event.swift */,
-				E0CCBAD2230DDDAF001AC44A /* EventSourceSessionDelegate.swift */,
 			);
 			name = Sources;
 			path = ../../Sources;
@@ -248,7 +245,6 @@
 			files = (
 				E297A30520494B7D002E0920 /* EventSource.swift in Sources */,
 				E0EDE5C122A2C76800EEC3FE /* Event.swift in Sources */,
-				E0CCBAD3230DDDAF001AC44A /* EventSourceSessionDelegate.swift in Sources */,
 				E0C2BA8122A00167007B8017 /* EventStreamParser.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

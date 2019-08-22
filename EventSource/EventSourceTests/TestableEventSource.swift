@@ -14,7 +14,7 @@ class TestableEventSource: EventSource {
 	func callDidReceiveResponse() {
 		let delegate = self as URLSessionDataDelegate
 
-		delegate.urlSession!(self.urlSession!, dataTask: self.task!, didReceive: URLResponse()) { (NSURLSessionResponseDisposition) -> Void in
+		delegate.urlSession!(self.urlSession!, dataTask: self.task!, didReceive: URLResponse()) { (_) -> Void in
 
 		}
 	}

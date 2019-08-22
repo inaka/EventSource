@@ -37,7 +37,7 @@ public class EventSource: NSObject, URLSessionDataDelegate {
     var task: URLSessionDataTask?
     var readyState: EventSourceState
 
-    public init(url: String, headers: [String : String] = [:], resetLastEventID: Bool = false) {
+    public init(url: String, headers: [String: String] = [:], resetLastEventID: Bool = false) {
         self.url = URL(string: url)!
         self.headers = headers
         self.readyState = EventSourceState.closed
@@ -126,7 +126,7 @@ public class EventSource: NSObject, URLSessionDataDelegate {
         self.eventListeners[event] = handler
     }
 
-	func removeEventListener(_ event: String) -> Void {
+	func removeEventListener(_ event: String) {
 		self.eventListeners.removeValue(forKey: event)
 	}
 

@@ -27,14 +27,14 @@ class ViewController: UIViewController {
 
         let basicAuthAuthorization = EventSource.basicAuth(username, password: password)
 
-        self.eventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
+        self.eventSource = EventSource(url: server, headers: ["Authorization": basicAuthAuthorization])
 
         self.eventSource?.onOpen {
             self.status.backgroundColor = UIColor(red: 166/255, green: 226/255, blue: 46/255, alpha: 1)
             self.status.text = "CONNECTED"
         }
 
-        self.eventSource?.onError { (error) in
+        self.eventSource?.onError { (_) in
             self.status.backgroundColor = UIColor(red: 249/255, green: 38/255, blue: 114/255, alpha: 1)
             self.status.text = "DISCONNECTED"
         }
@@ -50,7 +50,7 @@ class ViewController: UIViewController {
 //        eventSource.close()
     }
 
-    func updateLabels(_ id: String?, event: String?, data: String?) -> Void {
+    func updateLabels(_ id: String?, event: String?, data: String?) {
         self.idLabel.text = ""
         self.idLabel.text = ""
         self.idLabel.text = ""
