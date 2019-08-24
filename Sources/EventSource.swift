@@ -39,7 +39,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 
     var event = Dictionary<String, String>()
 
-    public init(url: String, headers: [String : String] = [:]) {
+    public init(url: String, headers: [String : String] = [:], resetLastEventID: Bool = false) {
         self.url = URL(string: url)!
         self.headers = headers
         self.readyState = EventSourceState.closed
@@ -52,10 +52,13 @@ open class EventSource: NSObject, URLSessionDataDelegate {
 		let host = self.url.host ?? ""
         let scheme = self.url.scheme ?? ""
 
-		self.uniqueIdentifier = "\(scheme).\(host).\(port).\(relativePath)"
+        self.uniqueIdentifier = "\(scheme).\(host).\(port).\(relativePath)"
 		self.lastEventIDKey = "\(EventSource.DefaultsKey).\(self.uniqueIdentifier)"
 
         super.init()
+        if resetLastEventID {
+            self.resetLastEventID()
+        }
         self.connect()
     }
 
@@ -292,17 +295,23 @@ open class EventSource: NSObject, URLSessionDataDelegate {
             if parsedEvent.event == nil {
                 if let data = parsedEvent.data, let onMessage = self.onMessageCallback {
                     DispatchQueue.main.async {
-                        onMessage(self.lastEventID, "message", data)
+                        onMessage(parsedEvent.id, "message", data)
                     }
                 }
             }
 
             if let event = parsedEvent.event, let data = parsedEvent.data, let eventHandler = self.eventListeners[event] {
                 DispatchQueue.main.async {
-                    eventHandler(self.lastEventID, event, data)
+                    eventHandler(parsedEvent.id, event, data)
                 }
             }
         }
+    }
+	
+    fileprivate func resetLastEventID() {
+    	let defaults = UserDefaults.standard
+        defaults.removeObject(forKey: lastEventIDKey)
+        defaults.synchronize()
     }
 
     internal var lastEventID: String? {
