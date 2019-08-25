@@ -41,7 +41,7 @@ Also in `sse-server` folder you will find an extremely simple `node.js` server t
 2) Import the framework:
 
 ```
-import EventSource
+import IKEventSource
 ```
 
 #### Carthage
@@ -51,7 +51,7 @@ import EventSource
 2) Import the framework:
 
 ```
-import EventSource
+import IKEventSource
 ```
 
 For further reference see [Carthage's documentation](https://github.com/Carthage/Carthage/blob/master/README.md).
