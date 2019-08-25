@@ -1,4 +1,4 @@
-osx_image: xcode9.3
+osx_image: xcode10.3
 language: objective-c
 script:
 - "xcodebuild -project EventSource.xcodeproj -scheme EventSource -destination 'platform=iOS Simulator,name=iPhone 8,OS=12.4' -configuration Release ONLY_ACTIVE_ARCH=NO ENABLE_TESTABILITY=YES test | xcpretty"
