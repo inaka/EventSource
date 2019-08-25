@@ -22,22 +22,29 @@ class ViewController: UIViewController {
         let serverURL = URL(string: "http://127.0.0.1:8080/sse")!
         eventSource = EventSource(url: serverURL, headers: ["Authorization": "Bearer basic-auth-token"])
 
-        eventSource?.onOpen {
-            self.status.backgroundColor = UIColor(red: 166/255, green: 226/255, blue: 46/255, alpha: 1)
-            self.status.text = "CONNECTED"
+        eventSource?.onOpen { [weak self] in
+            self?.status.backgroundColor = UIColor(red: 166/255, green: 226/255, blue: 46/255, alpha: 1)
+            self?.status.text = "CONNECTED"
         }
 
-        eventSource?.onComplete { _, _, _ in
-            self.status.backgroundColor = UIColor(red: 249/255, green: 38/255, blue: 114/255, alpha: 1)
-            self.status.text = "DISCONNECTED"
+        eventSource?.onComplete { [weak self] statusCode, reconnect, error in
+            self?.status.backgroundColor = UIColor(red: 249/255, green: 38/255, blue: 114/255, alpha: 1)
+            self?.status.text = "DISCONNECTED"
+
+            guard reconnect ?? false else { return }
+
+            let retryTime = self?.eventSource?.retryTime ?? 3000
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(retryTime)) { [weak self] in
+                self?.eventSource?.connect()
+            }
         }
 
-        eventSource?.onMessage { (id, event, data) in
-            self.updateLabels(id, event: event, data: data)
+        eventSource?.onMessage { [weak self] id, event, data in
+            self?.updateLabels(id, event: event, data: data)
         }
 
-        eventSource?.addEventListener("user-connected") { (id, event, data) in
-            self.updateLabels(id, event: event, data: data)
+        eventSource?.addEventListener("user-connected") { [weak self] id, event, data in
+            self?.updateLabels(id, event: event, data: data)
         }
     }
 
