@@ -9,7 +9,7 @@ SSE Client written on Swift using NSURLSession.
 
 This is an EventSource implementation written on Swift following the [W3C EventSource](http://www.w3.org/TR/eventsource/) document. If something is missing or not completely right open an issue and I'll work on it! 
 
-If you like the library please leave as a ★. That helps us to stay engaged on the mantainence!
+If you like the library please leave us a ★. That helps us to stay engaged on the mantainence!
 
 ### Changes from version 2.2.1 to 3.0
 
