@@ -7,15 +7,25 @@ SSE Client written on Swift using NSURLSession.
 
 ### Abstract
 
-This is an EventSource implementation written on Swift trying to keep the API as similar as possible to the JavaScript one. Written following the [W3C EventSource](http://www.w3.org/TR/eventsource/). If something is missing or not completely right open an issue and I'll work on it!
+This is an EventSource implementation written on Swift following the [W3C EventSource](http://www.w3.org/TR/eventsource/) document. If something is missing or not completely right open an issue and I'll work on it! 
+
+If you like the library please leave as a ★. That helps us to stay engaged on the mantainence!
+
+### Changes from version 2.2.1 to 3.0
+
+I took some time to review all the forks, pull requests and issues opened on github. The main changes and complains I found were related to the connection and the `Last-Event-Id` handling.
+
+The changes on this version are:
+
+- `EventSource` doesn't connect automatically anymore. It waits until  `connect(lastEventId: String? = nil)` method is called. This method accepts a `lastEventId` which will be sent to the server upon connection.
+- `EventSource` lets you call `disconnect()` whenever you want.
+- `EventSource` doesn't store the `Last-Event-Id` anymore and you will have to take care of storing the `id` and sending using it or not in the `connect` method.
+- `EventSource` doesn't reconnect at all. If a network layer error occurs (disconnection, timeout, etc) or if the server closes the connection you will have to take care to reconnect with the server.
+- Modularization. This library has been around since `Swift 1.0` and started just as a way to learn the language. With this new version the whole code has been improved, commented and fully tested to make it easier to track problems and extend in the future.
 
 ### How to use it?
 
-It works just like the JavaScript version, the main difference is when creating a new EventSource object you can add headers to the request, for example if your server uses basic auth you can add the headers there.
-
-`Last-Event-Id` is completely handled by the library, so it's sent to the server if the connection drops and library needs to reconnect. Also the `Last-Event-Id` is stored in `NSUserDefaults` so we can keep the last received event for the next time the app is used to avoid receiving duplicate events.
-
-The library automatically reconnects if connection drops. The reconnection time is 3 seconds. This time may be changed by the server sending a `retry: time-in-milliseconds` event.
+There is a simple working sample in the repository. Check the ViewController.swift to see how to use it.
 
 Also in `sse-server` folder you will find an extremely simple `node.js` server to test the library. To run the server you just need to:
 
@@ -24,113 +34,89 @@ Also in `sse-server` folder you will find an extremely simple `node.js` server t
 
 ### Install
 
-EventSource delivers itself as a framework. There are a couple ways to include in your app.
-
 #### Cocoapods
 
-1) Include EventSource in your `Podfile`:
-`pod 'IKEventSource'`
+1) Include EventSource in your `Podfile`: `pod 'IKEventSource'`
 
-2) Run `pod install`
-
-```
-pod 'IKEventSource'
+2) Import the framework:
 
 ```
-
-3) Import the framework:
-
-```
-import EventSource
+import IKEventSource
 ```
 
 #### Carthage
 
-1) Include EventSource in your `Cartfile`:
-`github "inaka/EventSource"`
+1) Include EventSource in your `Cartfile`: `github "inaka/EventSource"`
 
-2) Run `carthage update --platform 'iOS'`
-
-3) In your app target, navigate to the `Link Binary with Libraries` section, and add `EventSource.framework`, which you should be able to find in your `Carthage/Build/iOS` directory
-
-4) To your test target, add a `Run Script` to call the Carthage `copy-frameworks` script:
-
-`/usr/local/bin/carthage copy-frameworks`
-
-Additionally, add as an input file the Event Source framework. The path probably looks something like this:
-
-`$(SRCROOT)/Carthage/Build/iOS/EventSource.framework`
-
-5) Import the framework:
+2) Import the framework:
 
 ```
-import EventSource
+import IKEventSource
 ```
 
 For further reference see [Carthage's documentation](https://github.com/Carthage/Carthage/blob/master/README.md).
 
-#### Javascript API:
-
-```JavaScript
-var eventSource = new EventSource(server);
-
-eventSource.onopen = function() {
-    // When opened
-}
-
-eventSource.onerror = function() {
-    // When errors
-}
-
-eventSource.onmessage = function(e) {  
-    // Here you get an event without event name!
-}
-
-eventSource.addEventListener("ping", function(e) {
-  // Here you get an event 'event-name'
-}, false);
-
-eventSource.close();
-```
-
 #### Swift API:
 
 ```swift
-var eventSource: EventSource = EventSource(url: server, headers: ["Authorization" : basicAuthAuthorization])
-   
-eventSource.onOpen {
-  // When opened
-}
-        
-eventSource.onError { (error) in
-  // When errors
-}
+/// RetryTime: This can be changed remotly if the server sends an event `retry:`
+var retryTime: Int { get }
 
-eventSource.onMessage { (id, event, data) in
-  // Here you get an event without event name!
-}
-   
-eventSource.addEventListener("event-name") { (id, event, data) in
-  // Here you get an event 'event-name'
-}
+/// URL where EventSource will listen for events.
+var url: URL { get }
 
-eventSource.close()
+/// The last event id received from server. This id is neccesary to keep track of the last event-id received to avoid
+/// receiving duplicate events after a reconnection.
+var lastEventId: String? { get }
+
+/// Current state of EventSource
+var readyState: EventSourceState { get }
+
+/// Method used to connect to server. It can receive an optional lastEventId indicating the Last-Event-ID
+///
+/// - Parameter lastEventId: optional value that is going to be added on the request header to server.
+func connect(lastEventId: String?)
+
+/// Method used to disconnect from server.
+func disconnect()
+
+/// Returns the list of event names that we are currently listening for.
+///
+/// - Returns: List of event names.
+func events() -> [String]
+
+/// Callback called when EventSource has successfully connected to the server.
+///
+/// - Parameter onOpenCallback: callback
+func onOpen(_ onOpenCallback: @escaping (() -> Void))
+
+/// Callback called once EventSource has disconnected from server. This can happen for multiple reasons.
+/// The server could have requested the disconnection or maybe a network layer error, wrong URL or any other
+/// error. The callback receives as parameters the status code of the disconnection, if we should reconnect or not
+/// following event source rules and finally the network layer error if any. All this information is more than
+/// enought for you to take a decition if you should reconnect or not.
+/// - Parameter onOpenCallback: callback
+func onComplete(_ onComplete: @escaping ((Int?, Bool?, NSError?) -> Void))
+
+/// This callback is called everytime an event with name "message" or no name is received.
+func onMessage(_ onMessageCallback: @escaping ((_ id: String?, _ event: String?, _ data: String?) -> Void))
+
+/// Add an event handler for an specific event name.
+///
+/// - Parameters:
+///   - event: name of the event to receive
+///   - handler: this handler will be called everytime an event is received with this event-name
+func addEventListener(_ event: String,
+                      handler: @escaping ((_ id: String?, _ event: String?, _ data: String?) -> Void))
+
+/// Remove an event handler for the event-name
+///
+/// - Parameter event: name of the listener to be remove from event source.
+func removeEventListener(_ event: String)
+
+
 ```
 
-We added the following methods that are not available on JavaScript EventSource API but we think they might be useful:
-
-```swift
-public func removeEventListener(event: String) -> Void
-public func events() -> Array<String>
-```
-
-Also the following properties are available: 
-
-- **readyState**: Status of EventSource
-  - **EventSourceState.Closed**
-  - **EventSourceState.Connecting**
-  - **EventSourceState.Open**
-- **URL**: EventSource server URL.
 
 #### Examples:
 ---
@@ -225,3 +211,5 @@ Thanks to all the contributors for pointing out missing stuff or problems and fi
 
 ### Contact Us
 If you find any **bugs** or have a **problem** while using this library, please [open an issue](https://github.com/inaka/EventSource/issues/new) in this repo (or a pull request :)).
+
+Please provide an example of the problem you are facing. If an event is not correctly parsed please provide a sample event.
