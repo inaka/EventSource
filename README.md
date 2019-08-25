@@ -7,7 +7,22 @@ SSE Client written on Swift using NSURLSession.
 
 ### Abstract
 
-This is an EventSource implementation written on Swift trying to keep the API as similar as possible to the JavaScript one. Written following the [W3C EventSource](http://www.w3.org/TR/eventsource/). If something is missing or not completely right open an issue and I'll work on it!
+This is an EventSource implementation written on Swift following the [W3C EventSource](http://www.w3.org/TR/eventsource/) document. If something is missing or not completely right open an issue and I'll work on it!
+
+### Changes from version 2.2.1 to 3.0
+
+I took some time to review all the forks, pull requests and issues opened on github. The main changes and complains I found are related to the connection handling and the `Last-Event-Id` handling.
+
+So the changes made on this version are mainly bring the library to Swift 5.0 and get rid of 
+
+- `EventSource` doesn't connect automatically anymore. It waits until  `connect(lastEventId: String? = nil)` method is called. This method accepts a `lastEventId` which will be sent to the server upon connection.
+- `EventSource` lets you call `disconnect()` whenever you want.
+- `EventSource` doesn't store the `Last-Event-Id` anymore and you will have to take care of storing the `id` and sending using it or not in the `connect` method.
+- `EventSource` doesn't reconnect at all. If a network layer error occurs (disconnection, timeout, redirection, etc) or if the server closes the connection you will have to take care to reconnect with the server.
+
+
+
+### Difference?
 
 ### How to use it?
 
