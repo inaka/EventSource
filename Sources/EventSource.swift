@@ -292,7 +292,7 @@ open class EventSource: NSObject, URLSessionDataDelegate {
         for parsedEvent in parsedEvents {
             self.lastEventID = parsedEvent.id
 
-            if parsedEvent.event == nil {
+            if parsedEvent.event == nil || parsedEvent.event == "message" {
                 if let data = parsedEvent.data, let onMessage = self.onMessageCallback {
                     DispatchQueue.main.async {
                         onMessage(parsedEvent.id, "message", data)
