@@ -73,7 +73,7 @@ public protocol EventSourceProtocol {
     func removeEventListener(_ event: String)
 }
 
-public class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
+open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
     static let DefaultRetryTime = 3000
 
     public let url: URL
@@ -145,7 +145,7 @@ public class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate 
 		return Array(eventListeners.keys)
 	}
 
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+    open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
 
 		if readyState != .open {
             return
@@ -156,10 +156,10 @@ public class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate 
         }
     }
 
-    public func urlSession(_ session: URLSession,
-                           dataTask: URLSessionDataTask,
-                           didReceive response: URLResponse,
-                           completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+    open func urlSession(_ session: URLSession,
+                         dataTask: URLSessionDataTask,
+                         didReceive response: URLResponse,
+                         completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
 
         completionHandler(URLSession.ResponseDisposition.allow)
 
@@ -167,9 +167,9 @@ public class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate 
         mainQueue.async { [weak self] in self?.onOpenCallback?() }
     }
 
-    public func urlSession(_ session: URLSession,
-                           task: URLSessionTask,
-                           didCompleteWithError error: Error?) {
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         didCompleteWithError error: Error?) {
 
         guard let responseStatusCode = (task.response as? HTTPURLResponse)?.statusCode else {
             mainQueue.async { [weak self] in self?.onComplete?(nil, nil, error as NSError?) }
@@ -180,11 +180,11 @@ public class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate 
         mainQueue.async { [weak self] in self?.onComplete?(responseStatusCode, reconnect, nil) }
     }
 
-    public func urlSession(_ session: URLSession,
-                           task: URLSessionTask,
-                           willPerformHTTPRedirection response: HTTPURLResponse,
-                           newRequest request: URLRequest,
-                           completionHandler: @escaping (URLRequest?) -> Void) {
+    open func urlSession(_ session: URLSession,
+                         task: URLSessionTask,
+                         willPerformHTTPRedirection response: HTTPURLResponse,
+                         newRequest request: URLRequest,
+                         completionHandler: @escaping (URLRequest?) -> Void) {
 
         var newRequest = request
         self.headers.forEach { newRequest.setValue($1, forHTTPHeaderField: $0) }
