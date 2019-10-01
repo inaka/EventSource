@@ -160,9 +160,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		657A452623433EBA0017B99A /* EventSourceFramework */ = {
+		657A452623433EBA0017B99A /* EventSource iOS */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 657A452C23433EBA0017B99A /* Build configuration list for PBXNativeTarget "EventSourceFramework" */;
+			buildConfigurationList = 657A452C23433EBA0017B99A /* Build configuration list for PBXNativeTarget "EventSource iOS" */;
 			buildPhases = (
 				657A452223433EBA0017B99A /* Headers */,
 				657A452323433EBA0017B99A /* Sources */,
@@ -173,7 +173,7 @@
 			);
 			dependencies = (
 			);
-			name = EventSourceFramework;
+			name = "EventSource iOS";
 			productName = EventSourceFramework;
 			productReference = 657A452723433EBA0017B99A /* EventSource.framework */;
 			productType = "com.apple.product-type.framework";
@@ -249,7 +249,7 @@
 			targets = (
 				E009F80C230F387A004C3141 /* EventSource */,
 				E009F820230F387B004C3141 /* EventSourceTests */,
-				657A452623433EBA0017B99A /* EventSourceFramework */,
+				657A452623433EBA0017B99A /* EventSource iOS */,
 			);
 		};
 /* End PBXProject section */
@@ -595,7 +595,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		657A452C23433EBA0017B99A /* Build configuration list for PBXNativeTarget "EventSourceFramework" */ = {
+		657A452C23433EBA0017B99A /* Build configuration list for PBXNativeTarget "EventSource iOS" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				657A452D23433EBA0017B99A /* Debug */,

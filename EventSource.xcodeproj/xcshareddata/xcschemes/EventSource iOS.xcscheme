@@ -15,8 +15,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "657A452623433EBA0017B99A"
-               BuildableName = "EventSourceFramework.framework"
-               BlueprintName = "EventSourceFramework"
+               BuildableName = "EventSource.framework"
+               BlueprintName = "EventSource iOS"
                ReferencedContainer = "container:EventSource.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -51,8 +51,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "657A452623433EBA0017B99A"
-            BuildableName = "EventSourceFramework.framework"
-            BlueprintName = "EventSourceFramework"
+            BuildableName = "EventSource.framework"
+            BlueprintName = "EventSource iOS"
             ReferencedContainer = "container:EventSource.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
