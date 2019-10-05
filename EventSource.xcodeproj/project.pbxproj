@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		657A452F23433EDD0017B99A /* Event.swift in Sources */ = {isa = PBXBuildFile; fileRef = E009F83F230F38E9004C3141 /* Event.swift */; };
+		657A453023433EDD0017B99A /* EventSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = E009F840230F38E9004C3141 /* EventSource.swift */; };
+		657A453123433EDD0017B99A /* EventStreamParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E009F841230F38E9004C3141 /* EventStreamParser.swift */; };
 		E009F811230F387A004C3141 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E009F810230F387A004C3141 /* AppDelegate.swift */; };
 		E009F818230F387B004C3141 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E009F817230F387B004C3141 /* Assets.xcassets */; };
 		E009F81B230F387B004C3141 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E009F819230F387B004C3141 /* LaunchScreen.storyboard */; };
@@ -35,6 +38,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		657A452723433EBA0017B99A /* EventSource.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = EventSource.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		657A452A23433EBA0017B99A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E009F80D230F387A004C3141 /* EventSource.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EventSource.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E009F810230F387A004C3141 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E009F817230F387B004C3141 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -54,6 +59,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		657A452423433EBA0017B99A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E009F80A230F387A004C3141 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -86,6 +98,7 @@
 			children = (
 				E009F80D230F387A004C3141 /* EventSource.app */,
 				E009F821230F387B004C3141 /* EventSourceTests.xctest */,
+				657A452723433EBA0017B99A /* EventSource.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -121,6 +134,7 @@
 				E009F83F230F38E9004C3141 /* Event.swift */,
 				E009F840230F38E9004C3141 /* EventSource.swift */,
 				E009F841230F38E9004C3141 /* EventStreamParser.swift */,
+				657A452A23433EBA0017B99A /* Info.plist */,
 			);
 			path = EventSource;
 			sourceTree = "<group>";
@@ -135,7 +149,35 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		657A452223433EBA0017B99A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
+		657A452623433EBA0017B99A /* EventSource iOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 657A452C23433EBA0017B99A /* Build configuration list for PBXNativeTarget "EventSource iOS" */;
+			buildPhases = (
+				657A452223433EBA0017B99A /* Headers */,
+				657A452323433EBA0017B99A /* Sources */,
+				657A452423433EBA0017B99A /* Frameworks */,
+				657A452523433EBA0017B99A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "EventSource iOS";
+			productName = EventSourceFramework;
+			productReference = 657A452723433EBA0017B99A /* EventSource.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 		E009F80C230F387A004C3141 /* EventSource */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E009F835230F387C004C3141 /* Build configuration list for PBXNativeTarget "EventSource" */;
@@ -181,6 +223,9 @@
 				LastUpgradeCheck = 1030;
 				ORGANIZATIONNAME = Andres;
 				TargetAttributes = {
+					657A452623433EBA0017B99A = {
+						CreatedOnToolsVersion = 11.0;
+					};
 					E009F80C230F387A004C3141 = {
 						CreatedOnToolsVersion = 10.3;
 					};
@@ -204,11 +249,19 @@
 			targets = (
 				E009F80C230F387A004C3141 /* EventSource */,
 				E009F820230F387B004C3141 /* EventSourceTests */,
+				657A452623433EBA0017B99A /* EventSource iOS */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		657A452523433EBA0017B99A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E009F80B230F387A004C3141 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -229,6 +282,16 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		657A452323433EBA0017B99A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				657A452F23433EDD0017B99A /* Event.swift in Sources */,
+				657A453023433EDD0017B99A /* EventSource.swift in Sources */,
+				657A453123433EDD0017B99A /* EventStreamParser.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E009F809230F387A004C3141 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -277,6 +340,60 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		657A452D23433EBA0017B99A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = EventSource/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ar.com.andres.EventSource;
+				PRODUCT_NAME = EventSource;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		657A452E23433EBA0017B99A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = EventSource/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = ar.com.andres.EventSource;
+				PRODUCT_NAME = EventSource;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 		E009F833230F387C004C3141 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -399,6 +516,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = BB9PXVJ39L;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = EventSourceSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -417,6 +538,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = BB9PXVJ39L;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/iOS",
+				);
 				INFOPLIST_FILE = EventSourceSample/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -470,6 +595,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		657A452C23433EBA0017B99A /* Build configuration list for PBXNativeTarget "EventSource iOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				657A452D23433EBA0017B99A /* Debug */,
+				657A452E23433EBA0017B99A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E009F808230F387A004C3141 /* Build configuration list for PBXProject "EventSource" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
