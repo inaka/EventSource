@@ -64,7 +64,7 @@ import PackageDescription
 
 let package = Package(
 dependencies: [
-    .package(url: "https://github.com/inaka/EventSource.git")
+    .package(url: "https://github.com/inaka/EventSource.git", .branch("master"))
 ])
 ```
 
