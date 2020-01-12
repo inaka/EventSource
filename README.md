@@ -56,6 +56,24 @@ import IKEventSource
 
 For further reference see [Carthage's documentation](https://github.com/Carthage/Carthage/blob/master/README.md).
 
+#### Swift Package Manager
+
+1) Include EventSource in your `Package.swift`: `github "inaka/EventSource"`
+```swift
+import PackageDescription
+
+let package = Package(
+dependencies: [
+    .package(url: "https://github.com/inaka/EventSource.git", .branch("master"))
+])
+```
+
+2) Import the framework:
+
+```
+import IKEventSource
+```
+
 #### Swift API:
 
 ```swift
