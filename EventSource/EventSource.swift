@@ -55,6 +55,14 @@ public protocol EventSourceProtocol {
     /// enought for you to take a decition if you should reconnect or not.
     /// - Parameter onOpenCallback: callback
     func onComplete(_ onComplete: @escaping ((Int?, Bool?, NSError?) -> Void))
+    
+    /// Callback called once EventSource has disconnected from server. This can happen for multiple reasons.
+    /// The server could have requested the disconnection or maybe a network layer error, wrong URL or any other
+    /// error. The callback receives as parameters the status code of the disconnection, if we should reconnect or not
+    /// following event source rules and finally the network layer error if any. All this information is more than
+    /// enought for you to take a decition if you should reconnect or not.
+    /// - Parameter onOpenCallback: callback
+    func onCompleteBridged(_ onComplete: @escaping ((NSNumber?, NSNumber?, NSError?) -> Void))
 
     /// This callback is called everytime an event with name "message" or no name is received.
     func onMessage(_ onMessageCallback: @escaping ((_ id: String?, _ event: String?, _ data: String?) -> Void))
@@ -92,6 +100,7 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
     private var mainQueue = DispatchQueue.main
     private var urlSession: URLSession?
 
+    @objc
     public init(
         url: URL,
         headers: [String: String] = [:]
@@ -106,6 +115,7 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
         super.init()
     }
 
+    @objc
     public func connect(lastEventId: String? = nil) {
         eventStreamParser = EventStreamParser()
         readyState = .connecting
@@ -115,11 +125,13 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
         urlSession?.dataTask(with: url).resume()
     }
 
+    @objc
     public func disconnect() {
         readyState = .closed
         urlSession?.invalidateAndCancel()
     }
 
+    @objc
     public func onOpen(_ onOpenCallback: @escaping (() -> Void)) {
         self.onOpenCallback = onOpenCallback
     }
@@ -127,20 +139,36 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
     public func onComplete(_ onComplete: @escaping ((Int?, Bool?, NSError?) -> Void)) {
         self.onComplete = onComplete
     }
+    
+    @objc
+    public func onCompleteBridged(_ onComplete: @escaping((NSNumber?, NSNumber?, NSError?) -> Void)) {
+        
+        self.onComplete = { (statusCode: Int?, shouldReconnect: Bool?, error: NSError?) -> Void in
+            let status: NSNumber? = statusCode != nil ? NSNumber(value: statusCode!) : nil
+            
+            let reconnect: NSNumber? = shouldReconnect != nil ? NSNumber(booleanLiteral: shouldReconnect!) : nil
 
+            return onComplete(status, reconnect, error)
+        }
+    }
+
+    @objc
     public func onMessage(_ onMessageCallback: @escaping ((_ id: String?, _ event: String?, _ data: String?) -> Void)) {
         self.onMessageCallback = onMessageCallback
     }
 
+    @objc
     public func addEventListener(_ event: String,
                                  handler: @escaping ((_ id: String?, _ event: String?, _ data: String?) -> Void)) {
         eventListeners[event] = handler
     }
 
+    @objc
 	public func removeEventListener(_ event: String) {
 		eventListeners.removeValue(forKey: event)
 	}
 
+    @objc
 	public func events() -> [String] {
 		return Array(eventListeners.keys)
 	}
