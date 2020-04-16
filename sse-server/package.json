@@ -4,6 +4,6 @@
   "author": "Andres Canal",
   "version": "1.0.0",
   "dependencies": {
-    "node-uuid": "1.4.2"
+    "node-uuid": "1.4.8"
   }
 }
