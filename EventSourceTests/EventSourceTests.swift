@@ -88,6 +88,7 @@ class EventSourceTests: XCTestCase {
     func testOnCompleteRetryTrue() {
         let expectation = XCTestExpectation(description: "onComplete gets called")
         eventSource.onComplete { statusCode, retry, _ in
+            XCTAssertEqual(self.eventSource.readyState, .closed)
             XCTAssertEqual(statusCode, 200)
             XCTAssertEqual(retry, false)
             expectation.fulfill()
@@ -103,6 +104,7 @@ class EventSourceTests: XCTestCase {
     func testOnCompleteRetryFalse() {
         let expectation = XCTestExpectation(description: "onComplete gets called")
         eventSource.onComplete { statusCode, retry, _ in
+            XCTAssertEqual(self.eventSource.readyState, .closed)
             XCTAssertEqual(statusCode, 250)
             XCTAssertEqual(retry, true)
             expectation.fulfill()
@@ -118,6 +120,7 @@ class EventSourceTests: XCTestCase {
     func testOnCompleteError() {
         let expectation = XCTestExpectation(description: "onComplete gets called")
         eventSource.onComplete { statusCode, retry, error in
+            XCTAssertEqual(self.eventSource.readyState, .closed)
             XCTAssertNotNil(error)
             XCTAssertNil(retry)
             XCTAssertNil(statusCode)
