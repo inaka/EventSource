@@ -170,7 +170,7 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
     open func urlSession(_ session: URLSession,
                          task: URLSessionTask,
                          didCompleteWithError error: Error?) {
-
+        readyState = .closed
         guard let responseStatusCode = (task.response as? HTTPURLResponse)?.statusCode else {
             mainQueue.async { [weak self] in self?.onComplete?(nil, nil, error as NSError?) }
             return
