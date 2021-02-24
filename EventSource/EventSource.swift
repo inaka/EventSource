@@ -223,7 +223,10 @@ private extension EventSource {
 
         for event in events {
             lastEventId = event.id
-            retryTime = event.retryTime ?? EventSource.DefaultRetryTime
+            
+            if let eventRetryTime = event.retryTime {
+                retryTime = eventRetryTime
+            }
 
             if event.onlyRetryEvent == true {
                 continue
