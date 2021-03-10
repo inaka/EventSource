@@ -177,7 +177,7 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
         }
 
         let reconnect = shouldReconnect(statusCode: responseStatusCode)
-        mainQueue.async { [weak self] in self?.onComplete?(responseStatusCode, reconnect, nil) }
+        mainQueue.async { [weak self] in self?.onComplete?(responseStatusCode, reconnect, error as NSError?) }
     }
 
     open func urlSession(_ session: URLSession,
