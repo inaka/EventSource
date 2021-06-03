@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "EventSource",
 	platforms: [
-		.iOS("8.0"),
+		.iOS("9.0"),
 		.macOS("10.10"),
 	],
     products: [
