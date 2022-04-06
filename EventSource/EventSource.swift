@@ -81,7 +81,8 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
     private(set) public var retryTime = EventSource.DefaultRetryTime
     private(set) public var headers: [String: String]
     private(set) public var readyState: EventSourceState
-
+    private var allowSelfSignedCerts: Bool
+    
     private var onOpenCallback: (() -> Void)?
     private var onComplete: ((Int?, Bool?, NSError?) -> Void)?
     private var onMessageCallback: ((_ id: String?, _ event: String?, _ data: String?) -> Void)?
@@ -94,10 +95,12 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
 
     public init(
         url: URL,
-        headers: [String: String] = [:]
+        headers: [String: String] = [:],
+        allowSelfSignedCerts: Bool = false
     ) {
         self.url = url
         self.headers = headers
+        self.allowSelfSignedCerts = allowSelfSignedCerts
 
         readyState = EventSourceState.closed
         operationQueue = OperationQueue()
@@ -190,6 +193,90 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
         self.headers.forEach { newRequest.setValue($1, forHTTPHeaderField: $0) }
         completionHandler(newRequest)
     }
+    
+    open func urlSession(_ session: URLSession, task: URLSessionTask, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+        
+        if self.allowSelfSignedCerts {
+            switch (challenge.protectionSpace.authenticationMethod) {
+                case (NSURLAuthenticationMethodServerTrust):
+                    self.didReceive(serverTrustChallenge: challenge, completionHandler: completionHandler)
+                case (NSURLAuthenticationMethodClientCertificate):
+                    self.didReceive(clientIdentityChallenge: challenge, completionHandler: completionHandler)
+                default:
+                    completionHandler(.performDefaultHandling, nil)
+            }
+        }
+        completionHandler(.performDefaultHandling, nil)
+    }
+    
+    private func didReceive(serverTrustChallenge challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+            
+        if let trust: SecTrust = challenge.protectionSpace.serverTrust {
+            completionHandler(.useCredential, URLCredential(trust: trust))
+        } else {
+            print("Could not get server trust. Cancelling authentication challenge!")
+            completionHandler(.cancelAuthenticationChallenge, nil)
+        }
+        
+        var isTrusted = false
+        
+        // We override server trust evaluation (`NSURLAuthenticationMethodServerTrust`) to allow the
+        // server to use a custom root certificate.
+        let certPaths: [String] = Bundle.main.paths(forResourcesOfType: "cer", inDirectory: nil)
+        
+        for certPath in certPaths {
+            let certFileUrl = URL(fileURLWithPath: certPath)
+            
+            let cerData = try! Data(contentsOf: certFileUrl)
+            let secCer = SecCertificateCreateWithData(nil, cerData as CFData)!
+            if let trust = challenge.protectionSpace.serverTrust {
+                // Apply our custom root to the trust object.
+                var err = SecTrustSetAnchorCertificates(trust, [secCer] as CFArray)
+                guard err == errSecSuccess else {
+                    completionHandler(.cancelAuthenticationChallenge, nil)
+                    return
+                }
+                // Re-enable the system's built-in root certificates.
+                err = SecTrustSetAnchorCertificatesOnly(trust, false)
+                guard err == errSecSuccess else {
+                    completionHandler(.cancelAuthenticationChallenge, nil)
+                    return
+                }
+                var secResult = SecTrustResultType.invalid
+                SecTrustGetTrustResult(trust, &secResult)
+                switch secResult {
+                case .proceed:
+                    isTrusted = true
+                case .recoverableTrustFailure:
+                    let secResult = SecTrustCopyResult(trust)
+                    // A dictionary with a result equal to zero for the AnchorTrusted should not be accepted...
+                    if let dict = secResult as? [String: AnyObject],
+                       let results = dict["TrustResultDetails"]?.firstObject as? Dictionary<String, Any>,
+                       let trustedAnchorValue = results["AnchorTrusted"],
+                        (trustedAnchorValue as? Int) == 0 {
+                        
+                        isTrusted = false
+                    }
+                    isTrusted = true
+                default:
+                    isTrusted = false
+                }
+
+                // Run a trust evaluation and only allow the connection if it succeeds.
+                if isTrusted {
+                    completionHandler(.useCredential, URLCredential(trust: trust))
+                } else {
+                    completionHandler(.cancelAuthenticationChallenge, nil)
+                }
+            }
+        }
+    }
+    
+    private func didReceive(clientIdentityChallenge challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+            if let identity = challenge.proposedCredential?.identity {
+                completionHandler(.useCredential, URLCredential(identity: identity, certificates: nil, persistence: .forSession))
+            }
+        }
 }
 
 internal extension EventSource {
