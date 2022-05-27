@@ -84,12 +84,26 @@ private extension Event {
     static func parseLine(_ line: String, newLineCharacters: [String]) -> (key: String?, value: String?) {
         var key: NSString?, value: NSString?
         let scanner = Scanner(string: line)
-        scanner.scanUpTo(":", into: &key)
-        scanner.scanString(":", into: nil)
+        if #available(iOS 13.0, *) {
+            if let scannedKey = scanner.scanUpToString(":") {
+                key = scannedKey as NSString
+            }
+            _ = scanner.scanString(":")
+        } else {
+            scanner.scanUpTo(":", into: &key)
+            scanner.scanString(":", into: nil)
+        }
 
         for newline in newLineCharacters {
-            if scanner.scanUpTo(newline, into: &value) {
-                break
+            if #available(iOS 13.0, *) {
+                if let scannedValue = scanner.scanUpToString(newline) {
+                    value = scannedValue as NSString
+                    break
+                }
+            } else {
+                if scanner.scanUpTo(newline, into: &value) {
+                    break
+                }
             }
         }
 
