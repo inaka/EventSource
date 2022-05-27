@@ -10,7 +10,7 @@ import UIKit
 import XCTest
 @testable import EventSource
 
-class EventStreamParserTests: XCTestCase {
+final class EventStreamParserTests: XCTestCase {
 
     func testExtractingEvents() {
         let eventParser = EventStreamParser()

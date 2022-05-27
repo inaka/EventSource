@@ -8,7 +8,7 @@
 
 import Foundation
 
-class URLSessionDataTaskMock: URLSessionDataTask {
+final class URLSessionDataTaskMock: URLSessionDataTask {
 
     let mockResponse: URLResponse?
 
