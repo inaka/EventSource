@@ -9,13 +9,22 @@
 import XCTest
 @testable import EventSource
 
-class EventSourceTests: XCTestCase {
+final class EventSourceTests: XCTestCase {
 
-    var eventSource: EventSource!
-    let url = URL(string: "https://localhost")!
+    private var eventSource: EventSource!
+    private var url: URL!
 
     override func setUp() {
+        super.setUp()
+
+        url = URL(string: "https://localhost")!
         eventSource = EventSource(url: url, headers: ["header": "value"])
+    }
+
+    override func tearDown() {
+        eventSource = nil
+        url = nil
+        super.tearDown()
     }
 
     func testCreation() {

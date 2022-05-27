@@ -10,8 +10,10 @@ import UIKit
 import XCTest
 @testable import EventSource
 
-class EventTests: XCTestCase {
-    let newLineCharacters = ["\r\n", "\n", "\r"]
+final class EventTests: XCTestCase {
+    private var newLineCharacters: [String] {
+        ["\r\n", "\n", "\r"]
+    }
 
     func testIgnoreComment() {
         var event = Event(eventString: ":retry", newLineCharacters: newLineCharacters)
