@@ -109,7 +109,7 @@ class EventTests: XCTestCase {
         XCTAssertEqual(event?.data, "")
     }
 
-    func testEventDobleEmptyData() {
+    func testEventDoubleEmptyData() {
         let eventsString = """
         data
         data

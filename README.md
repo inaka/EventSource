@@ -9,18 +9,18 @@ SSE Client written on Swift using NSURLSession.
 
 This is an EventSource implementation written on Swift following the [W3C EventSource](http://www.w3.org/TR/eventsource/) document. If something is missing or not completely right open an issue and I'll work on it! 
 
-If you like the library please leave us a ★. That helps us to stay engaged on the mantainence!
+If you like the library please leave us a ★. That helps us to stay engaged on the maintenance!
 
 ### Changes from version 2.2.1 to 3.0
 
-I took some time to review all the forks, pull requests and issues opened on github. The main changes and complains I found were related to the connection and the `Last-Event-Id` handling.
+I took some time to review all the forks, pull requests and issues opened on GitHub. The main changes and complains I found were related to the connection and the `Last-Event-Id` handling.
 
 The changes on this version are:
 
 - `EventSource` doesn't connect automatically anymore. It waits until  `connect(lastEventId: String? = nil)` method is called. This method accepts a `lastEventId` which will be sent to the server upon connection.
 - `EventSource` lets you call `disconnect()` whenever you want.
 - `EventSource` doesn't store the `Last-Event-Id` anymore and you will have to take care of storing the `id` and sending using it or not in the `connect` method.
-- `EventSource` doesn't reconnect at all. If a network layer error occurs (disconnection, timeout, etc) or if the server closes the connection you will have to take care to reconnect with the server.
+- `EventSource` doesn't reconnect at all. If a network layer error occurs (disconnection, timeout, etc.) or if the server closes the connection you will have to take care to reconnect with the server.
 - Modularization. This library has been around since `Swift 1.0` and started just as a way to learn the language. With this new version the whole code has been improved, commented and fully tested to make it easier to track problems and extend in the future.
 
 ### How to use it?
@@ -77,13 +77,13 @@ import IKEventSource
 #### Swift API:
 
 ```swift
-/// RetryTime: This can be changed remotly if the server sends an event `retry:`
+/// RetryTime: This can be changed remotely if the server sends an event `retry:`
 var retryTime: Int { get }
 
 /// URL where EventSource will listen for events.
 var url: URL { get }
 
-/// The last event id received from server. This id is neccesary to keep track of the last event-id received to avoid
+/// The last event id received from server. This id is necessary to keep track of the last event-id received to avoid
 /// receiving duplicate events after a reconnection.
 var lastEventId: String? { get }
 
@@ -112,7 +112,7 @@ func onOpen(_ onOpenCallback: @escaping (() -> Void))
 /// The server could have requested the disconnection or maybe a network layer error, wrong URL or any other
 /// error. The callback receives as parameters the status code of the disconnection, if we should reconnect or not
 /// following event source rules and finally the network layer error if any. All this information is more than
-/// enought for you to take a decition if you should reconnect or not.
+/// enough for you to take a decision if you should reconnect or not.
 /// - Parameter onOpenCallback: callback
 func onComplete(_ onComplete: @escaping ((Int?, Bool?, NSError?) -> Void))
 

@@ -175,7 +175,7 @@ class EventSourceTests: XCTestCase {
         }
     }
 
-    func testDisconnet() {
+    func testDisconnect() {
         eventSource.readyStateOpen()
         eventSource.disconnect()
 

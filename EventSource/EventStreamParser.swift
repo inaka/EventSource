@@ -42,10 +42,10 @@ final class EventStreamParser {
 
         var searchRange =  NSRange(location: 0, length: dataBuffer.length)
         while let foundRange = searchFirstEventDelimiter(in: searchRange) {
-            // if we found a delimiter range that means that from the beggining of the buffer
-            // until the beggining of the range where the delimiter was found we have an event.
-            // The beggining of the event is: searchRange.location
-            // The lenght of the event is the position where the foundRange was found.
+            // if we found a delimiter range that means that from the beginning of the buffer
+            // until the beginning of the range where the delimiter was found we have an event.
+            // The beginning of the event is: searchRange.location
+            // The length of the event is the position where the foundRange was found.
 
             let dataChunk = dataBuffer.subdata(
                 with: NSRange(location: searchRange.location, length: foundRange.location - searchRange.location)
