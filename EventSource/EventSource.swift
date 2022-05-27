@@ -17,13 +17,13 @@ public enum EventSourceState {
 public protocol EventSourceProtocol {
     var headers: [String: String] { get }
 
-    /// RetryTime: This can be changed remotly if the server sends an event `retry:`
+    /// RetryTime: This can be changed remotely if the server sends an event `retry:`
     var retryTime: Int { get }
 
     /// URL where EventSource will listen for events.
     var url: URL { get }
 
-    /// The last event id received from server. This id is neccesary to keep track of the last event-id received to avoid
+    /// The last event id received from server. This id is necessary to keep track of the last event-id received to avoid
     /// receiving duplicate events after a reconnection.
     var lastEventId: String? { get }
 
@@ -52,7 +52,7 @@ public protocol EventSourceProtocol {
     /// The server could have requested the disconnection or maybe a network layer error, wrong URL or any other
     /// error. The callback receives as parameters the status code of the disconnection, if we should reconnect or not
     /// following event source rules and finally the network layer error if any. All this information is more than
-    /// enought for you to take a decition if you should reconnect or not.
+    /// enough for you to take a decision if you should reconnect or not.
     /// - Parameter onOpenCallback: callback
     func onComplete(_ onComplete: @escaping ((Int?, Bool?, NSError?) -> Void))
 
