@@ -22,7 +22,7 @@ final class EventStreamParser {
     }
 
     var currentBuffer: String? {
-        return NSString(data: dataBuffer as Data, encoding: String.Encoding.utf8.rawValue) as String?
+        NSString(data: dataBuffer as Data, encoding: String.Encoding.utf8.rawValue) as String?
     }
 
     func append(data: Data?) -> [Event] {

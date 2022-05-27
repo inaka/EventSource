@@ -18,7 +18,7 @@ class URLSessionDataTaskMock: URLSessionDataTask {
     }
 
     override var response: URLResponse? {
-        return mockResponse
+        mockResponse
     }
 
 }

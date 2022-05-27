@@ -142,7 +142,7 @@ open class EventSource: NSObject, EventSourceProtocol, URLSessionDataDelegate {
 	}
 
 	public func events() -> [String] {
-		return Array(eventListeners.keys)
+        Array(eventListeners.keys)
 	}
 
     open func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
